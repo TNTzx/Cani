@@ -1,22 +1,19 @@
 import discord
+import discord.ext.commands
 import os
 
-client = discord.Client()
+bot = discord.Client()
+bot = discord.ext.commands.Bot(command_prefix='!')
 
-@client.event
+@bot.event
 async def on_ready():
-    print(f"Logged in as {client.user}.")
+    print(f"Logged in as {bot.user}.")
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+@bot.command()
+async def helloWorld(ctx):
+    context = ctx
+    await print(f"*Bark!* \n \"Your name must be {ctx.author}!")
     
-    if message.content.startswith("//"):
-        messageCut = message.content[2:]
-
-        if messageCut == "hello":
-            await message.channel.send("*Bark!*")
 
 botToken = os.environ['TOKEN']
-client.run(botToken)
+bot.run(botToken)
