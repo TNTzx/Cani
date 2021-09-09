@@ -10,8 +10,12 @@ async def on_ready():
     print(f"Logged in as {bot.user}.")
 
 @bot.command()
-async def helloWorld(ctx):
-    await ctx.send(f"*Bark!* \n \"Your name must be {ctx.author}!")
+async def hello(ctx):
+    await ctx.send(f"*Bark! I'm an actual bot! :D*")
+
+@bot.command()
+async def claimchannel(ctx, arg):
+    ctx.channel.topic = arg
     
 
 botToken = os.environ['TOKEN']
