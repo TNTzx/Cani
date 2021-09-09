@@ -11,7 +11,7 @@ async def on_ready():
 
 @bot.command()
 async def helloWorld(ctx):
-    await print(f"*Bark!* \n \"Your name must be {ctx.author}!")
+    await ctx.send(f"*Bark!* \n \"Your name must be {ctx.author}!")
     
 
 botToken = os.environ['TOKEN']
