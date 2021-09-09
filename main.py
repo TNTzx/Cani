@@ -13,7 +13,7 @@ async def on_message(message):
         return
     
     if message.content.startswith("//"):
-        messageCut = message[2:]
+        messageCut = message.content[2:]
 
         if messageCut == "hello":
             await message.channel.send("*Bark!*")
