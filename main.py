@@ -11,7 +11,6 @@ async def on_ready():
 
 @bot.command()
 async def helloWorld(ctx):
-    context = ctx
     await print(f"*Bark!* \n \"Your name must be {ctx.author}!")
     
 
