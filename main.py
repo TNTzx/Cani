@@ -15,7 +15,8 @@ async def hello(ctx):
 
 @bot.command()
 async def claimchannel(ctx, arg):
-    ctx.channel.topic = arg
+    await ctx.channel.edit(topic=arg)
+    await ctx.send(f"hi just wanna let ya know it works")
     
 
 botToken = os.environ['TOKEN']
