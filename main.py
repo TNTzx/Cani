@@ -7,29 +7,31 @@ commandPrefix = "//"
 bot = discord.Client()
 bot = discord.ext.commands.Bot(command_prefix=commandPrefix)
 
-@bot.event
-async def on_ready():
-    print(f"Logged in as {bot.user}.")
+allCogs = os.listdir(os.path.join(os.path.realpath(__file__), "..", "Cogs"))
 
-
-@bot.command()
-async def hello(ctx):
-    await ctx.send(f"*Bark! I'm an actual bot! :D*")
+for filename in allCogs:
+    if filename.endswith(".py"):
+        bot.load_extension(f"Cogs.{filename[:-3]}")
 
 @bot.command()
-async def claimchannel(ctx, place):
-    currentTopic = ctx.channel.topic
-    currentTopicSplit = currentTopic.split(" | ")
-    newTopicList = [currentTopicSplit[0], " | ", f"Channel claimed. Current location: {place}"]
+async def restartswitch(ctx):
+    await ctx.send("*Restarting...*")
 
-    await ctx.channel.edit(topic="".join(newTopicList))
-    await ctx.send(f"Channel claimed.")
+    for filename in allCogs:
+        if filename.endswith(".py"):
+            newName = f"Cogs.{filename[:-3]}"
+            bot.unload_extension(newName)
+            bot.load_extension(newName)
 
+    await ctx.send("*Restarted! :D*")
 
 @bot.command()
 async def killswitch(ctx):
     await ctx.send("O- *baiii-*")
     await bot.logout()
+
+
+
 
 botToken = os.environ['CANITOKEN']
 bot.run(botToken)
