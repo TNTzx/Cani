@@ -3,6 +3,9 @@ import discord.ext.commands as commands
 import os
 import asyncio
 
+import KeepAlive
+
+
 commandPrefix = "++"
 bot = discord.Client()
 bot = commands.Bot(command_prefix=commandPrefix)
@@ -11,7 +14,7 @@ bot.remove_command("help")
 adminRole = "///Moderator"
 
 def allCogs():
-    return os.listdir(os.path.join(os.path.realpath(__file__), "..", "Cogs"))
+    return os.listdir("./Cogs")
 
 for filename in allCogs():
     if filename.endswith(".py"):
@@ -40,4 +43,5 @@ async def killswitch(ctx):
     await bot.logout()
 
 botToken = os.environ['CANITOKEN']
+KeepAlive.keep_alive()
 bot.run(botToken)
