@@ -19,6 +19,10 @@ class Hello(commands.Cog):
     async def ping(self, ctx):
         await ctx.send(f"*Pong! <@{ctx.author.id}> :D*")
 
+    @commands.command()
+    async def bark(self, ctx):
+        await ctx.send(f"*Bark! :D*")
+
 def setup(bot):
     bot.add_cog(Hello(bot))
 
