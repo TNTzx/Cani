@@ -14,13 +14,14 @@ bot.remove_command("help")
 adminRole = "///Moderator"
 
 def allCogs():
-    return os.listdir("./Cogs")
+    return os.listdir(os.path.join(os.path.dirname(__file__), ".", "Cogs"))
 
 for filename in allCogs():
     if filename.endswith(".py"):
         bot.load_extension(f"Cogs.{filename[:-3]}")
 
 @bot.command()
+@commands.guild_only()
 @commands.has_role(adminRole)
 async def restartswitch(ctx):
     await ctx.send("*Restarting...*")
@@ -37,6 +38,7 @@ async def restartswitch(ctx):
     await ctx.send("*Restarted! :D*")
 
 @bot.command()
+@commands.guild_only()
 @commands.has_role(adminRole)
 async def killswitch(ctx):
     await ctx.send("O- *baiii-*")

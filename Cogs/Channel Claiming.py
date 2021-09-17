@@ -16,6 +16,7 @@ class ChannelClaim(commands.Cog):
         return ctx.channel.name.startswith("general-rp-")
 
     @commands.command()
+    @commands.guild_only()
     @commands.cooldown(1, cooldownTime, commands.BucketType.channel)
     async def claimchannel(self, ctx, place):
         if await ChannelClaim.isRpChannel(ctx):
@@ -30,6 +31,7 @@ class ChannelClaim(commands.Cog):
             await fas.sendError(ctx, f"*This isn't an RP channel! >:(*")
 
     @commands.command()
+    @commands.guild_only()
     @commands.cooldown(1, cooldownTime, commands.BucketType.channel)
     async def unclaimchannel(self, ctx):
         if await ChannelClaim.isRpChannel(ctx):
@@ -48,6 +50,7 @@ class ChannelClaim(commands.Cog):
             await fas.sendError(ctx, f"*This isn't an RP channel! >:(*")
     
     @commands.command()
+    @commands.guild_only()
     @commands.has_role(main.adminRole)
     async def causeerror(self, ctx):
         raise ValueError('funky error')

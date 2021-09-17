@@ -29,6 +29,9 @@ class ErrorHandler(commands.Cog):
             await fas.sendError(ctx, f"Make sure you have the correct parameters! Use `{main.commandPrefix}help` to get help!")
             return
         
+        elif checkexc(commands.NoPrivateMessage):
+            await fas.sendError(ctx, "*This command is disabled in DMs! >:(*", sendToOwner=True)
+        
         elif checkexc(commands.CommandInvokeError):
             if (str(exc.__cause__) == "Exited Function."):
                 return
