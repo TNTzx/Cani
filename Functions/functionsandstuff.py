@@ -1,15 +1,19 @@
 import discord
+import discord.ext.commands as commands
 import main
 import traceback
 from Cogs import ErrorHandler
 import datetime
 
+import main
+
 import sqlite3
 
 
 errorPrefix = ErrorHandler.errorPrefix
-async def sendError(ctx, suffix, exc="", sendToAuthor=False, sendToOwner=False, printToConsole=False):
+async def sendError(ctx:commands.Context, suffix, exc="", sendToAuthor=False, sendToOwner=False, printToConsole=False):
     text = f"{errorPrefix}{ctx.author.mention}, {suffix}"
+    
     
     if sendToOwner:
         tntz = await main.bot.fetch_user(279803094722674693)
@@ -18,10 +22,15 @@ async def sendError(ctx, suffix, exc="", sendToAuthor=False, sendToOwner=False, 
         error = getattr(exc, 'original', exc)
         print(f"Ignoring exception in command {ctx.command}:")
         traceback.print_exception(type(error), error, error.__traceback__)
+
     if sendToAuthor:
         await ctx.author.send(text)
     else:
-        await ctx.channel.send(text)
+        if isinstance(ctx.message.channel, discord.DMChannel):
+            channel = await main.bot.get_channel(ctx.message.channel.id)
+            await channel.send(text)
+        else:
+            await ctx.channel.send(text)
     return
 
 

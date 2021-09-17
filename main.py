@@ -5,6 +5,8 @@ import asyncio
 
 import KeepAlive
 
+# UNCOMMENT SECOND TO LAST LINE WHEN UPDATING THE BOT!
+
 
 commandPrefix = "++"
 bot = discord.Client()
@@ -45,5 +47,5 @@ async def killswitch(ctx):
     await bot.logout()
 
 botToken = os.environ['CANITOKEN']
-KeepAlive.keep_alive()
+# KeepAlive.keep_alive()
 bot.run(botToken)
