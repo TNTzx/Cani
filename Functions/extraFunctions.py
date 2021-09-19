@@ -14,7 +14,6 @@ errorPrefix = ErrorHandler.errorPrefix
 async def sendError(ctx:commands.Context, suffix, exc="", sendToAuthor=False, sendToOwner=False, printToConsole=False):
     text = f"{errorPrefix}{ctx.author.mention}, {suffix}"
     
-    
     if sendToOwner:
         tntz = await main.bot.fetch_user(279803094722674693)
         await tntz.send(f"Error in `{ctx.guild.name}`!\nLink: {ctx.message.jump_url}\n```{exc}```")

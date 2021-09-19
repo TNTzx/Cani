@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 import main
-from Functions import functionsandstuff as fas
+from Functions import extraFunctions as ef
 
 color = 0x7289da
 
@@ -11,6 +11,45 @@ class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         main.bot.remove_command("help")
+
+    listOfCommands = {
+        "Channel Claiming": {
+            "claimchannel": {
+                "description": "Claims the current RP channel to a specific location.",
+                "parameters": {
+                    "location": "The location of where you want the channel to be in. Surround the location with quotes (example: `\"Imagination Room\"`)."
+                }
+            },
+            "unclaimchannel": {
+                "description": "Unclaims the RP channel."
+            },
+            "addclaimchannel":{
+                "description": "Adds the RP channel to the bot.",
+                "requireAdminRole": True
+            }
+        },
+        "Bot Control": {
+            "killswitch": {
+                "description": "Shuts the bot down.",
+                "requireAdminRole": True
+            },
+            "restartswitch": {
+                "description": "Restarts the bot.",
+                "requireAdminRole": True
+            }
+        },
+        "Fun": {
+            "hello": {
+                "description": "Sends a hello message! :D"
+            },
+            "ping": {
+                "description": "I ping you back! :D"
+            },
+            "bark": {
+                "description": "...why do you need help for a.. bark command..?"
+            }
+        }
+    }
 
     @main.bot.group(invoke_without_command=True)
     async def help(self, ctx):
@@ -50,6 +89,10 @@ class Help(commands.Cog):
     @help.command()
     async def unclaimchannel(self, ctx):
         await Help.create_help(ctx, "unclaimchannel", "Channel Claiming", "Unclaims the RP channel.")
+    
+    @help.command()
+    async def addclaimchannel(self, ctx):
+        await Help.create_help(ctx, "addclaimchannel", "Channel Claiming", "Adds the RP channel to the bot.")
     
     @help.command()
     async def killswitch(self, ctx):
