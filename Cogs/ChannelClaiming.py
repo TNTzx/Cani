@@ -52,7 +52,7 @@ class ChannelClaim(commands.Cog):
         for key, value in claimChannels.items():
             if value["claimStatus"]:
                 title = "Claimed"
-                description = f"Current location: `{value['location']}`"
+                description = f"`Current location:` {value['location']}"
             else:
                 title = "Unclaimed"
                 description = f"_ _"
@@ -66,34 +66,34 @@ class ChannelClaim(commands.Cog):
 
         await mainEmbed.edit(embed=embed)
 
-    @commands.command()
+    @commands.command(aliases=["cc"])
     @commands.guild_only()
-    # @commands.cooldown(1, cooldownTime, commands.BucketType.channel)
-    async def claimchannel(self, ctx, place):
-        if await self.isRpChannel(ctx):
-            await self.editChannelDatabase(ctx, True, place)
-            await ctx.send(f"*Channel claimed! :D\nCurrent location: {place}*")
-        else:
-            await eF.sendError(ctx, f"*This isn't an RP channel! >:(*")
-        await self.updateEmbed(ctx)
-
-
-    @commands.command()
-    @commands.guild_only()
-    async def unclaimchannel(self, ctx):
-        if await self.isRpChannel(ctx):
-            claimChannels = await self.getClaims(ctx)
-            if claimChannels[ctx.channel.name]["claimStatus"] == True:
-                await self.editChannelDatabase(ctx, False, "Unknown")
-                await ctx.send(f"*Channel unclaimed! :D*")
+    @commands.cooldown(1, cooldownTime, commands.BucketType.channel)
+    async def claimchannel(self, ctx, type, place):
+        if type == "claim":
+            if await self.isRpChannel(ctx):
+                await self.editChannelDatabase(ctx, True, place)
+                await ctx.send(f"*Channel claimed! :D\nCurrent location: **{place}***")
             else:
-                await eF.sendError(ctx, f"*This channel isn't claimed yet! >:(*")
+                await eF.sendError(ctx, f"*This isn't an RP channel! >:(*")
+        elif type == "unclaim":
+            if await self.isRpChannel(ctx):
+                claimChannels = await self.getClaims(ctx)
+                if claimChannels[ctx.channel.name]["claimStatus"] == True:
+                    await self.editChannelDatabase(ctx, False, "Unknown")
+                    await ctx.send(f"*Channel unclaimed! :D*")
+                else:
+                    await eF.sendError(ctx, f"*This channel isn't claimed yet! >:(*")
+            else:
+                await eF.sendError(ctx, f"*This isn't an RP channel! >:(*")
         else:
-            await eF.sendError(ctx, f"*This isn't an RP channel! >:(*")
+            eF.sendError(ctx, f"*`{type}` isn't a valid argument! Type `{main.commandPrefix}help` for help!*")
+
+        
         await self.updateEmbed(ctx)
 
 
-    @commands.command()
+    @commands.command(aliases=["ecc"])
     @commands.guild_only()
     @commands.has_role(main.adminRole)
     async def editclaimchannels(self, ctx:commands.Context, type, channelMention):
