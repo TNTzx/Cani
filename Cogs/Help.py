@@ -23,8 +23,12 @@ class Help(commands.Cog):
             "unclaimchannel": {
                 "description": "Unclaims the RP channel."
             },
-            "addclaimchannel":{
-                "description": "Adds the RP channel to the bot.",
+            "editclaimchannels":{
+                "description": "Adds / removes the channel as an RP channel.",
+                "parameters": {
+                    "add | remove": "Tells if you want to add or remove a channel as an RP channel.",
+                    "channel": "Channel that you want to add / remove as an RP channel."
+                },
                 "requireAdminRole": True
             }
         },

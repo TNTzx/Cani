@@ -52,3 +52,8 @@ async def formatTime(num):
 
     timeFinal = " ".join(timeFinalList)
     return timeFinal
+
+async def getChannelFromMention(mention):
+    channelId = mention[2:-1]
+    channelObj = main.bot.get_channel(int(channelId))
+    return channelObj

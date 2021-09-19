@@ -38,6 +38,7 @@ async def restartswitch(ctx):
             bot.load_extension(newName)
 
     await ctx.send("*Restarted! :D*")
+    print("\n \n Restart break! -------------------------------------- \n \n")
 
 @bot.command()
 @commands.guild_only()
