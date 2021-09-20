@@ -35,7 +35,6 @@ class ChannelClaim(commands.Cog):
     async def isRpChannel(self, ctx:commands.Context):
         channels = await self.getClaims(ctx)
         return ctx.channel.name in channels.keys()
-        # return ctx.channel.name.startswith("general-rp-")
 
 
     async def editChannelDatabase(self, ctx, claimStatus, place):
@@ -66,14 +65,18 @@ class ChannelClaim(commands.Cog):
 
         await mainEmbed.edit(embed=embed)
 
+
     @commands.command(aliases=["cc"])
     @commands.guild_only()
     @commands.cooldown(1, cooldownTime, commands.BucketType.channel)
-    async def claimchannel(self, ctx, type, place):
+    async def claimchannel(self, ctx, type, place=None):
         if type == "claim":
             if await self.isRpChannel(ctx):
-                await self.editChannelDatabase(ctx, True, place)
-                await ctx.send(f"*Channel claimed! :D\nCurrent location: **{place}***")
+                if not place == None:
+                    await self.editChannelDatabase(ctx, True, place)
+                    await ctx.send(f"*Channel claimed! :D\nCurrent location: **{place}***")
+                else:
+                    eF.sendError(ctx, f"*You didn't specify what the `<location>` is! Type {main.commandPrefix}help to get help! >:(*")
             else:
                 await eF.sendError(ctx, f"*This isn't an RP channel! >:(*")
         elif type == "unclaim":

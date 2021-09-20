@@ -19,16 +19,17 @@ class Help(commands.Cog):
                 "description": "Claims / unclaims the current RP channel to a specific location.",
                 "parameters": {
                     "claim | unclaim": "Tells if you want to claim or unclaim the current RP channel.",
-                    "location": "The location of where you want the channel to be in. Surround the location with quotes (example: `\"Imagination Room\"`)."
+                    "location": "The location of where you want the channel to be in. Surround the location with quotes (example: `\"Imagination Room\"`).\nNote that __this parameter doesn't have to be filled in when you're `unclaim`ing__ the channel."
                 },
                 "aliases": [
                     "cc"
                 ],
-                "cooldown": cc.cooldownTime
+                "cooldown": cc.cooldownTime,
+                "exampleUsage": [
+                    f"{main.commandPrefix}claimchannel claim \"Quaz's HQ\"",
+                    f"{main.commandPrefix}claimchannel unclaim"
+                ]
             },
-            # "unclaimchannel": {
-            #     "description": "Unclaims the RP channel."
-            # },
             "editclaimchannels":{
                 "description": "Adds / removes the channel as an RP channel.",
                 "parameters": {
@@ -138,40 +139,6 @@ class Help(commands.Cog):
                 embed.add_field(name=category, value=commandFormat, inline=False)
 
             await ctx.send(embed=embed)
-
-    
-
-    # @help.command()
-    # async def claimchannel(self, ctx):
-    #     await Help.create_help(ctx, "claimchannel", "Channel Claiming", "Claims the current RP channel to a specific location.", parameters={"location": "The location of where you want the channel to be in. Surround the location with quotes (example: `\"Imagination Room\"`)."})
-    
-    # @help.command()
-    # async def unclaimchannel(self, ctx):
-    #     await Help.create_help(ctx, "unclaimchannel", "Channel Claiming", "Unclaims the RP channel.")
-    
-    # @help.command()
-    # async def addclaimchannel(self, ctx):
-    #     await Help.create_help(ctx, "addclaimchannel", "Channel Claiming", "Adds the RP channel to the bot.")
-    
-    # @help.command()
-    # async def killswitch(self, ctx):
-    #     await Help.create_help(ctx, "killswitch", "Moderation", "Shuts the bot down.", requireAdminRole=True)
-    
-    # @help.command()
-    # async def restartswitch(self, ctx):
-    #     await Help.create_help(ctx, "restartswitch", "Moderation", "Restarts the bot.", requireAdminRole=True)
-    
-    # @help.command()
-    # async def hello(self, ctx):
-    #     await Help.create_help(ctx, "hello", "Fun", "Sends a hello message! :D")
-
-    # @help.command()
-    # async def ping(self, ctx):
-    #     await Help.create_help(ctx, "ping", "Fun", "I ping you back! :D")
-    
-    # @help.command()
-    # async def bark(self, ctx):
-    #     await Help.create_help(ctx, "bark", "Fun", "...why do you need help for a.. bark command..?")
         
 
 def setup(bot):
