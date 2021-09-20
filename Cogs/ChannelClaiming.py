@@ -5,7 +5,7 @@ import main
 from Functions import extraFunctions as eF
 from Functions import sqlInteraction as sI
 
-cooldownTime = 60 * 5
+cooldownTime = 60 * 2
 
 class ChannelClaim(commands.Cog):
     def __init__(self, bot):
