@@ -3,6 +3,7 @@ from discord.ext import commands
 
 import main
 from Functions import extraFunctions as ef
+from Cogs import ChannelClaiming as cC
 
 class ErrorHandler(commands.Cog):
     def __init__(self, bot):
@@ -13,26 +14,28 @@ class ErrorHandler(commands.Cog):
 
         def checkexc(type):
             return isinstance(exc, type)
+        
+        isRp = await cC.ChannelClaim(main.bot).isRpChannel(ctx)
     
         if checkexc(commands.CommandOnCooldown):
             time = await ef.formatTime(int(str(round(exc.retry_after, 0))[:-2]))
-            await ef.sendError(ctx, f"*The command is on cooldown for `{time}` more! >:(*")
+            await ef.sendError(ctx, f"*The command is on cooldown for `{time}` more! >:(*", sendToAuthor=isRp, resetCooldown=isRp)
             return
 
         elif checkexc(commands.MissingRole):
-            await ef.sendError(ctx, f"*You don't have the `{exc.missing_role}` role! >:(*")
+            await ef.sendError(ctx, f"*You don't have the `{exc.missing_role}` role! >:(*", sendToAuthor=isRp, resetCooldown=isRp)
             return
     
         elif checkexc(commands.MissingRequiredArgument):
-            await ef.sendError(ctx, f"Make sure you have the correct parameters! Use `{main.commandPrefix}help` to get help!")
-            return
-        
-        elif checkexc(commands.NoPrivateMessage):
-            await ef.sendError(ctx, "*This command is disabled in DMs! >:(*", sendToAuthor=True)
+            await ef.sendError(ctx, f"Make sure you have the correct parameters! Use `{main.commandPrefix}help` to get help!", sendToAuthor=isRp, resetCooldown=isRp)
             return
 
         elif checkexc(commands.ExpectedClosingQuoteError):
-            await ef.sendError(ctx, "*Your quotation marks (`\"`) are wrong! Double-check the command if you have missing quotation marks! >:(*", sendToOwner=True)
+            await ef.sendError(ctx, "*Your quotation marks (`\"`) are wrong! Double-check the command if you have missing quotation marks! >:(*", sendToAuthor=isRp, resetCooldown=isRp)
+            return
+        
+        elif checkexc(commands.NoPrivateMessage):
+            await ef.sendError(ctx, "*This command is disabled in DMs! >:(*", sendToAuthor=True, resetCooldown=True)
             return
 
 

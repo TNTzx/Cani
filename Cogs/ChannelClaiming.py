@@ -82,7 +82,7 @@ class ChannelClaim(commands.Cog):
                 await self.editChannelDatabase(ctx, True, place)
                 await ctx.send(f"*Channel claimed! :D\nCurrent location: __{place}__*")
             else:
-                eF.sendError(ctx, f"*You didn't specify what the `<location>` is! Type {main.commandPrefix}help to get help! >:(*", resetCooldown=True)
+                await eF.sendError(ctx, f"*You didn't specify what the `<location>` is! Type `{main.commandPrefix}help` to get help! >:(*", resetCooldown=True, sendToAuthor=True)
                 return
         elif type == "unclaim":
             claimChannels = await self.getClaims(ctx)
@@ -91,10 +91,10 @@ class ChannelClaim(commands.Cog):
                 await self.editChannelDatabase(ctx, False, "Unknown")
                 await ctx.send(f"*Channel unclaimed! :D*")
             else:
-                await eF.sendError(ctx, f"*This channel isn't claimed yet! >:(*", resetCooldown=True)
+                await eF.sendError(ctx, f"*This channel isn't claimed yet! >:(*", resetCooldown=True, sendToAuthor=True)
                 return
         else:
-            await eF.sendError(ctx, f"*`{type}` isn't a valid argument! Type `{main.commandPrefix}help` for help!*", resetCooldown=True)
+            await eF.sendError(ctx, f"*`{type}` isn't a valid argument! Type `{main.commandPrefix}help` for help!*", resetCooldown=True, sendToAuthor=True)
             return
 
         await self.updateEmbed(ctx)

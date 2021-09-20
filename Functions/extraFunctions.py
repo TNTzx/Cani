@@ -9,6 +9,8 @@ import main
 
 
 errorPrefix = "**Error! D:**\n"
+errorEmoji = "❌"
+
 async def sendError(ctx:commands.Context, suffix, exc="", sendToAuthor=False, sendToOwner=False, printToConsole=False, resetCooldown=False):
     text = f"{errorPrefix}{ctx.author.mention}, {suffix}"
     tntz = await main.bot.fetch_user(279803094722674693)
@@ -26,6 +28,7 @@ async def sendError(ctx:commands.Context, suffix, exc="", sendToAuthor=False, se
 
     if sendToAuthor:
         await ctx.author.send(text)
+        await ctx.message.add_reaction(errorEmoji)
     else:
         if isinstance(ctx.message.channel, discord.DMChannel):
             channel = await main.bot.get_channel(ctx.message.channel.id)
