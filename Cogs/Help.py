@@ -50,6 +50,13 @@ class Help(commands.Cog):
                 "aliases": [
                     "ccm"
                 ]
+            },
+            "claimchannelupdate": {
+                "description": "Updates the embed for displaying claimed channels.",
+                "requireAdminRole": True,
+                "aliases": [
+                    "ccu"
+                ]
             }
         },
         "Bot Control": {
