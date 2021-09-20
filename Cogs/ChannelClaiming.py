@@ -48,7 +48,7 @@ class ChannelClaim(commands.Cog):
             for key, value in claimChannels.items():
                 if value["claimStatus"]:
                     title = "Claimed"
-                    description = f"`Current location:` **{value['location']}**"
+                    description = f"`Current location:` __{value['location']}__"
                 else:
                     title = "Unclaimed"
                     description = f"_ _"
