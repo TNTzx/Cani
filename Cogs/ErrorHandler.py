@@ -4,8 +4,6 @@ from discord.ext import commands
 import main
 from Functions import extraFunctions as ef
 
-errorPrefix = "**Error! D:**\n"
-
 class ErrorHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot

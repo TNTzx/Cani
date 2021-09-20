@@ -8,7 +8,7 @@ import datetime
 import main
 
 
-errorPrefix = ErrorHandler.errorPrefix
+errorPrefix = "**Error! D:**\n"
 async def sendError(ctx:commands.Context, suffix, exc="", sendToAuthor=False, sendToOwner=False, printToConsole=False, resetCooldown=False):
     text = f"{errorPrefix}{ctx.author.mention}, {suffix}"
     tntz = await main.bot.fetch_user(279803094722674693)
