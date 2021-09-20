@@ -53,8 +53,8 @@ class ChannelClaim(commands.Cog):
                     title = "Unclaimed"
                     description = f"_ _"
             
-            newTitle = f"__#{key}__: {title}"
-            embed.add_field(name=newTitle, value=description, inline=False)
+                newTitle = f"__#{key}__: {title}"
+                embed.add_field(name=newTitle, value=description, inline=False)
         else:
             embed.add_field(name="No RP channels! :(", value=f"Ask the moderators to go add one using {main.commandPrefix}claimchanneledit add.", inline=False)
 
