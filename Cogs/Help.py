@@ -142,7 +142,7 @@ class Help(commands.Cog):
                 return
 
             await Help.create_help(ctx, command, category, cmdDict["description"],
-                aliases = cmdDict["aliases"],
+                aliases = cmdDict.get("aliases", []),
                 parameters = cmdDict.get("parameters", {}),
                 requireAdminRole = cmdDict.get("requireAdminRole", False),
                 cooldown = cmdDict.get("cooldown", 0),
