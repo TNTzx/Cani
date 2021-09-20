@@ -131,3 +131,5 @@ dmypy.json
 
 # Custom!
 Database/
+Functions/sqlTesting.sql
+/testcode.py
