@@ -43,18 +43,25 @@ class ChannelClaim(commands.Cog):
         claimChannels = await self.getClaims(ctx)
 
         embed = discord.Embed(name="embed", title="Claimed Channels", color=0x0000ff)
-        for key, value in claimChannels.items():
-            if value["claimStatus"]:
-                title = "Claimed"
-                description = f"`Current location:` **{value['location']}**"
-            else:
-                title = "Unclaimed"
-                description = f"_ _"
+
+        if not len(claimChannels) == 0:
+            for key, value in claimChannels.items():
+                if value["claimStatus"]:
+                    title = "Claimed"
+                    description = f"`Current location:` **{value['location']}**"
+                else:
+                    title = "Unclaimed"
+                    description = f"_ _"
             
             newTitle = f"__#{key}__: {title}"
             embed.add_field(name=newTitle, value=description, inline=False)
+        else:
+            embed.add_field(name="No RP channels! :(", value=f"Ask the moderators to go add one using {main.commandPrefix}claimchanneledit add.", inline=False)
 
         embedDict = sI.getData(ctx.guild.id, "claim_channel_embed", type=dict)
+        if len(embedDict) == 0:
+            await eF.sendError(ctx, "*There hasn't been a channel added to display claimed channels. Please ask the moderators / admins to add one!*")
+            return
         embedChannel = await eF.getChannelFromMention(embedDict["channel"])
         mainEmbed = await embedChannel.fetch_message(embedDict["messageId"])
 
@@ -67,22 +74,28 @@ class ChannelClaim(commands.Cog):
     async def claimchannel(self, ctx, type, place=None, *dump):
         if not await self.isRpChannel(ctx):
             await eF.sendError(ctx, f"*This isn't an RP channel! >:(*", resetCooldown=True)
+            return
 
         if type == "claim":
             if not place == None:
+                await ctx.send(f"*Claiming channel...*")
                 await self.editChannelDatabase(ctx, True, place)
-                await ctx.send(f"*Channel claimed! :D\nCurrent location: **{place}***")
+                await ctx.send(f"*Channel claimed! :D\nCurrent location: __{place}__*")
             else:
                 eF.sendError(ctx, f"*You didn't specify what the `<location>` is! Type {main.commandPrefix}help to get help! >:(*", resetCooldown=True)
+                return
         elif type == "unclaim":
             claimChannels = await self.getClaims(ctx)
             if claimChannels[ctx.channel.name]["claimStatus"] == True:
+                await ctx.send(f"*Unclaiming channel...*")
                 await self.editChannelDatabase(ctx, False, "Unknown")
                 await ctx.send(f"*Channel unclaimed! :D*")
             else:
                 await eF.sendError(ctx, f"*This channel isn't claimed yet! >:(*", resetCooldown=True)
+                return
         else:
             await eF.sendError(ctx, f"*`{type}` isn't a valid argument! Type `{main.commandPrefix}help` for help!*", resetCooldown=True)
+            return
 
         await self.updateEmbed(ctx)
 
@@ -148,8 +161,9 @@ class ChannelClaim(commands.Cog):
                 "messageId": message.id
             })
 
+        await ctx.send(f"*Changing claim display channel...*")
         await self.updateEmbed(ctx)
-        await ctx.send(f"*Changed claim display channel to *{channelMention}*! :D*")
+        await ctx.send(f"*Changed claim display channel to {channelMention}! :D*")
         
     
 

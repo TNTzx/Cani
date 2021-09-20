@@ -14,6 +14,7 @@ crsr.execute("""
         `guild_id` TEXT,
         `claim_channel_data` TEXT
         `claim_channel_embed` TEXT
+        `bark_count` TEXT
 )
 """)
 
@@ -47,7 +48,7 @@ def createData(guildId):
 
     crsr.execute(f"""
             INSERT INTO database
-            VALUES ('{guildId}', 'nodata', 'nodata')
+            VALUES ('{guildId}', '{{}}', '{{}}', '0')
     """)
     cxn.commit()
 
