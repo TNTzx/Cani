@@ -164,6 +164,15 @@ class ChannelClaim(commands.Cog):
         await ctx.send(f"*Changing claim display channel...*")
         await self.updateEmbed(ctx)
         await ctx.send(f"*Changed claim display channel to {channelMention}! :D*")
+    
+
+    @commands.command(aliases=["ccu"])
+    @commands.guild_only()
+    @commands.has_role(main.adminRole)
+    async def claimchannelupdate(self, ctx):
+        await ctx.send(f"*Updating embed...*")
+        await self.updateEmbed(ctx)
+        await ctx.send(f"*Updated! :D*")
         
     
 
