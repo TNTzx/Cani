@@ -18,7 +18,7 @@ class Help(commands.Cog):
             "claimchannel": {
                 "description": "Claims / unclaims the current RP channel to a specific location.",
                 "parameters": {
-                    "claim | unclaim": "Tells if you want to claim or unclaim the current RP channel.",
+                    "[claim | unclaim]": "Tells if you want to claim or unclaim the current RP channel.",
                     "location": "The location of where you want the channel to be in. Surround the location with quotes (example: `\"Imagination Room\"`).\nNote that __this parameter doesn't have to be filled in when you're `unclaim`ing__ the channel."
                 },
                 "aliases": [
@@ -30,15 +30,25 @@ class Help(commands.Cog):
                     f"{main.commandPrefix}claimchannel unclaim"
                 ]
             },
-            "editclaimchannels":{
+            "claimchanneledit": {
                 "description": "Adds / removes the channel as an RP channel.",
                 "parameters": {
-                    "add | remove": "Tells if you want to add or remove a channel as an RP channel.",
+                    "[add | remove]": "Tells if you want to add or remove a channel as an RP channel.",
                     "channel": "Channel that you want to add / remove as an RP channel."
                 },
                 "requireAdminRole": True,
                 "aliases": [
-                    "ecc"
+                    "cce"
+                ]
+            },
+            "claimchannelembed": {
+                "description": "Changes where the embed for displaying claimed channels are sent.",
+                "parameters": {
+                    "channel": "Channel where the embed will be put in."
+                },
+                "requireAdminRole": True,
+                "aliases": [
+                    "ccm"
                 ]
             }
         },
@@ -129,9 +139,10 @@ class Help(commands.Cog):
                 parameters = cmdDict.get("parameters", {}),
                 requireAdminRole = cmdDict.get("requireAdminRole", False),
                 cooldown = cmdDict.get("cooldown", 0),
-                exampleUsage = cmdDict.get("exampleUsage", []))
+                exampleUsage = cmdDict.get("exampleUsage", [])
+            )
         else:
-            embed = discord.Embed(name="Help", title="Help!", description=f"what the dog doin\nCommand Prefix: {main.commandPrefix}", color=color)
+            embed = discord.Embed(name="Help", title="Help!", description=f"what the dog doin\n__Command Prefix:__ **{main.commandPrefix}**", color=color)
             embed.set_footer(text=f"Type {main.commandPrefix}help <command> for more information to a command.")
 
             for category, commands in self.helpDict.items():

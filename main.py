@@ -15,6 +15,8 @@ bot.remove_command("help")
 
 adminRole = "///Moderator"
 
+tntz = bot.fetch_user(279803094722674693)
+
 def allCogs():
     return os.listdir(os.path.join(os.path.dirname(__file__), ".", "Cogs"))
 

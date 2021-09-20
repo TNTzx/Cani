@@ -30,8 +30,14 @@ class ErrorHandler(commands.Cog):
             return
         
         elif checkexc(commands.NoPrivateMessage):
-            await ef.sendError(ctx, "*This command is disabled in DMs! >:(*", sendToOwner=True)
-        
+            await ef.sendError(ctx, "*This command is disabled in DMs! >:(*", sendToAuthor=True)
+            return
+
+        elif checkexc(commands.ExpectedClosingQuoteError):
+            await ef.sendError(ctx, "*Your quotation marks (`\"`) are wrong! Double-check the command if you have missing quotation marks! >:(*", sendToOwner=True)
+            return
+
+
         elif checkexc(commands.CommandInvokeError):
             if (str(exc.__cause__) == "Exited Function."):
                 return
@@ -39,7 +45,7 @@ class ErrorHandler(commands.Cog):
         elif checkexc(commands.CommandNotFound):
             return
 
-        await ef.sendError(ctx, "*Something went wrong! D: This error has been reported to the owner of the bot.*", exc=exc, sendToOwner=True, printToConsole=True)
+        await ef.sendError(ctx, "*Something went wrong! D:*\n*This error has been reported to the owner of the bot.*", exc=exc, sendToOwner=True, printToConsole=True)
 
 def setup(bot):
     bot.add_cog(ErrorHandler(bot))
