@@ -25,7 +25,6 @@ class Hello(commands.Cog):
 
     @commands.command()
     async def hello(self, ctx):
-        Hello.barkCount += 1
         await ctx.send(f"*Bark! I'm an actual bot! :D*")
 
     @commands.command()
