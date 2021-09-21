@@ -39,6 +39,10 @@ class Help(commands.Cog):
                 "requireAdminRole": True,
                 "aliases": [
                     "cce"
+                ],
+                "exampleUsage": [
+                    f"{main.commandPrefix}claimchanneledit add #general-rp-1",
+                    f"{main.commandPrefix}claimchanneledit remove #general-rp-1"
                 ]
             },
             "claimchannelembed": {
@@ -49,6 +53,9 @@ class Help(commands.Cog):
                 "requireAdminRole": True,
                 "aliases": [
                     "ccm"
+                ],
+                "exampleUsage": [
+                    f"{main.commandPrefix}claimchannelembed #general-display"
                 ]
             },
             "claimchannelupdate": {
@@ -77,10 +84,17 @@ class Help(commands.Cog):
                 "description": "I ping you back! :D"
             },
             "bark": {
-                "description": "...why do you need help for a.. bark command..?"
+                "description": "...why do you need help for a.. bark command..?",
+                "aliases": [
+                    "b"
+                ],
+                "cooldown": 1
             },
             "barkcount": {
-                "description": "Displays how much I barked for this server!"
+                "description": "Displays how much I barked for this server!",
+                "aliases": [
+                    "bc"
+                ],
             }
         }
     }
