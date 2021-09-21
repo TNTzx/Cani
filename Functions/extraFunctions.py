@@ -56,6 +56,8 @@ async def formatTime(num):
         timeFinalList.append(f"{int(timeSplit[2])}s")
 
     timeFinal = " ".join(timeFinalList)
+    if timeFinal == "":
+        timeFinal = "less than a second"
     return timeFinal
 
 async def getChannelFromMention(mention):
