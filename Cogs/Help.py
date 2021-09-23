@@ -76,13 +76,15 @@ class Help(commands.Cog):
                 "requireAdminRole": True
             }
         },
-        "Fun": {
+        "Basic Commands": {
             "hello": {
                 "description": "Sends a hello message! :D"
             },
             "ping": {
                 "description": "I ping you back! :D"
-            },
+            }
+        },
+        "Fun": {
             "bark": {
                 "description": "...why do you need help for a.. bark command..?",
                 "aliases": [
@@ -95,6 +97,12 @@ class Help(commands.Cog):
                 "aliases": [
                     "bc"
                 ],
+            },
+            "meow": {
+                "description": "No. No. Please don't."
+            },
+            "pork": {
+                "description": "Pork. That's it. That's all you get. Pork."
             }
         }
     }
