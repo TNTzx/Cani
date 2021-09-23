@@ -18,6 +18,29 @@ crsr.execute("""
 )
 """)
 
+
+# Check for stuff like quotes
+listOfReplaces = {
+    "\'": "(singlequote)"
+}
+
+def redump(dictionary):
+    dumped = json.dumps(dictionary)
+
+    iterate = dumped
+    for target, replace in listOfReplaces.items():
+        iterate = iterate.replace(target, replace)
+    
+    return iterate
+
+def undump(string):
+    iterate = string
+    for target, replace in listOfReplaces.items():
+        iterate = iterate.replace(replace, target)
+    
+    undumped = json.loads(iterate)
+    return undumped
+
 # Get Data
 def getData(guildId, column, type=str):
     crsr.execute(f"""
@@ -32,9 +55,10 @@ def getData(guildId, column, type=str):
         return None
 
     if type == dict:
-        return json.loads(data)
+        return undump(data)
     else:
         return type(data)
+
 
 # Check if data already exists
 def isDataExists(guildId):
@@ -59,7 +83,7 @@ def editData(guildId, **kwargs):
 
     for key, value in kwargs.items():
         if isinstance(value, dict):
-            value = json.dumps(value)
+            value = redump(value)
         crsr.execute(f"""
             UPDATE database SET {key} = '{value}'
             WHERE guild_id = '{guildId}'
