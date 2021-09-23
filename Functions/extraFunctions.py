@@ -1,9 +1,8 @@
 import discord
 import discord.ext.commands as commands
-import main
 import traceback
-from Cogs import ErrorHandler
 import datetime
+import asyncio
 
 import main
 
@@ -64,3 +63,12 @@ async def getChannelFromMention(mention):
     channelId = mention[2:-1]
     channelObj = main.bot.get_channel(int(channelId))
     return channelObj
+
+async def delayMessage(ctx, text, duration=2, delete=False):
+    message = await ctx.send(text)
+    await asyncio.sleep(duration)
+
+    if delete:
+        await message.delete()
+    else:
+        return message

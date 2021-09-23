@@ -30,19 +30,6 @@ class Hello(commands.Cog):
     @commands.command()
     async def ping(self, ctx):
         await ctx.send(f"*Pong! <@{ctx.author.id}> :D*")
-
-    @commands.command(aliases=["b"])
-    @commands.cooldown(1, 1, commands.BucketType.user)
-    async def bark(self, ctx):
-        barkCount = sI.getData(ctx.guild.id, "bark_count", type=int)
-        barkCount += 1
-        sI.editData(ctx.guild.id, bark_count=barkCount)
-        await ctx.send(f"*Bark! :D*")
-    
-    @commands.command(aliases=["bc"])
-    async def barkcount(self, ctx):
-        barkCount = sI.getData(ctx.guild.id, "bark_count", type=int)
-        await ctx.send(f"*I've barked for a total of {barkCount} times!*")
     
 
 def setup(bot):

@@ -46,7 +46,7 @@ class ErrorHandler(commands.Cog):
         elif checkexc(commands.CommandNotFound):
             return
 
-        await ef.sendError(ctx, "*Something went wrong! D:*\n*This error has been reported to the owner of the bot.*", exc=exc, sendToOwner=True, printToConsole=True)
+        await ef.sendError(ctx, "*Something went wrong! D:*\n*This error has been reported to the owner of the bot.*", exc=exc, resetCooldown=isRp, sendToOwner=True, printToConsole=True)
 
 def setup(bot):
     bot.add_cog(ErrorHandler(bot))
