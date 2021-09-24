@@ -3,3 +3,6 @@ class ExitFunction(Exception):
 
 class SqlNoEntry(Exception):
     pass
+
+class FirebaseNoEntry(Exception):
+    pass
