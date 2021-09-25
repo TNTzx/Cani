@@ -76,7 +76,7 @@ class Hello(commands.Cog):
                 
                 userYou = users[str(ctx.author.id)]["barkCount"]
                 
-                embed.add_field(name=f"{ctx.author.name} (You):", value=f"Your total barks: {userYou}", inline=False)
+                embed.add_field(name=f"Your total barks: {userYou}", value=f"_ _", inline=False)
 
                 await ctx.send(embed=embed)
 
