@@ -8,12 +8,6 @@ import KeepAlive
 
 # UNCOMMENT SECOND TO LAST LINE WHEN UPDATING THE BOT!
 
-
-def printIfHere(message):
-    executedHere = __name__ == "__main__"
-    if True:
-        print(message)
-
 commandPrefix = "++"
 bot = discord.Client()
 bot = commands.Bot(command_prefix=commandPrefix)
@@ -22,7 +16,7 @@ bot.remove_command("help")
 adminRole = "///Moderator"
 
 # Load all cogs
-printIfHere("Loading cogs...")
+print("Loading cogs...")
 def allCogs():
     return os.listdir(os.path.join(os.path.dirname(__file__), ".", "Cogs"))
 
@@ -31,11 +25,11 @@ for filename in allCogs():
         print(f"Loading cog '{filename}'...")
         bot.load_extension(f"Cogs.{filename[:-3]}")
 
-printIfHere("Loaded all cogs!")
+print("Loaded all cogs!")
 
 
 # Important commands
-printIfHere("Loading important commands...")
+print("Loading important commands...")
 
 @bot.command(aliases=["sr"])
 @commands.guild_only()
@@ -62,14 +56,14 @@ async def switchkill(ctx):
     await ctx.send("O- *baiii-*")
     await bot.logout()
 
-printIfHere("Loaded all important commands!")
+print("Loaded all important commands!")
 
 # Server
-printIfHere("Initializing server...")
+print("Initializing server...")
 # KeepAlive.keep_alive()
-printIfHere("Initialized server!...")
+print("Initialized server!...")
 
 # Log in
-printIfHere("Logging into bot...")
+print("Logging into bot...")
 botToken = os.environ['CANITOKEN']
 bot.run(botToken)

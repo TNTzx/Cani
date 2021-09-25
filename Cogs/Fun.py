@@ -37,14 +37,15 @@ class Hello(commands.Cog):
                     }
                 }
                 fi.editData(barkPath + ["users"], defaultData)
-            
-            if fi.isDataExists(barkPath + ["users", "userId"]):
-                fi.deleteData(barkPath + ["users", "userId"])
 
         else:
             # Bark Rank
             if args[0] == "rank":
                 users = fi.getData(barkPath + ["users"])
+                if users == "null":
+                    await ef.sendError(ctx, "*There wasn't anyone that made me bark yet. Be the first one!*")
+                    return
+
                 userSort = sorted(users, key=lambda x: users[x]["barkCount"])
                 userSort.reverse()
 
@@ -52,20 +53,29 @@ class Hello(commands.Cog):
 
                 embed = discord.Embed(name="Leaderboard", title=f"Barking Leaderboard!", color=0x00FFFF)
 
-                embed.add_field(name=f"Total Barks: {totalBarks}", value=f"`...`", inline=False)
+                embed.add_field(name=f"Total Barks: {totalBarks}", value=f"`----------`", inline=False)
 
+                formatList = []
                 for i in range(5):
                     try:
                         userId = userSort[i]
                     except IndexError:
                         continue
                     userObj = await main.bot.fetch_user(userId)
-                    totalBarks = users[userId]["barkCount"]
-                    embed.add_field(name=f"{userObj.name}: {totalBarks}", value=f"_ _", inline=False)
+                    userBarks = users[userId]["barkCount"]
+                    formatList.append(f"{i + 1}. {userObj.name}: {userBarks}")
 
-                embed.add_field(name=f"_ _", value=f"`...`", inline=False)
+                formatStr = "\n".join(formatList)   
+                embed.add_field(name=f"Leaderboard:", value=f"```{formatStr}```", inline=False)
 
+                embed.add_field(name=f"`----------`", value=f"_ _", inline=False)
+
+                if not str(ctx.author.id) in users:
+                    await ef.sendError(ctx, "*You didn't made me bark yet! >:(*")
+                    return
+                
                 userYou = users[str(ctx.author.id)]["barkCount"]
+                
                 embed.add_field(name=f"{ctx.author.name} (You):", value=f"Your total barks: {userYou}", inline=False)
 
                 await ctx.send(embed=embed)
