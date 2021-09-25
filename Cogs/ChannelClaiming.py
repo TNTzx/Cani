@@ -110,7 +110,6 @@ class ChannelClaim(commands.Cog):
     @commands.has_role(main.adminRole)
     async def claimchanneledit(self, ctx, type, channelMention, *dump):
         claimChannels = await self.getClaims(ctx)
-        print(claimChannels)
         try:
             channel = await eF.getChannelFromMention(channelMention)
         except ValueError:
