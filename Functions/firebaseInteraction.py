@@ -24,11 +24,10 @@ from GlobalVariables import variables as vars
 
 # Get data from keys in database
 def getFromPath(path):
-    if not isinstance(path, list):
-        path = [path]
-
     final = vars.db
     for key in path:
+        if not isinstance(key, str):
+            key = str(key)
         final = final.child(key)
     return final
 
@@ -43,15 +42,11 @@ def getData(path:list):
             value = dict(result)
         return value
     else:
-        error = "/".join(str(path))
-        raise ce.FirebaseNoEntry(f"Data doesn't exist for '{error}'.")
+        raise ce.FirebaseNoEntry(f"Data doesn't exist for '{path}'.")
     
 
 # Check if data already exists
 def isDataExists(path):
-    if not isinstance(path, list):
-        path = [path]
-
     try:
         getData(path)
         return True
@@ -71,8 +66,7 @@ def createData(path, data):
 # Edit
 def editData(path, data):
     if not isDataExists(path):
-        error = "/".join(path)
-        raise ce.FirebaseNoEntry(f"Data can't be found for '{error}'.")
+        raise ce.FirebaseNoEntry(f"Data can't be found for '{path}'.")
 
     pathParse = getFromPath(path)
     pathParse.update(data, token=vars.getToken())
@@ -80,9 +74,8 @@ def editData(path, data):
 
 # Delete
 def deleteData(path):
-    if isDataExists(path):
-        error = "/".join(path)
-        raise ce.FirebaseNoEntry(f"Data being deleted doesn't exist for '{error}'.")
+    if not isDataExists(path):
+        raise ce.FirebaseNoEntry(f"Data being deleted doesn't exist for '{path}'.")
     
     pathParse = getFromPath(path)
     pathParse.remove(token=vars.getToken())

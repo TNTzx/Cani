@@ -27,7 +27,7 @@ class ErrorHandler(commands.Cog):
             return
     
         elif checkexc(commands.MissingRequiredArgument):
-            await ef.sendError(ctx, f"Make sure you have the correct parameters! Use `{main.commandPrefix}help` to get help!", sendToAuthor=isRp, resetCooldown=isRp)
+            await ef.sendError(ctx, f"*Make sure you have the correct parameters! Use `{main.commandPrefix}help` to get help!*", sendToAuthor=isRp, resetCooldown=isRp)
             return
 
         elif checkexc(commands.ExpectedClosingQuoteError) or checkexc(commands.InvalidEndOfQuotedStringError) or checkexc(commands.UnexpectedQuoteError):

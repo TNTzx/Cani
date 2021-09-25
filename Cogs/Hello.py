@@ -12,11 +12,8 @@ class Hello(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    
-    @commands.Cog.listener()
-    async def on_ready(self):
-        print(f"Logged in as {self.bot.user}.")
 
+    def newDefault(self):
         for guild in main.bot.guilds:
             if not fi.isDataExists(["guilds", guild.id]):
                 defaultValues = {
@@ -26,7 +23,7 @@ class Hello(commands.Cog):
                             "barking": {
                                 "users": {
                                     "userId": {
-                                        "barks": 0
+                                        "barkCount": 0
                                     }
                                 },
                                 "totalBarks": 0
@@ -36,12 +33,15 @@ class Hello(commands.Cog):
                 }
 
                 fi.editData(["guilds"], defaultValues)
+    
 
-            # get = sI.getData(guild.id, "claim_channel_data")
-            # if get == None:
-            #     sI.createData(guild.id)
-            # if get == "nodata":
-            #     sI.editData(guild.id, claim_channel_data={}, claim_channel_embed={})
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print(f"Logged in as {self.bot.user}.")
+
+        for guild in main.bot.guilds:
+            if not fi.isDataExists(["guilds", guild.id]):
+                self.newDefault()
 
     @commands.command()
     async def hello(self, ctx):
@@ -51,6 +51,10 @@ class Hello(commands.Cog):
     async def ping(self, ctx):
         await ctx.send(f"*Pong! <@{ctx.author.id}> :D*")
     
+    @commands.command()
+    @commands.has_role(main.adminRole)
+    async def updatedefault(self, ctx):
+        self.newDefault()
 
 def setup(bot):
     bot.add_cog(Hello(bot))

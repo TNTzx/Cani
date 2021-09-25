@@ -16,8 +16,8 @@ def startLoop():
         vars.fbUser = vars.fbAuth.refresh(vars.fbUser['refreshToken'])
     
         tz = pytz.timezone('Asia/Manila') 
-        timeObj = datetime.now(tz)
-        timeStr = timeObj.strftime("%I:%M:%S %p | %a, %d/%m/%Y ")
+        timeObj = datetime.datetime.now(tz)
+        timeStr = timeObj.strftime("%I:%M:%S %p | %a, %d/%m/%Y")
 
         print(f"Token refreshed at {timeStr}.")
         

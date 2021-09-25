@@ -8,7 +8,6 @@ import KeepAlive
 
 # UNCOMMENT SECOND TO LAST LINE WHEN UPDATING THE BOT!
 
-print(__name__)
 
 def printIfHere(message):
     executedHere = __name__ == "__main__"
