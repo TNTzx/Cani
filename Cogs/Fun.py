@@ -45,11 +45,15 @@ class Hello(commands.Cog):
             # Bark Rank
             if args[0] == "rank":
                 users = fi.getData(barkPath + ["users"])
-                print(users)
                 userSort = sorted(users, key=lambda x: users[x]["barkCount"])
                 userSort.reverse()
 
+                totalBarks = fi.getData(barkPath + ["totalBarks"])
+
                 embed = discord.Embed(name="Leaderboard", title=f"Barking Leaderboard!", color=0x00FFFF)
+
+                embed.add_field(name=f"Total Barks: {totalBarks}", value=f"`...`", inline=False)
+
                 for i in range(5):
                     try:
                         userId = userSort[i]

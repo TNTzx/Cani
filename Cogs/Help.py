@@ -67,13 +67,26 @@ class Help(commands.Cog):
             }
         },
         "Bot Control": {
-            "killswitch": {
+            "switchkill": {
                 "description": "Shuts the bot down.",
-                "requireAdminRole": True
+                "requireAdminRole": True,
+                "aliases": [
+                    "sk"
+                ]
             },
-            "restartswitch": {
+            "switchrestart": {
                 "description": "Restarts the bot.",
-                "requireAdminRole": True
+                "requireAdminRole": True,
+                "aliases": [
+                    "sr"
+                ]
+            },
+            "updatedatabase": {
+                "description": "Updates the database for new guilds.",
+                "requireAdminRole": True,
+                "aliases": [
+                    "ud"
+                ]
             }
         },
         "Basic Commands": {
@@ -82,11 +95,17 @@ class Help(commands.Cog):
             },
             "ping": {
                 "description": "I ping you back! :D"
+            },
+            "help": {
+                "description": "HOW THE HECK DID YOU GET HERE IF YOU'VE- WHAT- OH MY GOODNESS WHY- WHY DID YOU DO THIS-"
             }
         },
         "Fun": {
             "bark": {
-                "description": "...why do you need help for a.. bark command..?",
+                "description": "BARK",
+                "parameters": {
+                    "[rank]": "Displays barking leaderboards along with the total bark count! ~~WHY DID I DO THIS~~"
+                },
                 "aliases": [
                     "b"
                 ],

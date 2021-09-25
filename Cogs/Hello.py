@@ -51,9 +51,9 @@ class Hello(commands.Cog):
     async def ping(self, ctx):
         await ctx.send(f"*Pong! <@{ctx.author.id}> :D*")
     
-    @commands.command()
+    @commands.command(aliases=["ud"])
     @commands.has_role(main.adminRole)
-    async def updatedefault(self, ctx):
+    async def updatedatabase(self, ctx):
         self.newDefault()
 
 def setup(bot):

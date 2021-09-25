@@ -37,10 +37,10 @@ printIfHere("Loaded all cogs!")
 # Important commands
 printIfHere("Loading important commands...")
 
-@bot.command()
+@bot.command(aliases=["sr"])
 @commands.guild_only()
 @commands.has_role(adminRole)
-async def restartswitch(ctx):
+async def switchrestart(ctx):
     await ctx.send("*Restarting...*")
 
     for filename in allCogs():
@@ -55,10 +55,10 @@ async def restartswitch(ctx):
     await ctx.send("*Restarted! :D*")
     print("\n \n Restart break! -------------------------------------- \n \n")
 
-@bot.command()
+@bot.command(aliases=["sk"])
 @commands.guild_only()
 @commands.has_role(adminRole)
-async def killswitch(ctx):
+async def switchkill(ctx):
     await ctx.send("O- *baiii-*")
     await bot.logout()
 
