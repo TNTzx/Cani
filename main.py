@@ -1,12 +1,19 @@
 import discord
 import discord.ext.commands as commands
+import json
+import pyrebase
 import os
 import asyncio
-
 import KeepAlive
 
 # UNCOMMENT SECOND TO LAST LINE WHEN UPDATING THE BOT!
 
+print(__name__)
+
+def printIfHere(message):
+    executedHere = __name__ == "__main__"
+    if True:
+        print(message)
 
 commandPrefix = "++"
 bot = discord.Client()
@@ -15,12 +22,21 @@ bot.remove_command("help")
 
 adminRole = "///Moderator"
 
+# Load all cogs
+printIfHere("Loading cogs...")
 def allCogs():
     return os.listdir(os.path.join(os.path.dirname(__file__), ".", "Cogs"))
 
 for filename in allCogs():
     if filename.endswith(".py"):
+        print(f"Loading cog '{filename}'...")
         bot.load_extension(f"Cogs.{filename[:-3]}")
+
+printIfHere("Loaded all cogs!")
+
+
+# Important commands
+printIfHere("Loading important commands...")
 
 @bot.command()
 @commands.guild_only()
@@ -47,6 +63,14 @@ async def killswitch(ctx):
     await ctx.send("O- *baiii-*")
     await bot.logout()
 
-botToken = os.environ['CANITOKEN']
+printIfHere("Loaded all important commands!")
+
+# Server
+printIfHere("Initializing server...")
 # KeepAlive.keep_alive()
+printIfHere("Initialized server!...")
+
+# Log in
+printIfHere("Logging into bot...")
+botToken = os.environ['CANITOKEN']
 bot.run(botToken)

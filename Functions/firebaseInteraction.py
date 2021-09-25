@@ -3,46 +3,31 @@ import os
 import json
 
 import pyrebase
-from requests.api import get
+import threading as thread
 
 from Functions import customExceptions as ce
+from Functions import firebaseResetToken as frt
+from GlobalVariables import variables as vars
 
-
-env = os.environ["CaniDBToken"]
-envDict = json.loads(env)
-
-dbKey = envDict["databaseKey"]
-
-fb = pyrebase.initialize_app(dbKey)
-db = fb.database()
-fbAuth = fb.auth()
-
-envAuth = envDict["auth"]
-fbUser = fbAuth.sign_in_with_email_and_password(envAuth["email"], envAuth["password"])
-fbToken = fbUser['idToken']
-
-
-def refreshToken():
-    fbAuth.refresh(fbUser['refreshToken'])
 
 # new data
-# db.child().set(data, token=fbToken)
+# db.child().set(data, token=getToken())
 
 # # update
-# db.child().update({"barkcount": 25010}, token=fbToken)
+# db.child().update({"barkcount": 25010}, token=getToken())
 
 # # delete
-# db.child().remove(token=fbToken)
+# db.child().remove(token=getToken())
 
 # # get
-# result = db.child().get(token=fbToken).val()
+# result = db.child().get(token=getToken()).val()
 
 # Get data from keys in database
 def getFromPath(path):
     if not isinstance(path, list):
         path = [path]
 
-    final = db
+    final = vars.db
     for key in path:
         final = final.child(key)
     return final
@@ -50,7 +35,7 @@ def getFromPath(path):
 
 # Get Data
 def getData(path:list):
-    result = getFromPath(path).get(token=fbToken).val()
+    result = getFromPath(path).get(token=vars.getToken()).val()
     
     if not result == None:
         value = result
@@ -58,12 +43,15 @@ def getData(path:list):
             value = dict(result)
         return value
     else:
-        error = "/".join(path)
+        error = "/".join(str(path))
         raise ce.FirebaseNoEntry(f"Data doesn't exist for '{error}'.")
     
 
 # Check if data already exists
 def isDataExists(path):
+    if not isinstance(path, list):
+        path = [path]
+
     try:
         getData(path)
         return True
@@ -73,12 +61,12 @@ def isDataExists(path):
 
 # Create
 def createData(path, data):
-    if isDataExists(path):
-        error = "/".join(path)
-        raise ce.FirebaseNoEntry(f"Data already found for '{error}'.")
+    # if isDataExists(path):
+    #     error = "/".join(path)
+    #     raise ce.FirebaseNoEntry(f"Data already found for '{error}'.")
     
     pathParse = getFromPath(path)
-    pathParse.set(data, token=fbToken)
+    pathParse.set(data, token=vars.getToken())
 
 # Edit
 def editData(path, data):
@@ -87,7 +75,7 @@ def editData(path, data):
         raise ce.FirebaseNoEntry(f"Data can't be found for '{error}'.")
 
     pathParse = getFromPath(path)
-    pathParse.update(data, token=fbToken)
+    pathParse.update(data, token=vars.getToken())
 
 
 # Delete
@@ -97,4 +85,9 @@ def deleteData(path):
         raise ce.FirebaseNoEntry(f"Data being deleted doesn't exist for '{error}'.")
     
     pathParse = getFromPath(path)
-    pathParse.remove(token=fbToken)
+    pathParse.remove(token=vars.getToken())
+
+
+newToken = thread.Thread(target=frt.startLoop)
+newToken.daemon = True
+newToken.start()
