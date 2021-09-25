@@ -71,7 +71,7 @@ class Hello(commands.Cog):
                 embed.add_field(name=f"`----------`", value=f"_ _", inline=False)
 
                 if not str(ctx.author.id) in users:
-                    await ef.sendError(ctx, "*You didn't made me bark yet! >:(*")
+                    await ef.sendError(ctx, "*You didn't make me bark yet! >:(*")
                     return
                 
                 userYou = users[str(ctx.author.id)]["barkCount"]
