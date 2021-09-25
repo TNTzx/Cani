@@ -26,7 +26,11 @@ class ChannelClaim(commands.Cog):
 
 
     async def getClaims(self, ctx):
-        return sI.getData(ctx.guild.id, "claim_channel_data", type=dict)
+        data = fi.getData(["guilds", ctx.guild.id, "claimChannelData", "availableChannels"])
+        if not data == "null":
+            return data
+        else:
+            return {}
 
     async def isRpChannel(self, ctx:commands.Context):
         channels = await self.getClaims(ctx)
@@ -37,7 +41,7 @@ class ChannelClaim(commands.Cog):
         claimChannels = await self.getClaims(ctx)
         claimChannels[ctx.channel.name]["claimStatus"] = claimStatus
         claimChannels[ctx.channel.name]["location"] = place
-        sI.editData(ctx.guild.id, claim_channel_data=claimChannels)
+        fi.editData(["guilds", ctx.guild.id, "claimChannelData", "availableChannels"], claimChannels)
     
 
     async def updateEmbed(self, ctx):
@@ -59,8 +63,8 @@ class ChannelClaim(commands.Cog):
         else:
             embed.add_field(name="No RP channels! :(", value=f"Ask the moderators to go add one using {main.commandPrefix}claimchanneledit add.", inline=False)
 
-        embedDict = sI.getData(ctx.guild.id, "claim_channel_embed", type=dict)
-        if len(embedDict) == 0:
+        embedDict = fi.getData(["guilds", ctx.guild.id, "claimChannelData", "embedInfo"])
+        if embedDict["channel"] == "null":
             await eF.sendError(ctx, "*There hasn't been a channel added to display claimed channels. Please ask the moderators / admins to add one!*")
             return
         embedChannel = await eF.getChannelFromMention(embedDict["channel"])
@@ -106,6 +110,7 @@ class ChannelClaim(commands.Cog):
     @commands.has_role(main.adminRole)
     async def claimchanneledit(self, ctx, type, channelMention, *dump):
         claimChannels = await self.getClaims(ctx)
+        print(claimChannels)
         try:
             channel = await eF.getChannelFromMention(channelMention)
         except ValueError:
@@ -135,7 +140,10 @@ class ChannelClaim(commands.Cog):
             await eF.sendError(ctx, f"*`{type}` isn't a valid argument! Type `{main.commandPrefix}help` for help!*")
             return
         
-        sI.editData(ctx.guild.id, claim_channel_data=claimChannels)
+        if not len(claimChannels) == 0:
+            fi.editData(["guilds", ctx.guild.id, "claimChannelData", "availableChannels"], claimChannels)
+        else:
+            fi.editData(["guilds", ctx.guild.id, "claimChannelData"], {"availableChannels": "null"})
 
         if type == "add":
             await ctx.send("*The channel has been added as an RP channel! :D*")
@@ -157,7 +165,7 @@ class ChannelClaim(commands.Cog):
         
         message = await channel.send(embed=discord.Embed(name="?", title="?", description="?"))
 
-        sI.editData(ctx.guild.id, claim_channel_embed={
+        fi.editData(["guilds", ctx.guild.id, "claimChannelData", "embedInfo"], {
                 "channel": channelMention,
                 "messageId": message.id
             })

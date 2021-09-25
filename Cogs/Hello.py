@@ -18,14 +18,16 @@ class Hello(commands.Cog):
             if not fi.isDataExists(["guilds", guild.id]):
                 defaultValues = {
                     guild.id: {
-                        "claimChannelData": "a",
+                        "claimChannelData": {
+                            "availableChannels": "null",
+                            "embedInfo": {
+                                "channel": "null",
+                                "messageId": "null"
+                            }
+                        },
                         "fun": {
                             "barking": {
-                                "users": {
-                                    "userId": {
-                                        "barkCount": 0
-                                    }
-                                },
+                                "users": "null",
                                 "totalBarks": 0
                             }, 
                         }

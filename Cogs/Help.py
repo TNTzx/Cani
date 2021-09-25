@@ -97,7 +97,13 @@ class Help(commands.Cog):
                 "description": "I ping you back! :D"
             },
             "help": {
-                "description": "HOW THE HECK DID YOU GET HERE IF YOU'VE- WHAT- OH MY GOODNESS WHY- WHY DID YOU DO THIS-"
+                "description": "HOW THE HECK DID YOU GET HERE IF YOU'VE- WHAT- OH MY GOODNESS WHY- WHY DID YOU DO THIS-",
+                "parameters": {
+                    "[command]": "WHY DID YOU GET HELP FOR A HELP COMMAND ARE YOU I N S A N E"
+                },
+                "aliases": [
+                    "h"
+                ]
             }
         },
         "Fun": {
@@ -173,7 +179,7 @@ class Help(commands.Cog):
         await ctx.send(embed=embed)
     
 
-    @main.bot.group(invoke_without_command=True)
+    @main.bot.group(invoke_without_command=True, aliases=["h"])
     async def help(self, ctx, *args):
         if not len(args) == 0:
             command = args[0]
