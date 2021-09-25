@@ -70,11 +70,10 @@ class Hello(commands.Cog):
 
                 embed.add_field(name=f"`----------`", value=f"_ _", inline=False)
 
-                if not str(ctx.author.id) in users:
-                    await ef.sendError(ctx, "*You didn't make me bark yet! >:(*")
-                    return
-                
-                userYou = users[str(ctx.author.id)]["barkCount"]
+                if str(ctx.author.id) in users:
+                    userYou = users[str(ctx.author.id)]["barkCount"]
+                else:
+                    userYou = 0
                 
                 embed.add_field(name=f"Your total barks: {userYou}", value=f"_ _", inline=False)
 
