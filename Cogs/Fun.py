@@ -13,11 +13,11 @@ class Hello(commands.Cog):
 
 
     @commands.command(aliases=["b"])
-    @commands.cooldown(1, 1, commands.BucketType.user)
+    @commands.cooldown(1, 2, commands.BucketType.user)
     async def bark(self, ctx, *args):
         barkPath = ["guilds", ctx.guild.id, "fun", "barking"]
 
-        if len(args) == 0:
+        async def normalBark():
             #Normal Barking
             await ctx.send(f"*Bark! :D*")
 
@@ -37,51 +37,83 @@ class Hello(commands.Cog):
                     }
                 }
                 fi.editData(barkPath + ["users"], defaultData)
+        
+        async def barkRank():
+            users = fi.getData(barkPath + ["users"])
+            if users == "null":
+                await ef.sendError(ctx, "*There wasn't anyone that made me bark yet. Be the first one!*")
+                return
 
-        else:
-            # Bark Rank
-            if args[0] == "rank":
-                users = fi.getData(barkPath + ["users"])
-                if users == "null":
-                    await ef.sendError(ctx, "*There wasn't anyone that made me bark yet. Be the first one!*")
-                    return
+            userSort = sorted(users, key=lambda x: users[x]["barkCount"])
+            userSort.reverse()
 
-                userSort = sorted(users, key=lambda x: users[x]["barkCount"])
-                userSort.reverse()
+            totalBarks = fi.getData(barkPath + ["totalBarks"])
 
-                totalBarks = fi.getData(barkPath + ["totalBarks"])
+            embed = discord.Embed(name="Leaderboard", title=f"Barking Leaderboard!", color=0x00FFFF)
 
-                embed = discord.Embed(name="Leaderboard", title=f"Barking Leaderboard!", color=0x00FFFF)
+            embed.add_field(name=f"Total Barks: {totalBarks}", value=f"`----------`", inline=False)
 
-                embed.add_field(name=f"Total Barks: {totalBarks}", value=f"`----------`", inline=False)
+            formatList = []
+            for i in range(len(userSort)):
+                try:
+                    userId = userSort[i]
+                except IndexError:
+                    continue
+                userObj = await main.bot.fetch_user(userId)
+                userBarks = users[userId]["barkCount"]
+                formatList.append(f"{i + 1}. {userObj.name}: {userBarks}")
 
-                formatList = []
-                for i in range(5):
-                    try:
-                        userId = userSort[i]
-                    except IndexError:
-                        continue
-                    userObj = await main.bot.fetch_user(userId)
-                    userBarks = users[userId]["barkCount"]
-                    formatList.append(f"{i + 1}. {userObj.name}: {userBarks}")
+            formatStr = "\n".join(formatList)   
+            embed.add_field(name=f"Leaderboard:", value=f"```{formatStr}```", inline=False)
+            embed.add_field(name=f"`----------`", value=f"_ _", inline=False)
 
-                formatStr = "\n".join(formatList)   
-                embed.add_field(name=f"Leaderboard:", value=f"```{formatStr}```", inline=False)
-
-                embed.add_field(name=f"`----------`", value=f"_ _", inline=False)
-
-                if str(ctx.author.id) in users:
-                    userYou = users[str(ctx.author.id)]["barkCount"]
-                else:
-                    userYou = 0
+            if str(ctx.author.id) in users:
+                userYou = users[str(ctx.author.id)]["barkCount"]
+                userYouIndex = userSort.index(str(ctx.author.id))
+                userYouPos = userYouIndex + 1
+            else:
+                userYou = 0
+                userYouPos = "?"
+            
+            async def barkRelative(pos, place):
+                async def getUser(pos, offset):
+                    user = await main.bot.fetch_user(userSort[pos + offset])
+                    userBarks = users[str(user.id)]["barkCount"]
+                    return user, userBarks
                 
-                embed.add_field(name=f"Your total barks: {userYou}", value=f"_ _", inline=False)
+                if place == "up":
+                    user, userBarks = await getUser(pos, -1)
+                    return f"Next place up: `{pos+1 - 1}. {user.name}: {userBarks}`"
+                elif place == "down":
+                    user, userBarks = await getUser(pos, 1)
+                    return f"Previous place down: `{pos+1 + 1}. {user.name}: {userBarks}`"
+            
 
-                await ctx.send(embed=embed)
+            if userYouIndex == "?":
+                descFirst = await barkRelative(len(userSort), "up")
+                descLast = "You didn't make me bark yet!"
+            elif userYouIndex == 0:
+                descFirst = await barkRelative(userYouIndex, "down")
+                descLast = "You're #1!"
+            elif userYouIndex == (len(userSort) - 1):
+                descFirst = await barkRelative(userYouIndex, "up")
+                descLast = "You're last place!"
+            else:
+                descFirst = await barkRelative(userYouIndex, "up")
+                descLast = await barkRelative(userYouIndex, "down")
+            
+            embed.add_field(name=f"Your total barks: {userYou} (#{userYouPos})", value=f"{descFirst}\n{descLast}", inline=False)
 
+            await ctx.send(embed=embed)
+
+
+        if len(args) == 0:
+            await normalBark()
+        else:
+            if args[0] == "rank":
+                await barkRank()
             else:
                 await ef.sendError(ctx, f"*Make sure you have the correct parameters! Use `{main.commandPrefix}help` to get help!*")
-    
 
 
     @commands.command()
