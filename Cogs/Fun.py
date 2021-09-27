@@ -42,7 +42,7 @@ class Hello(commands.Cog):
     async def barkrank(self, ctx):
         await ctx.send("*Getting leaderboard...*")
         barkPath = ["guilds", ctx.guild.id, "fun", "barking"]
-        
+
         users = fi.getData(barkPath + ["users"])
         if users == "null":
             await ef.sendError(ctx, "*There wasn't anyone that made me bark yet. Be the first one!*")
@@ -119,10 +119,11 @@ class Hello(commands.Cog):
         await ef.delayMessage(ctx, f"...")
         await ef.delayMessage(ctx, f"...what did you just make me do.")
         await ef.delayMessage(ctx, f"*grrrrrrrrrrRRRRRR**RRRRRRRRRR***", duration=1)
+        await ctx.send("*(Art by glasses!)*")
         await ef.delayMessage(ctx, f"https://cdn.discordapp.com/attachments/588692481001127936/867477895924154378/image0.png", duration=0.5)
         await ef.delayMessage(ctx, f"**FEEL THE WRATH OF MY MACHINE GUN ATTACHMENTS, HUMAN**", duration=1)
         await ef.delayMessage(ctx, f"*BULLET RAIN*", duration=2)
-        await ctx.send("*Art by glasses.*")
+        
 
     @commands.command()
     @commands.cooldown(1, 120, type=commands.BucketType.guild)
