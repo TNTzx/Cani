@@ -106,17 +106,23 @@ class Help(commands.Cog):
                 ]
             }
         },
-        "Fun": {
+        "Barking": {
             "bark": {
                 "description": "BARK",
-                "parameters": {
-                    "[rank]": "Displays barking leaderboards along with the total bark count! ~~WHY DID I DO THIS~~"
-                },
                 "aliases": [
                     "b"
                 ],
                 "cooldown": 2
             },
+            "barkrank": {
+                "description": "Displays barking leaderboards along with the total bark count! ~~WHY DID I DO THIS~~",
+                "aliases": [
+                    "br"
+                ],
+                "cooldown": 60 * 2
+            }
+        },
+        "Fun": {
             "meow": {
                 "description": "No. No. Please don't."
             },
