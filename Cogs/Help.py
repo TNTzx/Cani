@@ -115,13 +115,7 @@ class Help(commands.Cog):
                 "aliases": [
                     "b"
                 ],
-                "cooldown": 1
-            },
-            "barkcount": {
-                "description": "Displays how much I barked for this server!",
-                "aliases": [
-                    "bc"
-                ],
+                "cooldown": 2
             },
             "meow": {
                 "description": "No. No. Please don't."
