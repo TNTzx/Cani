@@ -48,13 +48,10 @@ packaging==21.0
 pefile==2021.5.24
 Pillow==8.3.2
 protobuf==3.17.3
-py2exe==0.10.4.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.20
 pycryptodome==3.10.1
-pyinstaller==4.5.1
-pyinstaller-hooks-contrib==2021.2
 pylint==2.6.0
 PyNaCl==1.4.0
 pyparsing==2.4.7
