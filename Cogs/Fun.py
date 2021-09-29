@@ -13,20 +13,38 @@ class Hello(commands.Cog):
     async def barkPath(self, ctx):
         return ["guilds", ctx.guild.id, "fun", "barking"]
 
-    async def updateBark(self, ctx, add):
+
+    async def specialEvents(self, ctx):
         path = await self.barkPath(ctx)
+
+        async def eventTrigger(milestone, message):
+            if fi.getData(path + ["totalBarks"]) >= milestone and (not fi.getData(path + ["barkMilestone"]) == milestone):
+                fi.editData(path, {"barkMilestone": milestone})
+                await ctx.send(message)
+
+        await eventTrigger(10000, "YAYYAYAYAYYAAYAYA- AM HAPPY!! :D!!\n*Cani likes this server! The command `++pat` has been unlocked!*\n*Use `++help pat` for more information.*")
+
+
+    async def updateBark(self, ctx, added):
+        path = await self.barkPath(ctx)
+        
+        barkCount = fi.getData(path + ["totalBarks"])
+        barkCount += added
+        fi.editData(path, {"totalBarks": barkCount})
         
         if fi.isDataExists(path + ["users", ctx.author.id]):
             barkUser = fi.getData(path + ["users", ctx.author.id, "barkCount"])
-            barkUser += add
+            barkUser += added
             fi.editData(path + ["users", ctx.author.id], {"barkCount": barkUser})
         else:
             defaultData = {
                 ctx.author.id: {
-                    "barkCount": add
+                    "barkCount": added
                 }
             }
             fi.editData(path + ["users"], defaultData)
+
+        await self.specialEvents(ctx)
 
 
     @commands.command(aliases=["b"])
@@ -113,15 +131,13 @@ class Hello(commands.Cog):
     @commands.command(aliases=["pt"])
     @commands.cooldown(1, 1 * 60 * 60 * 12, commands.BucketType.guild)
     async def pat(self, ctx: commands.Context):
-        path = await self.barkPath()
+        path = await self.barkPath(ctx)
 
         if not fi.getData(path + ["barkMilestone"]) == 10000:
-            await ctx.command.reset_cooldown(ctx)
+            ctx.command.reset_cooldown(ctx)
             return
         
-        await ctx.send(f"""
-            *:D!! Bark! Bark!*
-            *I barked happily thanks to your pat! (+500 barks!)*""")
+        await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+500 barks!)*""")
         await self.updateBark(ctx, 500)
 
 

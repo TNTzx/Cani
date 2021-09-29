@@ -115,7 +115,7 @@ def helpData(ctx):
                 "cooldown": 60 * 2
             },
             "pat": {
-                "description": "PATPATPATPTPATAPTPATPPA",
+                "description": "PATPATPATPTPATAPTPATPPA (More borks!)",
                 "aliases": [
                     "pt"
                 ],
