@@ -94,6 +94,7 @@ class Hello(commands.Cog):
             userYouPos = userYouIndex + 1
         else:
             userYou = 0
+            userYouIndex = "?"
             userYouPos = "?"
         
         async def barkRelative(pos, place):
