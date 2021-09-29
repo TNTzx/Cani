@@ -10,39 +10,58 @@ class Hello(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    async def barkPath(self, ctx):
+        return ["guilds", ctx.guild.id, "fun", "barking"]
 
-    @commands.command(aliases=["b"])
-    @commands.cooldown(1, 2, commands.BucketType.user)
-    async def bark(self, ctx, *args):
-        barkPath = ["guilds", ctx.guild.id, "fun", "barking"]
 
-        #Normal Barking
-        await ctx.send(f"*Bark! :D*")
+    async def specialEvents(self, ctx):
+        path = await self.barkPath(ctx)
 
-        # Update Data
-        barkCount = fi.getData(barkPath + ["totalBarks"])
-        barkCount += 1
-        fi.editData(barkPath, {"totalBarks": barkCount})
+        async def eventTrigger(milestone, message):
+            if fi.getData(path + ["totalBarks"]) >= milestone and (not fi.getData(path + ["barkMilestone"]) == milestone):
+                fi.editData(path, {"barkMilestone": milestone})
+                await ctx.send(message)
 
-        if fi.isDataExists(barkPath + ["users", ctx.author.id]):
-            barkUser = fi.getData(barkPath + ["users", ctx.author.id, "barkCount"])
-            barkUser += 1
-            fi.editData(barkPath + ["users", ctx.author.id], {"barkCount": barkUser})
+        await eventTrigger(10000, "YAYYAYAYAYYAAYAYA- AM HAPPY!! :D!!\n*Cani likes this server! The command `++pat` has been unlocked!*\n*Use `++help pat` for more information.*")
+
+
+    async def updateBark(self, ctx, added):
+        path = await self.barkPath(ctx)
+        
+        barkCount = fi.getData(path + ["totalBarks"])
+        barkCount += added
+        fi.editData(path, {"totalBarks": barkCount})
+        
+        if fi.isDataExists(path + ["users", ctx.author.id]):
+            barkUser = fi.getData(path + ["users", ctx.author.id, "barkCount"])
+            barkUser += added
+            fi.editData(path + ["users", ctx.author.id], {"barkCount": barkUser})
         else:
             defaultData = {
                 ctx.author.id: {
-                    "barkCount": 1
+                    "barkCount": added
                 }
             }
-            fi.editData(barkPath + ["users"], defaultData)
+            fi.editData(path + ["users"], defaultData)
+
+        await self.specialEvents(ctx)
+
+
+    @commands.command(aliases=["b"])
+    @commands.cooldown(1, 2, commands.BucketType.user)
+    async def bark(self, ctx):
+        await ctx.send(f"*Bark! :D*")
+        await self.updateBark(ctx, 1)
+        
     
     @commands.command(aliases=["br"])
     @commands.cooldown(1, 60 * 2, commands.BucketType.guild)
     async def barkrank(self, ctx):
         await ctx.send("*Getting leaderboard...*")
-        barkPath = ["guilds", ctx.guild.id, "fun", "barking"]
+        path = await self.barkPath(ctx)
 
-        users = fi.getData(barkPath + ["users"])
+        # check if someone has barked yet
+        users = fi.getData(path + ["users"])
         if users == "null":
             await ef.sendError(ctx, "*There wasn't anyone that made me bark yet. Be the first one!*")
             return
@@ -50,10 +69,9 @@ class Hello(commands.Cog):
         userSort = sorted(users, key=lambda x: users[x]["barkCount"])
         userSort.reverse()
 
-        totalBarks = fi.getData(barkPath + ["totalBarks"])
+        totalBarks = fi.getData(path + ["totalBarks"])
 
         embed = discord.Embed(name="Leaderboard", title=f"Barking Leaderboard!", color=0x00FFFF)
-
         embed.add_field(name=f"Total Barks: {totalBarks}", value=f"`----------`", inline=False)
 
         formatList = []
@@ -108,8 +126,19 @@ class Hello(commands.Cog):
         embed.add_field(name=f"Your total barks: {userYou} (#{userYouPos})", value=f"{descFirst}\n{descLast}", inline=False)
 
         await ctx.send(embed=embed)
-    
 
+
+    @commands.command(aliases=["pt"])
+    @commands.cooldown(1, 1 * 60 * 60 * 12, commands.BucketType.guild)
+    async def pat(self, ctx: commands.Context):
+        path = await self.barkPath(ctx)
+
+        if not fi.getData(path + ["barkMilestone"]) == 10000:
+            ctx.command.reset_cooldown(ctx)
+            return
+        
+        await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+500 barks!)*""")
+        await self.updateBark(ctx, 500)
 
 
     @commands.command()
