@@ -4,7 +4,6 @@ from discord.ext import commands
 import main
 from Functions import extraFunctions as eF
 from Functions import firebaseInteraction as fi
-from Functions import sqlInteraction as sI
 
 cooldownTime = 60 * 2
 

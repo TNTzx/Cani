@@ -3,7 +3,6 @@ import discord.ext.commands as commands
 import asyncio
 
 import main
-from Functions import sqlInteraction as sI
 from Functions import firebaseInteraction as fi
 from Functions import extraFunctions as ef
 
