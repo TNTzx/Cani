@@ -3,7 +3,9 @@ from discord.ext import commands
 
 import main
 from Functions import extraFunctions as eF
+from Functions import firebaseInteraction as fi
 from Cogs import ChannelClaiming as cc
+from Functions import HelpData as hd
 
 color = 0x7289da
 
@@ -13,130 +15,11 @@ class Help(commands.Cog):
         self.bot = bot
         main.bot.remove_command("help")
 
-    helpDict = {
-        "Channel Claiming": {
-            "claimchannel": {
-                "description": "Claims / unclaims the current RP channel to a specific location.",
-                "parameters": {
-                    "[claim | unclaim]": "Tells if you want to claim or unclaim the current RP channel.",
-                    "location": "The location of where you want the channel to be in. Surround the location with quotes (example: `\"Imagination Room\"`).\nNote that __this parameter doesn't have to be filled in when you're `unclaim`ing__ the channel."
-                },
-                "aliases": [
-                    "cc"
-                ],
-                "cooldown": cc.cooldownTime,
-                "exampleUsage": [
-                    f"{main.commandPrefix}claimchannel claim \"Quaz's HQ\"",
-                    f"{main.commandPrefix}claimchannel unclaim"
-                ]
-            },
-            "claimchanneledit": {
-                "description": "Adds / removes the channel as an RP channel.",
-                "parameters": {
-                    "[add | remove]": "Tells if you want to add or remove a channel as an RP channel.",
-                    "channel": "Channel that you want to add / remove as an RP channel."
-                },
-                "requireAdminRole": True,
-                "aliases": [
-                    "cce"
-                ],
-                "exampleUsage": [
-                    f"{main.commandPrefix}claimchanneledit add #general-rp-1",
-                    f"{main.commandPrefix}claimchanneledit remove #general-rp-1"
-                ]
-            },
-            "claimchannelembed": {
-                "description": "Changes where the embed for displaying claimed channels are sent.",
-                "parameters": {
-                    "channel": "Channel where the embed will be put in."
-                },
-                "requireAdminRole": True,
-                "aliases": [
-                    "ccm"
-                ],
-                "exampleUsage": [
-                    f"{main.commandPrefix}claimchannelembed #general-display"
-                ]
-            },
-            "claimchannelupdate": {
-                "description": "Updates the embed for displaying claimed channels.",
-                "requireAdminRole": True,
-                "aliases": [
-                    "ccu"
-                ]
-            }
-        },
-        "Bot Control": {
-            "switchkill": {
-                "description": "Shuts the bot down.",
-                "requireAdminRole": True,
-                "aliases": [
-                    "sk"
-                ]
-            },
-            "switchrestart": {
-                "description": "Restarts the bot.",
-                "requireAdminRole": True,
-                "aliases": [
-                    "sr"
-                ]
-            },
-            "updatedatabase": {
-                "description": "Updates the database for new guilds.",
-                "requireAdminRole": True,
-                "aliases": [
-                    "ud"
-                ]
-            }
-        },
-        "Basic Commands": {
-            "hello": {
-                "description": "Sends a hello message! :D"
-            },
-            "ping": {
-                "description": "I ping you back! :D"
-            },
-            "help": {
-                "description": "HOW THE HECK DID YOU GET HERE IF YOU'VE- WHAT- OH MY GOODNESS WHY- WHY DID YOU DO THIS-",
-                "parameters": {
-                    "[command]": "WHY DID YOU GET HELP FOR A HELP COMMAND ARE YOU I N S A N E"
-                },
-                "aliases": [
-                    "h"
-                ]
-            }
-        },
-        "Barking": {
-            "bark": {
-                "description": "BARK",
-                "aliases": [
-                    "b"
-                ],
-                "cooldown": 2
-            },
-            "barkrank": {
-                "description": "Displays barking leaderboards along with the total bark count! ~~WHY DID I DO THIS~~",
-                "aliases": [
-                    "br"
-                ],
-                "cooldown": 60 * 2
-            }
-        },
-        "Fun": {
-            "meow": {
-                "description": "No. No. Please don't."
-            },
-            "pork": {
-                "description": "Pork. That's it. That's all you get. Pork."
-            }
-        }
-    }
 
-
-    def getCommand(self, command):
-        for category, commands in self.helpDict.items():
+    def getCommand(self, ctx, command):
+        for category, commands in hd.helpData(ctx).items():
             if command in commands:
-                return self.helpDict[category][command], category
+                return hd.helpData(ctx)[category][command], category
         return None, None
 
 
@@ -183,8 +66,10 @@ class Help(commands.Cog):
     async def help(self, ctx, *args):
         if not len(args) == 0:
             command = args[0]
-            cmdDict, category = self.getCommand(command)
-            if cmdDict == None:
+            cmdDict, category = self.getCommand(ctx, command)
+
+            showCondition = hd.helpData(ctx)[category][command].get("showCondition", lambda: True)
+            if cmdDict == None or (not showCondition()):
                 await eF.sendError(ctx, "*Documentation for command not found! Are you sure you typed it correctly?*")
                 return
 
@@ -199,8 +84,16 @@ class Help(commands.Cog):
             embed = discord.Embed(name="Help", title="Help!", description=f"what the dog doin\n__Command Prefix:__ **{main.commandPrefix}**", color=color)
             embed.set_footer(text=f"Type {main.commandPrefix}help <command> for more information to a command.")
 
-            for category, commands in self.helpDict.items():
-                commandFormat = f"`{'`, `'.join(commands.keys())}`"
+            for category, commands in hd.helpData(ctx).items():
+                cmdList = commands.keys()
+                cmdAllowed = []
+                for command in cmdList:
+                    showCondition = hd.helpData(ctx)[category][command].get("showCondition", lambda: True)
+                    if showCondition():
+                        cmdAllowed.append(command)
+                        continue
+
+                commandFormat = f"`{'`, `'.join(cmdAllowed)}`"
                 embed.add_field(name=category, value=commandFormat, inline=False)
 
             await ctx.send(embed=embed)
