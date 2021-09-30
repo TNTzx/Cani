@@ -6,13 +6,13 @@ import main
 from Functions import firebaseInteraction as fi
 from Functions import extraFunctions as ef
 
-class Hello(commands.Cog):
+class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     async def barkPath(self, ctx):
         return ["guilds", ctx.guild.id, "fun", "barking"]
-
+        
 
     async def specialEvents(self, ctx):
         path = await self.barkPath(ctx)
@@ -75,14 +75,10 @@ class Hello(commands.Cog):
         embed.add_field(name=f"Total Barks: {totalBarks}", value=f"`----------`", inline=False)
 
         formatList = []
-        for i in range(len(userSort)):
-            try:
-                userId = userSort[i]
-            except IndexError:
-                continue
+        for userId in userSort:
             userObj = await main.bot.fetch_user(userId)
             userBarks = users[userId]["barkCount"]
-            formatList.append(f"{i + 1}. {userObj.name}: {userBarks}")
+            formatList.append(f"{userSort.index(userId) + 1}. {userObj.name}: {userBarks}")
 
         formatStr = "\n".join(formatList)   
         embed.add_field(name=f"Leaderboard:", value=f"```{formatStr}```", inline=False)
@@ -99,30 +95,31 @@ class Hello(commands.Cog):
         
         async def barkRelative(pos, place):
             async def getUser(pos, offset):
+                pos -= 1
                 user = await main.bot.fetch_user(userSort[pos + offset])
                 userBarks = users[str(user.id)]["barkCount"]
                 return user, userBarks
             
             if place == "up":
                 user, userBarks = await getUser(pos, -1)
-                return f"Next place up: `{pos+1 - 1}. {user.name}: {userBarks}`"
+                return f"Next place up: `{pos - 1}. {user.name}: {userBarks}`"
             elif place == "down":
                 user, userBarks = await getUser(pos, 1)
-                return f"Previous place down: `{pos+1 + 1}. {user.name}: {userBarks}`"
+                return f"Previous place down: `{pos + 1}. {user.name}: {userBarks}`"
         
 
         if userYouIndex == "?":
             descFirst = await barkRelative(len(userSort), "up")
             descLast = "You didn't make me bark yet!"
         elif userYouIndex == 0:
-            descFirst = await barkRelative(userYouIndex, "down")
+            descFirst = await barkRelative(userYouPos, "down")
             descLast = "You're #1!"
         elif userYouIndex == (len(userSort) - 1):
-            descFirst = await barkRelative(userYouIndex, "up")
+            descFirst = await barkRelative(userYouPos, "up")
             descLast = "You're last place!"
         else:
-            descFirst = await barkRelative(userYouIndex, "up")
-            descLast = await barkRelative(userYouIndex, "down")
+            descFirst = await barkRelative(userYouPos, "up")
+            descLast = await barkRelative(userYouPos, "down")
         
         embed.add_field(name=f"Your total barks: {userYou} (#{userYouPos})", value=f"{descFirst}\n{descLast}", inline=False)
 
@@ -137,9 +134,10 @@ class Hello(commands.Cog):
         if not fi.getData(path + ["barkMilestone"]) == 10000:
             ctx.command.reset_cooldown(ctx)
             return
-        
-        await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+500 barks!)*""")
-        await self.updateBark(ctx, 500)
+
+        await ctx.send("https://cdn.discordapp.com/emojis/889713240714649650.gif")
+        await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+150 barks {ctx.author.mention}!)*""")
+        await self.updateBark(ctx, 150)
 
 
     @commands.command()
@@ -164,4 +162,4 @@ class Hello(commands.Cog):
     
 
 def setup(bot):
-    bot.add_cog(Hello(bot))
+    bot.add_cog(Fun(bot))

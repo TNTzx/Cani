@@ -64,6 +64,8 @@ class Help(commands.Cog):
 
     @main.bot.group(invoke_without_command=True, aliases=["h"])
     async def help(self, ctx, *args):
+        await ctx.send("*Getting help...*")
+
         if not len(args) == 0:
             command = args[0]
             cmdDict, category = self.getCommand(ctx, command)
