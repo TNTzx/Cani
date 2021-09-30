@@ -3,9 +3,11 @@ from discord.ext import commands
 
 import main
 from Functions import extraFunctions as eF
+from Functions import customExceptions as ce
 from Functions import firebaseInteraction as fi
 from Cogs import ChannelClaiming as cc
 from Functions import HelpData as hd
+
 
 color = 0x7289da
 
@@ -35,21 +37,11 @@ class Help(commands.Cog):
             embed.add_field(name=f"Required role:", value=f"`{main.adminRole}`", inline=False)
 
         if not len(parameters) == 0:
-            paramsKeyList = parameters.keys()
-
-            paramsKeyListForm = []
-            for params in paramsKeyList:
-                paramsKeyListForm.append(f"<{params}>")
+            paramsSyntax = "> <".join([x for x in parameters.keys()])
+            embed.add_field(name=f"Syntax:", value=f"`{main.commandPrefix}{commandName} <{paramsSyntax}>`", inline=False)
             
-            paramsKeyListFormSpace = " ".join(paramsKeyListForm)
-            embed.add_field(name=f"Syntax:", value=f"`{main.commandPrefix}{commandName} {paramsKeyListFormSpace}`", inline=False)
-            
-            paramsList = []
-            for params, paramsDesc in parameters.items():
-                paramsList.append(f"`<{params}>`: {paramsDesc}")
-
-            paramsListForm = "\n".join(paramsList)
-            embed.add_field(name=f"Parameters:", value=f"{paramsListForm}", inline=False)
+            paramsList = "\n".join([f"`<{params}>`: {paramsDesc}" for params, paramsDesc in parameters.items()])
+            embed.add_field(name=f"Parameters:", value=f"{paramsList}", inline=False)
 
         if not cooldown == 0:
             cooldownForm = await eF.formatTime(cooldown)
@@ -59,23 +51,27 @@ class Help(commands.Cog):
             exUseForm = "`\n`".join(exampleUsage)
             embed.add_field(name=f"Example:", value=f"`{exUseForm}`", inline=False)
 
-        await ctx.send(embed=embed)
+        return embed
     
 
     @main.bot.group(invoke_without_command=True, aliases=["h"])
     async def help(self, ctx, *args):
         await ctx.send("*Getting help...*")
 
+        async def showCondition(ctx, category, command):
+            return hd.helpData(ctx)[category][command].get("showCondition", lambda: True)()
+
         if not len(args) == 0:
             command = args[0]
             cmdDict, category = self.getCommand(ctx, command)
 
-            showCondition = hd.helpData(ctx)[category][command].get("showCondition", lambda: True)
-            if cmdDict == None or (not showCondition()):
-                await eF.sendError(ctx, "*Documentation for command not found! Are you sure you typed it correctly?*")
-                return
+            async def notFoundError():
+                await eF.sendError(ctx, "*Documentation for command not found! Make sure you used the actual name instead of the alias and check your spelling!*")
+                raise ce.ExitFunction("Exited Function.")
 
-            await Help.create_help(ctx, command, category, cmdDict["description"],
+            if cmdDict == None or (not await showCondition(ctx, category, command)): await notFoundError()
+
+            embed = await Help.create_help(ctx, command, category, cmdDict["description"],
                 aliases = cmdDict.get("aliases", []),
                 parameters = cmdDict.get("parameters", {}),
                 requireAdminRole = cmdDict.get("requireAdminRole", False),
@@ -88,17 +84,11 @@ class Help(commands.Cog):
 
             for category, commands in hd.helpData(ctx).items():
                 cmdList = commands.keys()
-                cmdAllowed = []
-                for command in cmdList:
-                    showCondition = hd.helpData(ctx)[category][command].get("showCondition", lambda: True)
-                    if showCondition():
-                        cmdAllowed.append(command)
-                        continue
-
+                cmdAllowed = [command for command in cmdList if await showCondition(ctx, category, command)]
                 commandFormat = f"`{'`, `'.join(cmdAllowed)}`"
                 embed.add_field(name=category, value=commandFormat, inline=False)
 
-            await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
         
 
 def setup(bot):

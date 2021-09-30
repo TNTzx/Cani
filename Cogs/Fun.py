@@ -19,10 +19,11 @@ class Fun(commands.Cog):
 
         async def eventTrigger(milestone, message):
             if fi.getData(path + ["totalBarks"]) >= milestone and (not fi.getData(path + ["barkMilestone"]) == milestone):
+                await ctx.send("*>>> Oh? Something's happening...*")
                 fi.editData(path, {"barkMilestone": milestone})
                 await ctx.send(message)
 
-        await eventTrigger(10000, "YAYYAYAYAYYAAYAYA- AM HAPPY!! :D!!\n*Cani likes this server! The command `++pat` has been unlocked!*\n*Use `++help pat` for more information.*")
+        await eventTrigger(10000, ">>> YAYYAYAYAYYAAYAYA- AM HAPPY!! :D!!\n*Cani likes this server! The command `++pat` has been unlocked!*\n*Use `++help pat` for more information.*")
 
 
     async def updateBark(self, ctx, added):
