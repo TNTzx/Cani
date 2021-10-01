@@ -52,6 +52,19 @@ class Fun(cmds.Cog):
     async def bark(self, ctx):
         await ctx.send(f"*Bark! :D*")
         await self.updateBark(ctx, 1)
+    
+    @cmds.command(aliases=["pt"])
+    @cmds.cooldown(1, 1 * 60 * 60 * 12, cmds.BucketType.guild)
+    async def pat(self, ctx: cmds.Context):
+        path = await self.barkPath(ctx)
+
+        if not fi.getData(path + ["barkMilestone"]) >= 10000:
+            ctx.command.reset_cooldown(ctx)
+            return
+
+        await ctx.send("https://cdn.discordapp.com/emojis/889713240714649650.gif")
+        await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+150 barks {ctx.author.mention}!)*""")
+        await self.updateBark(ctx, 150)
         
     
     @cmds.command(aliases=["br"])
@@ -123,20 +136,6 @@ class Fun(cmds.Cog):
         embed.add_field(name=f"Your total barks: {userYou} (#{userYouPos})", value=f"{descFirst}\n{descLast}", inline=False)
 
         await ctx.send(embed=embed)
-
-
-    @cmds.command(aliases=["pt"])
-    @cmds.cooldown(1, 1 * 60 * 60 * 12, cmds.BucketType.guild)
-    async def pat(self, ctx: cmds.Context):
-        path = await self.barkPath(ctx)
-
-        if not fi.getData(path + ["barkMilestone"]) >= 10000:
-            ctx.command.reset_cooldown(ctx)
-            return
-
-        await ctx.send("https://cdn.discordapp.com/emojis/889713240714649650.gif")
-        await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+150 barks {ctx.author.mention}!)*""")
-        await self.updateBark(ctx, 150)
 
 
     @cmds.command()
