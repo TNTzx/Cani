@@ -1,5 +1,4 @@
 import main
-from Cogs import ChannelClaiming as cc
 from Functions import firebaseInteraction as fi
 
 
@@ -15,7 +14,7 @@ def helpData(ctx):
                 "aliases": [
                     "cc"
                 ],
-                "cooldown": cc.cooldownTime,
+                "cooldown": 60 * 2,
                 "exampleUsage": [
                     f"{main.commandPrefix}claimchannel claim \"Quaz's HQ\"",
                     f"{main.commandPrefix}claimchannel unclaim"

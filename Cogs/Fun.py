@@ -60,7 +60,6 @@ class Fun(cmds.Cog):
         await ctx.send("*Getting leaderboard...*")
         path = await self.barkPath(ctx)
 
-        # check if someone has barked yet
         users = fi.getData(path + ["users"])
         if users == "null":
             await ef.sendError(ctx, "*There wasn't anyone that made me bark yet. Be the first one!*")
@@ -131,7 +130,7 @@ class Fun(cmds.Cog):
     async def pat(self, ctx: cmds.Context):
         path = await self.barkPath(ctx)
 
-        if not fi.getData(path + ["barkMilestone"]) == 10000:
+        if not fi.getData(path + ["barkMilestone"]) >= 10000:
             ctx.command.reset_cooldown(ctx)
             return
 
@@ -141,7 +140,7 @@ class Fun(cmds.Cog):
 
 
     @cmds.command()
-    @cmds.cooldown(1, 120, type=cmds.BucketType.guild)
+    @cmds.cooldown(1, 60 * 2, type=cmds.BucketType.guild)
     async def meow(self, ctx):
         await ef.delayMessage(ctx, f"...")
         await ef.delayMessage(ctx, f"...what did you just make me do.")
@@ -153,7 +152,7 @@ class Fun(cmds.Cog):
         
 
     @cmds.command()
-    @cmds.cooldown(1, 120, type=cmds.BucketType.guild)
+    @cmds.cooldown(1, 60 * 2, type=cmds.BucketType.guild)
     async def pork(self, ctx):
         await ef.delayMessage(ctx, f"https://media1.giphy.com/media/Lt3qObVV60Qda/200.gif", duration=7, delete=True)
         await ef.delayMessage(ctx, f"https://i.redd.it/bgmfikr8j9751.png", duration=2, delete=True)

@@ -5,7 +5,6 @@ import main
 from Functions import ExtraFunctions as ef
 from Functions import FirebaseInteraction as fi
 
-cooldownTime = 60 * 2
 
 class ChannelClaim(cmds.Cog):
     def __init__(self, bot):
@@ -55,54 +54,63 @@ class ChannelClaim(cmds.Cog):
         embed = discord.Embed(name="embed", title="Claimed Channels", color=0x0000ff)
 
         if not len(claimChannels) == 0:
-            for key, value in claimChannels.items():
-                if value["claimStatus"]:
+            for channelId, data in claimChannels.items():
+                if data["claimStatus"]:
                     title = "Claimed"
-                    description = f"`Current location:` __{value['location']}__"
+                    description = f"`Current location:` __{data['location']}__"
                 else:
                     title = "Unclaimed"
                     description = f"_ _"
-            
-                newTitle = f"__#{key}__: {title}"
+
+                channel = main.bot.get_channel(channelId)
+
+                newTitle = f"__#{channel}__: {title}"
                 embed.add_field(name=newTitle, value=description, inline=False)
         else:
             embed.add_field(name="No RP channels! :(", value=f"Ask the moderators to go add one using {main.commandPrefix}claimchanneledit add.", inline=False)
 
-        embedDict = fi.getData(path +  ["embedInfo"])
-        if embedDict["channel"] == "null":
+        embedInfo = fi.getData(path +  ["embedInfo"])
+        if embedInfo["channel"] == "null":
             await ef.sendError(ctx, "*There hasn't been a channel added to display claimed channels. Please ask the moderators / admins to add one!*")
             return
-        embedChannel = await ef.getChannelFromMention(embedDict["channel"])
-        mainEmbed = await embedChannel.fetch_message(embedDict["messageId"])
+        embedChannel = main.bot.get_channel(embedInfo["channel"])
+        embedMessage = await embedChannel.fetch_message(embedInfo["messageId"])
 
-        await mainEmbed.edit(embed=embed)
+        await embedMessage.edit(embed=embed)
 
 
     @cmds.command(aliases=["cc"])
     @cmds.guild_only()
-    @cmds.cooldown(1, cooldownTime, cmds.BucketType.user)
+    @cmds.cooldown(1, 60 * 2, cmds.BucketType.user)
     async def claimchannel(self, ctx, type, place=None, *dump):
         if not await self.isRpChannel(ctx):
             await ef.sendError(ctx, f"*This isn't an RP channel! >:(*", resetCooldown=True)
             return
 
-        if type == "claim":
-            if not place == None:
-                await ctx.send(f"*Claiming channel...*")
-                await self.editChannelDatabase(ctx, True, place)
-                await ctx.send(f"*Channel claimed! :D\nCurrent location: __{place}__*")
-            else:
+        async def claim():
+            if place == None:
                 await ef.sendError(ctx, f"*You didn't specify what the `<location>` is! Type `{main.commandPrefix}help` to get help! >:(*", resetCooldown=True, sendToAuthor=True)
                 return
-        elif type == "unclaim":
+            await ctx.send(f"*Claiming channel...*")
+            await self.editChannelDatabase(ctx, True, place)
+            await ctx.send(f"*Channel claimed! :D\nCurrent location: __{place}__*")
+                
+        
+        async def unclaim():
             claimChannels = await self.getChannels(ctx)
-            if claimChannels[ctx.channel.name]["claimStatus"] == True:
-                await ctx.send(f"*Unclaiming channel...*")
-                await self.editChannelDatabase(ctx, False, "Unknown")
-                await ctx.send(f"*Channel unclaimed! :D*")
-            else:
+            if not claimChannels[ctx.channel.name]["claimStatus"] == True:
                 await ef.sendError(ctx, f"*This channel isn't claimed yet! >:(*", resetCooldown=True, sendToAuthor=True)
                 return
+    
+            await ctx.send(f"*Unclaiming channel...*")
+            await self.editChannelDatabase(ctx, False, "Unknown")
+            await ctx.send(f"*Channel unclaimed! :D*")
+                
+
+        if type == "claim":
+            await claim()
+        elif type == "unclaim":
+            await unclaim()
         else:
             await ef.sendError(ctx, f"*`{type}` isn't a valid argument! Type `{main.commandPrefix}help` for help!*", resetCooldown=True, sendToAuthor=True)
             return
@@ -125,35 +133,42 @@ class ChannelClaim(cmds.Cog):
         if channel == None:
             await ef.sendError(ctx, f"*The channel doesn't exist! Make sure the channel name is highlighted in blue!*")
             return
-
-
-        if type == "add":
-            if not channel.name in claimChannels:
-                await ctx.send("*Adding channel as an RP channel...*")
-                claimChannels[channel.name] = {"claimStatus": False, "location": "Unknown"}
+        
+        async def updateData(data):
+            if not len(data) == 0:
+                fi.editData(path + ["availableChannels"], data)
             else:
+                fi.editData(path, {"availableChannels": "null"})
+
+
+        async def add():
+            if channel.id in claimChannels:
                 await ef.sendError(ctx, f"*That channel is already added! >:(*")
                 return
-        elif type == "remove":
-            if channel.name in claimChannels:
-                await ctx.send("*Removing channel as an RP channel...*")
-                claimChannels.pop(channel.name)
-            else:
+
+            await ctx.send("*Adding channel as an RP channel...*")
+            claimChannels[channel.id] = {"claimStatus": False, "location": "Unknown"}
+            await updateData(claimChannels)
+            await ctx.send("*The channel has been added as an RP channel! :D*")
+
+        async def remove():
+            if not channel.id in claimChannels:
                 await ef.sendError(ctx, f"*That channel hasn't been added yet! >:(*")
                 return
+
+            await ctx.send("*Removing channel as an RP channel...*")
+            claimChannels.pop(channel.id)
+            await updateData(claimChannels)
+            await ctx.send("*The channel has been removed as an RP channel! :D*")
+  
+
+        if type == "add":
+            await add()
+        elif type == "remove":
+            await remove()
         else:
             await ef.sendError(ctx, f"*`{type}` isn't a valid argument! Type `{main.commandPrefix}help` for help!*")
             return
-        
-        if not len(claimChannels) == 0:
-            fi.editData(path + ["availableChannels"], claimChannels)
-        else:
-            fi.editData(path, {"availableChannels": "null"})
-
-        if type == "add":
-            await ctx.send("*The channel has been added as an RP channel! :D*")
-        elif type == "remove":
-            await ctx.send("*The channel has been removed as an RP channel! :D*")
         
         await self.updateEmbed(ctx)
 
@@ -172,7 +187,7 @@ class ChannelClaim(cmds.Cog):
         message = await channel.send(embed=discord.Embed(name="?", title="?", description="?"))
 
         fi.editData(path + ["embedInfo"], {
-                "channel": channelMention,
+                "channel": channel.id,
                 "messageId": message.id
             })
 
