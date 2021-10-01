@@ -9,18 +9,7 @@ from Functions import FirebaseInteraction as fi
 class ChannelClaim(cmds.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
-    formatOfClaimDict = {
-        "channel": {
-            "claimStatus": False,
-            "location": str
-        }
-    }
 
-    formatOfEmbedDict = {
-        "channel": str,
-        "messageId": int
-    }
 
     async def path(self, ctx: cmds.Context):
         return ["guilds", ctx.guild.id, "claimChannelData"]
@@ -36,14 +25,14 @@ class ChannelClaim(cmds.Cog):
 
     async def isRpChannel(self, ctx: cmds.Context):
         channels = await self.getChannels(ctx)
-        return ctx.channel.name in channels.keys()
+        return ctx.channel.id in channels.keys()
 
 
     async def editChannelDatabase(self, ctx, claimStatus, place, *dump):
         path = await self.path(ctx)
         channels = await self.getChannels(ctx)
-        channels[ctx.channel.name]["claimStatus"] = claimStatus
-        channels[ctx.channel.name]["location"] = place
+        channels[ctx.channel.id]["claimStatus"] = claimStatus
+        channels[ctx.channel.id]["location"] = place
         fi.editData(path + ["availableChannels"], channels)
     
 
@@ -51,7 +40,7 @@ class ChannelClaim(cmds.Cog):
         path = await self.path(ctx)
         claimChannels = await self.getChannels(ctx)
 
-        embed = discord.Embed(name="embed", title="Claimed Channels", color=0x0000ff)
+        embed = discord.Embed(name="embed", title="RP Channels", color=0x0000ff)
 
         if not len(claimChannels) == 0:
             for channelId, data in claimChannels.items():
@@ -62,9 +51,9 @@ class ChannelClaim(cmds.Cog):
                     title = "Unclaimed"
                     description = f"_ _"
 
-                channel = main.bot.get_channel(channelId)
+                channel = main.bot.get_channel(int(channelId))
 
-                newTitle = f"__#{channel}__: {title}"
+                newTitle = f"__#{channel.name}__: {title}"
                 embed.add_field(name=newTitle, value=description, inline=False)
         else:
             embed.add_field(name="No RP channels! :(", value=f"Ask the moderators to go add one using {main.commandPrefix}claimchanneledit add.", inline=False)
@@ -73,6 +62,7 @@ class ChannelClaim(cmds.Cog):
         if embedInfo["channel"] == "null":
             await ef.sendError(ctx, "*There hasn't been a channel added to display claimed channels. Please ask the moderators / admins to add one!*")
             return
+
         embedChannel = main.bot.get_channel(embedInfo["channel"])
         embedMessage = await embedChannel.fetch_message(embedInfo["messageId"])
 
@@ -98,7 +88,7 @@ class ChannelClaim(cmds.Cog):
         
         async def unclaim():
             claimChannels = await self.getChannels(ctx)
-            if not claimChannels[ctx.channel.name]["claimStatus"] == True:
+            if not claimChannels[ctx.channel.id]["claimStatus"] == True:
                 await ef.sendError(ctx, f"*This channel isn't claimed yet! >:(*", resetCooldown=True, sendToAuthor=True)
                 return
     

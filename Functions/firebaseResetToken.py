@@ -1,7 +1,6 @@
 import time
 import datetime
 import pytz
-from Functions import firebaseInteraction as fi
 from GlobalVariables import variables as vars
 
 loop = True

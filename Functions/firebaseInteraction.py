@@ -5,8 +5,8 @@ import json
 import pyrebase
 import threading as thread
 
-from Functions import customExceptions as ce
-from Functions import firebaseResetToken as frt
+from Functions import CustomExceptions as ce
+from Functions import FirebaseResetToken as frt
 from GlobalVariables import variables as vars
 
 

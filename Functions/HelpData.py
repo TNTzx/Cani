@@ -1,5 +1,5 @@
 import main
-from Functions import firebaseInteraction as fi
+from Functions import FirebaseInteraction as fi
 
 
 def helpData(ctx):
