@@ -6,7 +6,6 @@ import os
 import asyncio
 import KeepAlive
 
-# UNCOMMENT SECOND TO LAST LINE WHEN UPDATING THE BOT!
 
 commandPrefix = "++"
 bot = discord.Client()
