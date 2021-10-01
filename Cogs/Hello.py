@@ -2,8 +2,8 @@ import discord
 import discord.ext.commands as cmds
 
 import main
-from Functions import FirebaseInteraction as fi
-from Functions import CustomExceptions as cE
+#from Functions import FirebaseInteraction as fi
+#from Functions import CustomExceptions as cE
 
 class Hello(cmds.Cog):
     def __init__(self, bot):
