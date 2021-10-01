@@ -88,7 +88,7 @@ class ChannelClaim(cmds.Cog):
         
         async def unclaim():
             claimChannels = await self.getChannels(ctx)
-            if not claimChannels[ctx.channel.id]["claimStatus"] == True:
+            if not claimChannels[str(ctx.channel.id)]["claimStatus"] == True:
                 await ef.sendError(ctx, f"*This channel isn't claimed yet! >:(*", resetCooldown=True, sendToAuthor=True)
                 return
     
