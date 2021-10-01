@@ -127,10 +127,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
-
-# Custom!
-Functions/sqlTesting.sql
-/testcode.py
-todo.txt
-get logs.bat
