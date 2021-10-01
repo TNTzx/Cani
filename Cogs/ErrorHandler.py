@@ -2,7 +2,7 @@ import discord
 import discord.ext.commands as cmds
 
 import main
-#from Functions import ExtraFunctions as ef
+from Functions import ExtraFunctions as ef
 from Cogs import ChannelClaiming as cc
 
 class ErrorHandler(cmds.Cog):
