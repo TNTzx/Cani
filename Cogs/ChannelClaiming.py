@@ -25,14 +25,14 @@ class ChannelClaim(cmds.Cog):
 
     async def isRpChannel(self, ctx: cmds.Context):
         channels = await self.getChannels(ctx)
-        return ctx.channel.id in channels.keys()
+        return str(ctx.channel.id) in channels.keys()
 
 
     async def editChannelDatabase(self, ctx, claimStatus, place, *dump):
         path = await self.path(ctx)
         channels = await self.getChannels(ctx)
-        channels[ctx.channel.id]["claimStatus"] = claimStatus
-        channels[ctx.channel.id]["location"] = place
+        channels[str(ctx.channel.id)]["claimStatus"] = claimStatus
+        channels[str(ctx.channel.id)]["location"] = place
         fi.editData(path + ["availableChannels"], channels)
     
 
