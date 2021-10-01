@@ -1,12 +1,11 @@
 import discord
-import discord.ext.commands as commands
-import asyncio
+import discord.ext.commands as cmds
 
 import main
-from Functions import firebaseInteraction as fi
-from Functions import extraFunctions as ef
+from Functions import FirebaseInteraction as fi
+from Functions import ExtraFunctions as ef
 
-class Fun(commands.Cog):
+class Fun(cmds.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -48,15 +47,15 @@ class Fun(commands.Cog):
         await self.specialEvents(ctx)
 
 
-    @commands.command(aliases=["b"])
-    @commands.cooldown(1, 2, commands.BucketType.user)
+    @cmds.command(aliases=["b"])
+    @cmds.cooldown(1, 2, cmds.BucketType.user)
     async def bark(self, ctx):
         await ctx.send(f"*Bark! :D*")
         await self.updateBark(ctx, 1)
         
     
-    @commands.command(aliases=["br"])
-    @commands.cooldown(1, 60 * 2, commands.BucketType.guild)
+    @cmds.command(aliases=["br"])
+    @cmds.cooldown(1, 60 * 2, cmds.BucketType.guild)
     async def barkrank(self, ctx):
         await ctx.send("*Getting leaderboard...*")
         path = await self.barkPath(ctx)
@@ -127,9 +126,9 @@ class Fun(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    @commands.command(aliases=["pt"])
-    @commands.cooldown(1, 1 * 60 * 60 * 12, commands.BucketType.guild)
-    async def pat(self, ctx: commands.Context):
+    @cmds.command(aliases=["pt"])
+    @cmds.cooldown(1, 1 * 60 * 60 * 12, cmds.BucketType.guild)
+    async def pat(self, ctx: cmds.Context):
         path = await self.barkPath(ctx)
 
         if not fi.getData(path + ["barkMilestone"]) == 10000:
@@ -141,8 +140,8 @@ class Fun(commands.Cog):
         await self.updateBark(ctx, 150)
 
 
-    @commands.command()
-    @commands.cooldown(1, 120, type=commands.BucketType.guild)
+    @cmds.command()
+    @cmds.cooldown(1, 120, type=cmds.BucketType.guild)
     async def meow(self, ctx):
         await ef.delayMessage(ctx, f"...")
         await ef.delayMessage(ctx, f"...what did you just make me do.")
@@ -153,8 +152,8 @@ class Fun(commands.Cog):
         await ef.delayMessage(ctx, f"*BULLET RAIN*", duration=2)
         
 
-    @commands.command()
-    @commands.cooldown(1, 120, type=commands.BucketType.guild)
+    @cmds.command()
+    @cmds.cooldown(1, 120, type=cmds.BucketType.guild)
     async def pork(self, ctx):
         await ef.delayMessage(ctx, f"https://media1.giphy.com/media/Lt3qObVV60Qda/200.gif", duration=7, delete=True)
         await ef.delayMessage(ctx, f"https://i.redd.it/bgmfikr8j9751.png", duration=2, delete=True)

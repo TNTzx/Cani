@@ -1,49 +1,49 @@
 import discord
-from discord.ext import commands
+import discord.ext.commands as cmds
 
 import main
-from Functions import extraFunctions as ef
-from Cogs import ChannelClaiming as cC
+from Functions import ExtraFunctions as ef
+from Cogs import ChannelClaiming as cc
 
-class ErrorHandler(commands.Cog):
+class ErrorHandler(cmds.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
+    @cmds.Cog.listener()
     async def on_command_error(self, ctx, exc):
 
         def checkexc(type):
             return isinstance(exc, type)
         
-        isRp = await cC.ChannelClaim(main.bot).isRpChannel(ctx)
+        isRp = await cc.ChannelClaim(main.bot).isRpChannel(ctx)
     
-        if checkexc(commands.CommandOnCooldown):
+        if checkexc(cmds.CommandOnCooldown):
             time = await ef.formatTime(int(str(round(exc.retry_after, 0))[:-2]))
             await ef.sendError(ctx, f"*The command is on cooldown for `{time}` more! >:(*", sendToAuthor=isRp, resetCooldown=isRp)
             return
 
-        elif checkexc(commands.MissingRole):
+        elif checkexc(cmds.MissingRole):
             await ef.sendError(ctx, f"*You don't have the `{exc.missing_role}` role! >:(*", sendToAuthor=isRp, resetCooldown=isRp)
             return
     
-        elif checkexc(commands.MissingRequiredArgument):
+        elif checkexc(cmds.MissingRequiredArgument):
             await ef.sendError(ctx, f"*Make sure you have the correct parameters! Use `{main.commandPrefix}help` to get help!*", sendToAuthor=isRp, resetCooldown=isRp)
             return
 
-        elif checkexc(commands.ExpectedClosingQuoteError) or checkexc(commands.InvalidEndOfQuotedStringError) or checkexc(commands.UnexpectedQuoteError):
+        elif checkexc(cmds.ExpectedClosingQuoteError) or checkexc(cmds.InvalidEndOfQuotedStringError) or checkexc(cmds.UnexpectedQuoteError):
             await ef.sendError(ctx, "*Your quotation marks (`\"`) are wrong! Double-check the command if you have missing quotation marks! >:(*", sendToAuthor=isRp, resetCooldown=isRp)
             return
         
-        elif checkexc(commands.NoPrivateMessage):
+        elif checkexc(cmds.NoPrivateMessage):
             await ef.sendError(ctx, "*This command is disabled in DMs! >:(*", sendToAuthor=True, resetCooldown=True)
             return
 
 
-        elif checkexc(commands.CommandInvokeError):
+        elif checkexc(cmds.CommandInvokeError):
             if (str(exc.__cause__) == "Exited Function."):
                 return
 
-        elif checkexc(commands.CommandNotFound):
+        elif checkexc(cmds.CommandNotFound):
             return
 
         await ef.sendError(ctx, "*Something went wrong! D:*\n*This error has been reported to the owner of the bot.*", exc=exc, resetCooldown=isRp, sendToOwner=True, printToConsole=True)

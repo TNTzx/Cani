@@ -1,10 +1,11 @@
 import discord
-from discord.ext import commands
+import discord.ext.commands as cmds
 
 import main
-from Functions import extraFunctions as eF
-from Functions import customExceptions as ce
-from Functions import firebaseInteraction as fi
+
+from Functions import ExtraFunctions as ef
+from Functions import CustomExceptions as ce
+from Functions import FirebaseInteraction as fi
 from Cogs import ChannelClaiming as cc
 from Functions import HelpData as hd
 
@@ -12,7 +13,7 @@ from Functions import HelpData as hd
 color = 0x7289da
 
 
-class Help(commands.Cog):
+class Help(cmds.Cog):
     def __init__(self, bot):
         self.bot = bot
         main.bot.remove_command("help")
@@ -44,12 +45,12 @@ class Help(commands.Cog):
             embed.add_field(name=f"Parameters:", value=f"{paramsList}", inline=False)
 
         if not cooldown == 0:
-            cooldownForm = await eF.formatTime(cooldown)
+            cooldownForm = await ef.formatTime(cooldown)
             embed.add_field(name=f"Cooldown:", value=f"`{cooldownForm}`", inline=False)
         
         if not len(exampleUsage) == 0:
-            exUseForm = "`\n`".join(exampleUsage)
-            embed.add_field(name=f"Example:", value=f"`{exUseForm}`", inline=False)
+            exUseform = "`\n`".join(exampleUsage)
+            embed.add_field(name=f"Example:", value=f"`{exUseform}`", inline=False)
 
         return embed
     
@@ -66,7 +67,7 @@ class Help(commands.Cog):
             cmdDict, category = self.getCommand(ctx, command)
 
             async def notFoundError():
-                await eF.sendError(ctx, "*Documentation for command not found! Make sure you used the actual name instead of the alias and check your spelling!*")
+                await ef.sendError(ctx, "*Documentation for command not found! Make sure you used the actual name instead of the alias and check your spelling!*")
                 raise ce.ExitFunction("Exited Function.")
 
             if cmdDict == None or (not await showCondition(ctx, category, command)): await notFoundError()

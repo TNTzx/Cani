@@ -1,20 +1,20 @@
 import discord
-from discord.ext import commands
+import discord.ext.commands as cmds
 
 import main
-from Functions import extraFunctions as eF
-from Functions import firebaseInteraction as fi
+from Functions import ExtraFunctions as ef
+from Functions import FirebaseInteraction as fi
 
 cooldownTime = 60 * 2
 
-class ChannelClaim(commands.Cog):
+class ChannelClaim(cmds.Cog):
     def __init__(self, bot):
         self.bot = bot
     
     formatOfClaimDict = {
         "channel": {
             "claimStatus": False,
-            "location": "Unknown"
+            "location": str
         }
     }
 
@@ -23,28 +23,34 @@ class ChannelClaim(commands.Cog):
         "messageId": int
     }
 
+    async def path(self, ctx: cmds.Context):
+        return ["guilds", ctx.guild.id, "claimChannelData"]
 
-    async def getClaims(self, ctx):
-        data = fi.getData(["guilds", ctx.guild.id, "claimChannelData", "availableChannels"])
+
+    async def getChannels(self, ctx):
+        path = await self.path(ctx)
+        data = fi.getData(path + ["availableChannels"])
         if not data == "null":
             return data
         else:
             return {}
 
-    async def isRpChannel(self, ctx:commands.Context):
-        channels = await self.getClaims(ctx)
+    async def isRpChannel(self, ctx: cmds.Context):
+        channels = await self.getChannels(ctx)
         return ctx.channel.name in channels.keys()
 
 
     async def editChannelDatabase(self, ctx, claimStatus, place, *dump):
-        claimChannels = await self.getClaims(ctx)
-        claimChannels[ctx.channel.name]["claimStatus"] = claimStatus
-        claimChannels[ctx.channel.name]["location"] = place
-        fi.editData(["guilds", ctx.guild.id, "claimChannelData", "availableChannels"], claimChannels)
+        path = await self.path(ctx)
+        channels = await self.getChannels(ctx)
+        channels[ctx.channel.name]["claimStatus"] = claimStatus
+        channels[ctx.channel.name]["location"] = place
+        fi.editData(path + ["availableChannels"], channels)
     
 
     async def updateEmbed(self, ctx):
-        claimChannels = await self.getClaims(ctx)
+        path = await self.path(ctx)
+        claimChannels = await self.getChannels(ctx)
 
         embed = discord.Embed(name="embed", title="Claimed Channels", color=0x0000ff)
 
@@ -62,22 +68,22 @@ class ChannelClaim(commands.Cog):
         else:
             embed.add_field(name="No RP channels! :(", value=f"Ask the moderators to go add one using {main.commandPrefix}claimchanneledit add.", inline=False)
 
-        embedDict = fi.getData(["guilds", ctx.guild.id, "claimChannelData", "embedInfo"])
+        embedDict = fi.getData(path +  ["embedInfo"])
         if embedDict["channel"] == "null":
-            await eF.sendError(ctx, "*There hasn't been a channel added to display claimed channels. Please ask the moderators / admins to add one!*")
+            await ef.sendError(ctx, "*There hasn't been a channel added to display claimed channels. Please ask the moderators / admins to add one!*")
             return
-        embedChannel = await eF.getChannelFromMention(embedDict["channel"])
+        embedChannel = await ef.getChannelFromMention(embedDict["channel"])
         mainEmbed = await embedChannel.fetch_message(embedDict["messageId"])
 
         await mainEmbed.edit(embed=embed)
 
 
-    @commands.command(aliases=["cc"])
-    @commands.guild_only()
-    @commands.cooldown(1, cooldownTime, commands.BucketType.user)
+    @cmds.command(aliases=["cc"])
+    @cmds.guild_only()
+    @cmds.cooldown(1, cooldownTime, cmds.BucketType.user)
     async def claimchannel(self, ctx, type, place=None, *dump):
         if not await self.isRpChannel(ctx):
-            await eF.sendError(ctx, f"*This isn't an RP channel! >:(*", resetCooldown=True)
+            await ef.sendError(ctx, f"*This isn't an RP channel! >:(*", resetCooldown=True)
             return
 
         if type == "claim":
@@ -86,37 +92,38 @@ class ChannelClaim(commands.Cog):
                 await self.editChannelDatabase(ctx, True, place)
                 await ctx.send(f"*Channel claimed! :D\nCurrent location: __{place}__*")
             else:
-                await eF.sendError(ctx, f"*You didn't specify what the `<location>` is! Type `{main.commandPrefix}help` to get help! >:(*", resetCooldown=True, sendToAuthor=True)
+                await ef.sendError(ctx, f"*You didn't specify what the `<location>` is! Type `{main.commandPrefix}help` to get help! >:(*", resetCooldown=True, sendToAuthor=True)
                 return
         elif type == "unclaim":
-            claimChannels = await self.getClaims(ctx)
+            claimChannels = await self.getChannels(ctx)
             if claimChannels[ctx.channel.name]["claimStatus"] == True:
                 await ctx.send(f"*Unclaiming channel...*")
                 await self.editChannelDatabase(ctx, False, "Unknown")
                 await ctx.send(f"*Channel unclaimed! :D*")
             else:
-                await eF.sendError(ctx, f"*This channel isn't claimed yet! >:(*", resetCooldown=True, sendToAuthor=True)
+                await ef.sendError(ctx, f"*This channel isn't claimed yet! >:(*", resetCooldown=True, sendToAuthor=True)
                 return
         else:
-            await eF.sendError(ctx, f"*`{type}` isn't a valid argument! Type `{main.commandPrefix}help` for help!*", resetCooldown=True, sendToAuthor=True)
+            await ef.sendError(ctx, f"*`{type}` isn't a valid argument! Type `{main.commandPrefix}help` for help!*", resetCooldown=True, sendToAuthor=True)
             return
 
         await self.updateEmbed(ctx)
 
 
-    @commands.command(aliases=["cce"])
-    @commands.guild_only()
-    @commands.has_role(main.adminRole)
+    @cmds.command(aliases=["cce"])
+    @cmds.guild_only()
+    @cmds.has_role(main.adminRole)
     async def claimchanneledit(self, ctx, type, channelMention, *dump):
-        claimChannels = await self.getClaims(ctx)
+        path = await self.path(ctx)
+        claimChannels = await self.getChannels(ctx)
         try:
-            channel = await eF.getChannelFromMention(channelMention)
+            channel = await ef.getChannelFromMention(channelMention)
         except ValueError:
-            await eF.sendError(ctx, f"*The channel doesn't exist! Make sure the channel name is highlighted in blue!*")
+            await ef.sendError(ctx, f"*The channel doesn't exist! Make sure the channel name is highlighted in blue!*")
             return
 
         if channel == None:
-            await eF.sendError(ctx, f"*The channel doesn't exist! Make sure the channel name is highlighted in blue!*")
+            await ef.sendError(ctx, f"*The channel doesn't exist! Make sure the channel name is highlighted in blue!*")
             return
 
 
@@ -125,23 +132,23 @@ class ChannelClaim(commands.Cog):
                 await ctx.send("*Adding channel as an RP channel...*")
                 claimChannels[channel.name] = {"claimStatus": False, "location": "Unknown"}
             else:
-                await eF.sendError(ctx, f"*That channel is already added! >:(*")
+                await ef.sendError(ctx, f"*That channel is already added! >:(*")
                 return
         elif type == "remove":
             if channel.name in claimChannels:
                 await ctx.send("*Removing channel as an RP channel...*")
                 claimChannels.pop(channel.name)
             else:
-                await eF.sendError(ctx, f"*That channel hasn't been added yet! >:(*")
+                await ef.sendError(ctx, f"*That channel hasn't been added yet! >:(*")
                 return
         else:
-            await eF.sendError(ctx, f"*`{type}` isn't a valid argument! Type `{main.commandPrefix}help` for help!*")
+            await ef.sendError(ctx, f"*`{type}` isn't a valid argument! Type `{main.commandPrefix}help` for help!*")
             return
         
         if not len(claimChannels) == 0:
-            fi.editData(["guilds", ctx.guild.id, "claimChannelData", "availableChannels"], claimChannels)
+            fi.editData(path + ["availableChannels"], claimChannels)
         else:
-            fi.editData(["guilds", ctx.guild.id, "claimChannelData"], {"availableChannels": "null"})
+            fi.editData(path, {"availableChannels": "null"})
 
         if type == "add":
             await ctx.send("*The channel has been added as an RP channel! :D*")
@@ -151,19 +158,20 @@ class ChannelClaim(commands.Cog):
         await self.updateEmbed(ctx)
 
 
-    @commands.command(aliases=["ccm"])
-    @commands.guild_only()
-    @commands.has_role(main.adminRole)
+    @cmds.command(aliases=["ccm"])
+    @cmds.guild_only()
+    @cmds.has_role(main.adminRole)
     async def claimchannelembed(self, ctx, channelMention, *dump):
+        path = await self.path(ctx)
         try:
-            channel = await eF.getChannelFromMention(channelMention)
+            channel = await ef.getChannelFromMention(channelMention)
         except ValueError:
-            await eF.sendError(ctx, f"*The channel doesn't exist! Make sure the channel name is highlighted in blue!*")
+            await ef.sendError(ctx, f"*The channel doesn't exist! Make sure the channel name is highlighted in blue!*")
             return
         
         message = await channel.send(embed=discord.Embed(name="?", title="?", description="?"))
 
-        fi.editData(["guilds", ctx.guild.id, "claimChannelData", "embedInfo"], {
+        fi.editData(path + ["embedInfo"], {
                 "channel": channelMention,
                 "messageId": message.id
             })
@@ -173,21 +181,14 @@ class ChannelClaim(commands.Cog):
         await ctx.send(f"*Changed claim display channel to {channelMention}! :D*")
     
 
-    @commands.command(aliases=["ccu"])
-    @commands.guild_only()
-    @commands.has_role(main.adminRole)
+
+    @cmds.command(aliases=["ccu"])
+    @cmds.guild_only()
+    @cmds.has_role(main.adminRole)
     async def claimchannelupdate(self, ctx):
         await ctx.send(f"*Updating embed...*")
         await self.updateEmbed(ctx)
         await ctx.send(f"*Updated! :D*")
-        
-    
-
-    @commands.command()
-    @commands.guild_only()
-    @commands.has_role(main.adminRole)
-    async def causeerror(self, ctx):
-        raise ValueError('funky error')
     
 def setup(bot):
     bot.add_cog(ChannelClaim(bot))
