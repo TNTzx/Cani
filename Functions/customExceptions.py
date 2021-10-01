@@ -6,5 +6,3 @@ class SqlNoEntry(Exception):
 
 class FirebaseNoEntry(Exception):
     pass
-
-#
