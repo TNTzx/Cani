@@ -62,9 +62,11 @@ class Fun(cmds.Cog):
             ctx.command.reset_cooldown(ctx)
             return
 
+        addBark = 200
+
         await ctx.send("https://cdn.discordapp.com/emojis/889713240714649650.gif")
-        await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+150 barks {ctx.author.mention}!)*""")
-        await self.updateBark(ctx, 150)
+        await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+{addBark} barks {ctx.author.mention}!)*""")
+        await self.updateBark(ctx, addBark)
         
     
     @cmds.command(aliases=["br"])
