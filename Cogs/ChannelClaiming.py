@@ -3,7 +3,7 @@ import discord.ext.commands as cmds
 
 import main
 from Functions import ExtraFunctions as ef
-from Functions import firebaseInteraction as fi
+from Functions import FirebaseInteraction as fi
 
 
 class ChannelClaim(cmds.Cog):
