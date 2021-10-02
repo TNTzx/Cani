@@ -6,8 +6,6 @@ import os
 import asyncio
 import KeepAlive
 
-print(__file__)
-
 commandPrefix = "++"
 bot = discord.Client()
 bot = commands.Bot(command_prefix=commandPrefix)
