@@ -2,8 +2,8 @@ import discord
 import discord.ext.commands as cmds
 
 import main
+from Functions import CommandWrapper as cw
 from Functions import FirebaseInteraction as fi
-from Functions import CustomExceptions as cE
 
 class Hello(cmds.Cog):
     def __init__(self, bot):
@@ -42,22 +42,30 @@ class Hello(cmds.Cog):
             if not fi.isDataExists(["guilds", guild.id]):
                 self.newDefault()
 
-    @cmds.command()
+
+    @cw.command(
+        category=cw.Categories.basicCommands,
+        description="Hello!")
     async def hello(self, ctx):
         await ctx.send(f"*Bark! I'm an actual bot! :D*")
 
-    @cmds.command()
+    @cw.command(
+        category=cw.Categories.basicCommands,
+        description="I ping you back! :D")
     async def ping(self, ctx):
         await ctx.send(f"*Pong! <@{ctx.author.id}> :D*")
     
-    @cmds.command(aliases=["ud"])
-    @cmds.has_role(main.adminRole)
+    @cw.command(
+        category=cw.Categories.botControl,
+        description="Updates the database juuuust in case my owner messed up.",
+        requireAdmin=True)
     async def updatedatabase(self, ctx):
         self.newDefault()
     
-    @cmds.command()
-    @cmds.guild_only()
-    @cmds.has_role(main.adminRole)
+    @cw.command(
+        category=cw.Categories.botControl,
+        description="Causes an error! D:",
+        requireAdmin=True)
     async def causeerror(self, ctx):
         raise ValueError('funky error')
 
