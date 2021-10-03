@@ -4,6 +4,7 @@ import discord.ext.commands as cmds
 import main
 from Functions import ExtraFunctions as ef
 from Functions import FirebaseInteraction as fi
+from Functions import CustomExceptions as ce
 
 
 class ChannelClaim(cmds.Cog):
@@ -29,6 +30,10 @@ class ChannelClaim(cmds.Cog):
 
 
     async def editChannelDatabase(self, ctx, claimStatus, place, *dump):
+        if len(place) >= 200:
+            await ef.sendError(ctx, "*You can't have locations with more than 200 characters! >:(*")
+            raise ce.ExitFunction("Exited Function.")
+
         path = await self.path(ctx)
         channels = await self.getChannels(ctx)
         channels[str(ctx.channel.id)]["claimStatus"] = claimStatus

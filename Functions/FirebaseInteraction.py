@@ -10,18 +10,6 @@ from Functions import FirebaseResetToken as frt
 from GlobalVariables import variables as vars
 
 
-# new data
-# db.child().set(data, token=getToken())
-
-# # update
-# db.child().update({"barkcount": 25010}, token=getToken())
-
-# # delete
-# db.child().remove(token=getToken())
-
-# # get
-# result = db.child().get(token=getToken()).val()
-
 # Get data from keys in database
 def getFromPath(path):
     final = vars.db
@@ -56,10 +44,6 @@ def isDataExists(path):
 
 # Create
 def createData(path, data):
-    # if isDataExists(path):
-    #     error = "/".join(path)
-    #     raise ce.FirebaseNoEntry(f"Data already found for '{error}'.")
-    
     pathParse = getFromPath(path)
     pathParse.set(data, token=vars.getToken())
 
