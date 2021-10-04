@@ -48,11 +48,7 @@ def command(
             wrapper = cmds.guild_only()(wrapper)
 
         if cooldown > 0:
-            if cooldownType == "user":
-                cooldownClass = cmds.BucketType.user
-            elif cooldownType == "guild":
-                cooldownClass = cmds.BucketType.guild
-            wrapper = cmds.cooldown(1, cooldown, cooldownClass)(wrapper)
+            wrapper = cmds.cooldown(1, cooldown, cooldownType)(wrapper)
         
         if requireAdmin:
             wrapper = cmds.has_role(main.adminRole)(wrapper)

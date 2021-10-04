@@ -1,9 +1,8 @@
 import discord
 import discord.ext.commands as commands
-import json
-import pyrebase
 import os
-import asyncio
+
+from Functions import CommandWrapper as cw
 import KeepAlive
 
 commandPrefix = "++"
@@ -29,9 +28,13 @@ print("Loaded all cogs!")
 # Important commands
 print("Loading important commands...")
 
-@bot.command(aliases=["sr"])
-@commands.guild_only()
-@commands.has_role(adminRole)
+
+@cw.command(
+    category=cw.Categories.botControl,
+    description="Restarts the bot.",
+    aliases=["sr"],
+    requireAdmin=True
+)
 async def switchrestart(ctx):
     await ctx.send("*Restarting...*")
 
@@ -47,9 +50,12 @@ async def switchrestart(ctx):
     await ctx.send("*Restarted! :D*")
     print("\n \n Restart break! -------------------------------------- \n \n")
 
-@bot.command(aliases=["sk"])
-@commands.guild_only()
-@commands.has_role(adminRole)
+@cw.command(
+    category=cw.Categories.botControl,
+    description="Shuts down the bot.",
+    aliases=["sk"],
+    requireAdmin=True
+)
 async def switchkill(ctx):
     await ctx.send("O- *baiii-*")
     await bot.logout()

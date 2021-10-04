@@ -81,7 +81,7 @@ class ChannelClaim(cmds.Cog):
             "[claim | unclaim]": "Tells if you want to claim or unclaim the current RP channel.",
             "location": "The location of where you want the channel to be in. Surround the location with quotes (example: `\"Imagination Room\"`).\nNote that __this parameter doesn't have to be filled in when you're `unclaim`ing__ the channel."
         }, aliases=["cc"],
-        cooldown=60 * 2, cooldownType="user",
+        cooldown=60 * 2, cooldownType=cmds.BucketType.user,
         exampleUsage=[
             f"{main.commandPrefix}claimchannel claim \"Quaz's HQ\"",
             f"{main.commandPrefix}claimchannel unclaim"
@@ -129,7 +129,8 @@ class ChannelClaim(cmds.Cog):
             "[add | remove]": "Tells if you want to add or remove a channel as an RP channel.",
             "channel": "Channel that you want to add / remove as an RP channel."
         }, aliases=["cce"],
-        requireAdmin=True)
+        requireAdmin=True
+    )
     async def claimchanneledit(self, ctx, type, channelMention, *dump):
         path = await self.path(ctx)
         claimChannels = await self.getChannels(ctx)
@@ -187,7 +188,8 @@ class ChannelClaim(cmds.Cog):
         parameters={
             "channel": "Channel where the embed will be put in."
         }, aliases=["ccm"],
-        requireAdmin=True)
+        requireAdmin=True
+    )
     async def claimchannelembed(self, ctx, channelMention, *dump):
         path = await self.path(ctx)
         try:
@@ -212,7 +214,8 @@ class ChannelClaim(cmds.Cog):
         category=cw.Categories.channelClaiming,
         description="Updates the embed for displaying claimed channels.",
         aliases=["ccm"],
-        requireAdmin=True)
+        requireAdmin=True
+    )
     async def claimchannelupdate(self, ctx):
         await ctx.send(f"*Updating embed...*")
         await self.updateEmbed(ctx)

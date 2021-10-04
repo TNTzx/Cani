@@ -68,14 +68,19 @@ class Help(cmds.Cog):
         return embed
     
 
-    @main.bot.group(invoke_without_command=True, aliases=["h"])
+    @cw.command(
+        description="WHY DID YOU GET HELP FOR A HELP COMMAND",
+        parameters={"<command>": "I DON'T UNDERSTAND YOU."},
+        aliases=["h"]
+    )
     async def help(self, ctx, *args):
         await ctx.send("*Getting help...*")
 
         async def showCondition(ctx, category, command):
             return cw.helpData[category][command]["showCondition"](ctx)
 
-        if not len(args) == 0:
+        
+        async def helpcommand():
             command = args[0]
             cmdDict, category = self.getCommand(ctx, command)
 
@@ -95,7 +100,9 @@ class Help(cmds.Cog):
                 requireAdmin = cmdDict["requireAdmin"],
                 exampleUsage = cmdDict["exampleUsage"]
             )
-        else:
+            return embed
+
+        async def helpraw():
             embed = discord.Embed(name="Help", title="Help!", description=f"what the dog doin\n__Command Prefix:__ **{main.commandPrefix}**", color=color)
             embed.set_footer(text=f"Type {main.commandPrefix}help <command> for more information to a command.")
 
@@ -104,6 +111,13 @@ class Help(cmds.Cog):
                 cmdAllowed = [command for command in cmdList if await showCondition(ctx, category, command)]
                 commandFormat = f"`{'`, `'.join(cmdAllowed)}`"
                 embed.add_field(name=category, value=commandFormat, inline=False)
+            return embed
+        
+
+        if not len(args) == 0:
+            embed = await helpcommand()
+        else:
+            embed = await helpraw()
 
         await ctx.send(embed=embed)
         

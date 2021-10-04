@@ -1,9 +1,11 @@
 import discord
 import discord.ext.commands as cmds
+from discord.ext.commands.core import cooldown
 
 import main
 from Functions import FirebaseInteraction as fi
 from Functions import ExtraFunctions as ef
+from Functions import CommandWrapper as cw
 
 class Fun(cmds.Cog):
     def __init__(self, bot):
@@ -47,21 +49,24 @@ class Fun(cmds.Cog):
         await self.specialEvents(ctx)
 
 
-    @cmds.command(aliases=["b"])
-    @cmds.cooldown(1, 2, cmds.BucketType.user)
+    @cw.command(
+        category=cw.Categories.barking,
+        description="Bark! :D",
+        cooldown=2, cooldownType=cmds.BucketType.user
+    )
     async def bark(self, ctx):
         await ctx.send(f"*Bark! :D*")
         await self.updateBark(ctx, 1)
     
-    @cmds.command(aliases=["pt"])
-    @cmds.cooldown(1, 1 * 60 * 60 * 12, cmds.BucketType.guild)
+
+    @cw.command(
+        category=cw.Categories.barking,
+        description="Patpat! :D",
+        cooldown=60 * 60 * 12, cooldownType=cmds.BucketType.guild,
+        showCondition=lambda ctx: not fi.getData(await barkPath(ctx) + ["barkMilestone"]) >= 10000
+    )
     async def pat(self, ctx: cmds.Context):
         path = await self.barkPath(ctx)
-
-        if not fi.getData(path + ["barkMilestone"]) >= 10000:
-            ctx.command.reset_cooldown(ctx)
-            return
-
         addBark = 200
 
         await ctx.send("https://cdn.discordapp.com/emojis/889713240714649650.gif")
@@ -69,8 +74,11 @@ class Fun(cmds.Cog):
         await self.updateBark(ctx, addBark)
         
     
-    @cmds.command(aliases=["br"])
-    @cmds.cooldown(1, 60 * 2, cmds.BucketType.guild)
+    @cw.command(
+        category=cw.Categories.barking,
+        aliases=["br"],
+        cooldown=60 * 2, cooldownType=cmds.BucketType.guild
+    )
     async def barkrank(self, ctx):
         await ctx.send("*Getting leaderboard...*")
         path = await self.barkPath(ctx)
@@ -140,8 +148,11 @@ class Fun(cmds.Cog):
         await ctx.send(embed=embed)
 
 
-    @cmds.command()
-    @cmds.cooldown(1, 60 * 2, type=cmds.BucketType.guild)
+    @cw.command(
+        category=cw.Categories.fun,
+        description="No. No. Please don't.",
+        cooldown=60 * 2, cooldownType=cmds.BucketType.guild
+    )
     async def meow(self, ctx):
         await ef.delayMessage(ctx, f"...")
         await ef.delayMessage(ctx, f"...what did you just make me do.")
@@ -151,9 +162,12 @@ class Fun(cmds.Cog):
         await ef.delayMessage(ctx, f"**FEEL THE WRATH OF MY MACHINE GUN ATTACHMENTS, HUMAN**", duration=1)
         await ef.delayMessage(ctx, f"*BULLET RAIN*", duration=2)
         
-
-    @cmds.command()
-    @cmds.cooldown(1, 60 * 2, type=cmds.BucketType.guild)
+        
+    @cw.command(
+        category=cw.Categories.fun,
+        description="I like pork!",
+        cooldown=60 * 2, cooldownType=cmds.BucketType.guild
+    )
     async def pork(self, ctx):
         await ef.delayMessage(ctx, f"https://media1.giphy.com/media/Lt3qObVV60Qda/200.gif", duration=7, delete=True)
         await ef.delayMessage(ctx, f"https://i.redd.it/bgmfikr8j9751.png", duration=2, delete=True)
