@@ -24,7 +24,7 @@ class Fun(cmds.Cog):
                 fi.editData(path, {"barkMilestone": milestone})
                 await ctx.send(message)
 
-        await eventTrigger(10000, ">>> YAYYAYAYAYYAAYAYA- AM HAPPY!! :D!!\n*Cani likes this server! The command `++pat` has been unlocked!*\n*Use `++help pat` for more information.*")
+        await eventTrigger(7500, ">>> YAYYAYAYAYYAAYAYA- AM HAPPY!! :D!!\n*Cani likes this server! The command `++pat` has been unlocked!*\n*Use `++help pat` for more information.*")
 
 
     async def updateBark(self, ctx, added):
@@ -64,7 +64,7 @@ class Fun(cmds.Cog):
         category=cw.Categories.barking,
         description="Patpat! :D",
         cooldown=60 * 60 * 12, cooldownType=cmds.BucketType.guild,
-        showCondition=lambda ctx: fi.getData(Fun.barkPath(Fun(main.bot), ctx) + ["barkMilestone"]) >= 10000
+        showCondition=lambda ctx: fi.getData(Fun.barkPath(Fun(main.bot), ctx) + ["barkMilestone"]) >= 7500
     )
     async def pat(self, ctx: cmds.Context):
         path = self.barkPath(ctx)
