@@ -5,6 +5,7 @@ import tracemalloc
 
 import main
 
+
 class Categories:
     channelClaiming = "Channel Claiming"
     botControl = "Bot Control"
