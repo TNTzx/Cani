@@ -128,7 +128,8 @@ class ChannelClaim(cmds.Cog):
         parameters={
             "[add | remove]": "Tells if you want to add or remove a channel as an RP channel.",
             "channel": "Channel that you want to add / remove as an RP channel."
-        }, aliases=["cce"],
+        },
+        aliases=["cce"],
         requireAdmin=True
     )
     async def claimchanneledit(self, ctx, type, channelMention, *dump):
@@ -187,7 +188,8 @@ class ChannelClaim(cmds.Cog):
         description="Changes where the embed for displaying claimed channels are sent.",
         parameters={
             "channel": "Channel where the embed will be put in."
-        }, aliases=["ccm"],
+        },
+        aliases=["ccm"],
         requireAdmin=True
     )
     async def claimchannelembed(self, ctx, channelMention, *dump):
@@ -213,7 +215,7 @@ class ChannelClaim(cmds.Cog):
     @cw.command(
         category=cw.Categories.channelClaiming,
         description="Updates the embed for displaying claimed channels.",
-        aliases=["ccm"],
+        aliases=["ccu"],
         requireAdmin=True
     )
     async def claimchannelupdate(self, ctx):

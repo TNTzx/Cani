@@ -11,12 +11,12 @@ class Fun(cmds.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def barkPath(self, ctx):
+    def barkPath(self, ctx):
         return ["guilds", ctx.guild.id, "fun", "barking"]
         
 
     async def specialEvents(self, ctx):
-        path = await self.barkPath(ctx)
+        path = self.barkPath(ctx)
 
         async def eventTrigger(milestone, message):
             if fi.getData(path + ["totalBarks"]) >= milestone and (not fi.getData(path + ["barkMilestone"]) == milestone):
@@ -28,7 +28,7 @@ class Fun(cmds.Cog):
 
 
     async def updateBark(self, ctx, added):
-        path = await self.barkPath(ctx)
+        path = self.barkPath(ctx)
         
         barkCount = fi.getData(path + ["totalBarks"])
         barkCount += added
@@ -52,7 +52,8 @@ class Fun(cmds.Cog):
     @cw.command(
         category=cw.Categories.barking,
         description="Bark! :D",
-        cooldown=2, cooldownType=cmds.BucketType.user
+        aliases=["b"],
+        cooldown=2, cooldownType=cmds.BucketType.user,
     )
     async def bark(self, ctx):
         await ctx.send(f"*Bark! :D*")
@@ -63,10 +64,10 @@ class Fun(cmds.Cog):
         category=cw.Categories.barking,
         description="Patpat! :D",
         cooldown=60 * 60 * 12, cooldownType=cmds.BucketType.guild,
-        showCondition=lambda ctx: not fi.getData(await barkPath(ctx) + ["barkMilestone"]) >= 10000
+        showCondition=lambda ctx: fi.getData(Fun.barkPath(Fun(main.bot), ctx) + ["barkMilestone"]) >= 10000
     )
     async def pat(self, ctx: cmds.Context):
-        path = await self.barkPath(ctx)
+        path = self.barkPath(ctx)
         addBark = 200
 
         await ctx.send("https://cdn.discordapp.com/emojis/889713240714649650.gif")
@@ -76,12 +77,13 @@ class Fun(cmds.Cog):
     
     @cw.command(
         category=cw.Categories.barking,
+        description="Shows barking leaderboards!",
         aliases=["br"],
         cooldown=60 * 2, cooldownType=cmds.BucketType.guild
     )
     async def barkrank(self, ctx):
         await ctx.send("*Getting leaderboard...*")
-        path = await self.barkPath(ctx)
+        path = self.barkPath(ctx)
 
         users = fi.getData(path + ["users"])
         if users == "null":

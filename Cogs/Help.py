@@ -31,14 +31,19 @@ class Help(cmds.Cog):
             cooldown=0,
             exampleUsage=[]):
 
+        async def createSeparator():
+            separator = f"{'-' * 20}"
+            embed.add_field(name=separator, value="_ _", inline=False)
+
         embed = discord.Embed(name="Help", title=f"{category}: {main.commandPrefix}{commandName}", color=color)
         embed.add_field(name=f"Description", value=description)
-        embed.add_field(name="`~~                                     ~~`", value="_ _", inline=False)
+        await createSeparator()
+
+        paramsSyntax = "> <".join([x for x in parameters.keys()])
+        paramsSyntax = f" `<{paramsSyntax}>`" if not paramsSyntax == "" else "_ _"
+        embed.add_field(name=f"Syntax:", value=f"`{main.commandPrefix}{commandName}`{paramsSyntax}", inline=False)
 
         if not len(parameters) == 0:
-            paramsSyntax = "> <".join([x for x in parameters.keys()])
-            embed.add_field(name=f"Syntax:", value=f"`{main.commandPrefix}{commandName} <{paramsSyntax}>`", inline=False)
-            
             paramsList = "\n".join([f"`<{params}>`: {paramsDesc}" for params, paramsDesc in parameters.items()])
             embed.add_field(name=f"Parameters:", value=f"{paramsList}", inline=False)
 
@@ -46,12 +51,12 @@ class Help(cmds.Cog):
             aliasNames = "`, `".join(aliases)
             embed.add_field(name=f"Aliases:", value=f"`{aliasNames}`", inline=False)
 
-        embed.add_field(name="`~~                                     ~~`", value="_ _", inline=False)
+        await createSeparator()
 
         if guildOnly:
-            embed.add_field(name=f"Guild Only:", value=f"`Yes`")
+            embed.add_field(name=f"Server Only:", value=f"`Yes`")
         else:
-            embed.add_field(name=f"Guild Only:", value=f"`No`")
+            embed.add_field(name=f"Server Only:", value=f"`No`")
 
         if requireAdmin:
             embed.add_field(name=f"Required role:", value=f"`{main.adminRole}`")
@@ -69,8 +74,9 @@ class Help(cmds.Cog):
     
 
     @cw.command(
+        category=cw.Categories.basicCommands,
         description="WHY DID YOU GET HELP FOR A HELP COMMAND",
-        parameters={"<command>": "I DON'T UNDERSTAND YOU."},
+        parameters={"command": "__I DON'T UNDERSTAND YOU.__\n WHY? WHY MUST YOU DO THIS?? YOU'RE- WHYYY???? PLEASE GET SOME HELP OR SOMETHING- OH WAIT NEVERMIND- __YOU ALREADY ARE DOING IT__!!! AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"},
         aliases=["h"]
     )
     async def help(self, ctx, *args):
