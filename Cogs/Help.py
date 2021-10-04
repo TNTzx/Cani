@@ -5,7 +5,7 @@ import main
 
 from Functions import ExtraFunctions as ef
 from Functions import CustomExceptions as ce
-from Functions import CommandWrapper as cw
+from Functions import CommandWrappingFunction as cw
 
 
 color = 0x7289da

@@ -2,7 +2,7 @@ import discord
 import discord.ext.commands as commands
 import os
 
-from Functions import CommandWrapper as cw
+from Functions import CommandWrappingFunction as cw
 import KeepAlive
 
 commandPrefix = "++"

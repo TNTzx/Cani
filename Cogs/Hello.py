@@ -2,7 +2,7 @@ import discord
 import discord.ext.commands as cmds
 
 import main
-from Functions import CommandWrapper as cw
+from Functions import CommandWrappingFunction as cw
 from Functions import FirebaseInteraction as fi
 
 class Hello(cmds.Cog):

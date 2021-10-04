@@ -5,7 +5,7 @@ import main
 from Functions import ExtraFunctions as ef
 from Functions import FirebaseInteraction as fi
 from Functions import CustomExceptions as ce
-from Functions import CommandWrapper as cw
+from Functions import CommandWrappingFunction as cw
 
 
 class ChannelClaim(cmds.Cog):

@@ -5,7 +5,7 @@ from discord.ext.commands.core import cooldown
 import main
 from Functions import FirebaseInteraction as fi
 from Functions import ExtraFunctions as ef
-from Functions import CommandWrapper as cw
+from Functions import CommandWrappingFunction as cw
 
 class Fun(cmds.Cog):
     def __init__(self, bot):
@@ -162,7 +162,7 @@ class Fun(cmds.Cog):
         await ef.delayMessage(ctx, f"**FEEL THE WRATH OF MY MACHINE GUN ATTACHMENTS, HUMAN**", duration=1)
         await ef.delayMessage(ctx, f"*BULLET RAIN*", duration=2)
         
-        
+
     @cw.command(
         category=cw.Categories.fun,
         description="I like pork!",
