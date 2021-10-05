@@ -37,11 +37,11 @@ async def sendError(ctx:commands.Context, suffix, exc="", sendToAuthor=False, se
     return
 
 
-async def subtractList(list1, list2):
+def subtractList(list1, list2):
     return [x for x in list1 if x not in list2]
 
 
-async def formatTime(num):
+def formatTime(num):
     numberOfSeconds = num
     timeConverted = str(datetime.timedelta(seconds=numberOfSeconds))
     timeSplit = timeConverted.split(":")

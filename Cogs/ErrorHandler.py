@@ -18,7 +18,7 @@ class ErrorHandler(cmds.Cog):
         isRp = await cc.ChannelClaim(main.bot).isRpChannel(ctx)
     
         if checkexc(cmds.CommandOnCooldown):
-            time = await ef.formatTime(int(str(round(exc.retry_after, 0))[:-2]))
+            time = ef.formatTime(int(str(round(exc.retry_after, 0))[:-2]))
             await ef.sendError(ctx, f"*The command is on cooldown for `{time}` more! >:(*", sendToAuthor=isRp, resetCooldown=isRp)
             return
 

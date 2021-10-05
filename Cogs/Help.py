@@ -62,7 +62,7 @@ class Help(cmds.Cog):
             embed.add_field(name=f"Required role:", value=f"`{main.adminRole}`")
 
         if not cooldown["length"] == 0:
-            cooldownForm = await ef.formatTime(cooldown["length"])
+            cooldownForm = ef.formatTime(cooldown["length"])
             cooldownType = cooldown["type"]
             embed.add_field(name=f"Cooldown:", value=f"`Length: {cooldownForm}\nApplies to: {cooldownType}`")
         
