@@ -8,10 +8,11 @@ adminRole = "///Moderator"
 
 class Categories:
     channelClaiming = "Channel Claiming"
-    botControl = "Bot Control"
     basicCommands = "Basic Commands"
     barking = "Barking"
     fun = "Fun"
+    botControl = "Bot Control"
+    
 
 
 helpData = {}
