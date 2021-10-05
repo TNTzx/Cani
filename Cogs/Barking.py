@@ -81,7 +81,7 @@ class Barking(cmds.Cog):
     )
     async def pat(self, ctx: cmds.Context):
         path = self.barkPath(ctx)
-        addBark = 200
+        addBark = 50
 
         await ctx.send("https://cdn.discordapp.com/emojis/889713240714649650.gif")
         await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+{addBark} barks {ctx.author.mention}!)*""")
