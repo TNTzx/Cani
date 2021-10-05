@@ -2,7 +2,7 @@ import discord
 import discord.ext.commands as cmds
 
 import main
-
+from GlobalVariables import variables as vars
 from Functions import ExtraFunctions as ef
 from Functions import CustomExceptions as ce
 from Functions import CommandWrappingFunction as cw
@@ -59,7 +59,7 @@ class Help(cmds.Cog):
             embed.add_field(name=f"Server Only:", value=f"`No`")
 
         if requireAdmin:
-            embed.add_field(name=f"Required role:", value=f"`{main.adminRole}`")
+            embed.add_field(name=f"Required role:", value=f"`{vars.adminRole}`")
 
         if not cooldown["length"] == 0:
             cooldownForm = ef.formatTime(cooldown["length"])

@@ -1,6 +1,7 @@
 import json, os
 import pyrebase
 
+adminRole = "///Moderator"
 
 # Initialize database
 env = os.environ["CaniDBToken"]
