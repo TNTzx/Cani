@@ -31,7 +31,7 @@ class Hello(cmds.Cog):
                     }
                 }
 
-                fi.editData(["guilds"], defaultValues)
+                fi.createData(["guilds"], defaultValues)
     
 
     @cmds.Cog.listener()
