@@ -130,7 +130,7 @@ class ChannelClaim(cmds.Cog):
             "channel": "Channel that you want to add / remove as an RP channel."
         },
         aliases=["cce"],
-        requireAdmin=True
+        requireGuildAdmin=True
     )
     async def claimchanneledit(self, ctx, type, channelMention, *dump):
         path = await self.path(ctx)
@@ -190,7 +190,7 @@ class ChannelClaim(cmds.Cog):
             "channel": "Channel where the embed will be put in."
         },
         aliases=["ccm"],
-        requireAdmin=True
+        requireGuildAdmin=True
     )
     async def claimchannelembed(self, ctx, channelMention, *dump):
         path = await self.path(ctx)
@@ -216,7 +216,7 @@ class ChannelClaim(cmds.Cog):
         category=cw.Categories.channelClaiming,
         description="Updates the embed for displaying claimed channels.",
         aliases=["ccu"],
-        requireAdmin=True
+        requireGuildAdmin=True
     )
     async def claimchannelupdate(self, ctx):
         await ctx.send(f"*Updating embed...*")

@@ -1,11 +1,11 @@
 import discord
 import discord.ext.commands as cmds
-from discord.ext.commands.core import cooldown
 
 import main
 from Functions import FirebaseInteraction as fi
 from Functions import ExtraFunctions as ef
 from Functions import CommandWrappingFunction as cw
+
 
 class Barking(cmds.Cog):
     def __init__(self, bot):

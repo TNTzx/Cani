@@ -2,15 +2,12 @@ import discord
 import discord.ext.commands as commands
 import os
 
-from Functions import CommandWrappingFunction as cw
 import KeepAlive
 
 commandPrefix = "++"
 bot = discord.Client()
 bot = commands.Bot(command_prefix=commandPrefix)
 bot.remove_command("help")
-
-
 
 
 # Load all cogs
@@ -38,10 +35,10 @@ def restartSwitch():
     
     print("\n \n Restart break! -------------------------------------- \n \n")
 
-# Server
-print("Initializing server...")
-# KeepAlive.keep_alive()
-print("Initialized server!...")
+# # Server
+# print("Initializing server...")
+# # KeepAlive.keep_alive()
+# print("Initialized server!...")
 
 # Log in
 print("Logging into bot...")

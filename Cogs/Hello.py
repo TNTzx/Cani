@@ -2,45 +2,30 @@ import discord
 import discord.ext.commands as cmds
 
 import main
+from GlobalVariables import defaultstuff as defaults
 from Functions import CommandWrappingFunction as cw
 from Functions import FirebaseInteraction as fi
+
+async def updateData():
+    for guild in main.bot.guilds:
+        if not fi.isDataExists(["guilds", guild.id]):
+            defaultValues = defaults.default["guildId"]
+            defaultValues = {guild.id: defaultValues}
+            fi.createData(["guilds"], defaultValues)
 
 class Hello(cmds.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-
-    def newDefault(self):
-        for guild in main.bot.guilds:
-            if not fi.isDataExists(["guilds", guild.id]):
-                defaultValues = {
-                    guild.id: {
-                        "claimChannelData": {
-                            "availableChannels": "null",
-                            "embedInfo": {
-                                "channel": "null",
-                                "messageId": "null"
-                            }
-                        },
-                        "fun": {
-                            "barking": {
-                                "users": "null",
-                                "totalBarks": 0
-                            }, 
-                        }
-                    }
-                }
-
-                fi.createData(["guilds"], defaultValues)
     
 
     @cmds.Cog.listener()
     async def on_ready(self):
         print(f"Logged in as {self.bot.user}.")
+        await updateData()
 
-        for guild in main.bot.guilds:
-            if not fi.isDataExists(["guilds", guild.id]):
-                self.newDefault()
+    @cmds.Cog.listener()
+    async def on_guild_join(self, guild):
+        await updateData()
 
 
     @cw.command(
@@ -58,14 +43,14 @@ class Hello(cmds.Cog):
     @cw.command(
         category=cw.Categories.botControl,
         description="Updates the database juuuust in case my owner messed up.",
-        requireAdmin=True)
+        requireGuildAdmin=True)
     async def updatedatabase(self, ctx):
         self.newDefault()
     
     @cw.command(
         category=cw.Categories.botControl,
         description="Causes an error! D:",
-        requireAdmin=True)
+        requireGuildAdmin=True)
     async def causeerror(self, ctx):
         raise ValueError('funky error')
 

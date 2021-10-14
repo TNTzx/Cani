@@ -2,17 +2,19 @@ import discord
 import discord.ext.commands as cmds
 import functools as fc
 
-from GlobalVariables import variables as vars
+from GlobalVariables import variables as varss
+from Functions import FirebaseInteraction as fi
+from Functions import CustomExceptions as ce
+from Functions import ExtraFunctions as ef
 
 class Categories:
     channelClaiming = "Channel Claiming"
     basicCommands = "Basic Commands"
     barking = "Barking"
     fun = "Fun"
+    moderation = "Moderation"
     botControl = "Bot Control"
     
-
-
 helpData = {}
 
 for attribute in dir(Categories):
@@ -27,7 +29,12 @@ def command(
         aliases=[],
         guildOnly=True,
         cooldown=0, cooldownType="",
-        requireAdmin=False,
+
+        requireGuildOwner=False,
+        requireGuildAdmin=False,
+        requireDev=False,
+        requirePAModerator=False,
+
         showCondition=lambda ctx: True,
         exampleUsage=[]
         ):
@@ -35,11 +42,46 @@ def command(
     def decorator(func):
         @fc.wraps(func)
         async def wrapper(*args, **kwargs):
-            if not showCondition(args[1]):
-                args[1].command.reset_cooldown(args[1])
+            self = args[0]
+            ctx: cmds.Context = args[1]
+
+            devs = fi.getData(['mainData', 'devs'])
+
+            async def sendError(suffix):
+                await ef.sendError(ctx, f"You don't have proper permissions! {suffix}")
+                return
+
+            if requireDev:
+                if not str(ctx.author.id) in devs:
+                    await sendError("Only developers of this bot may do this command!")
+                    return
+
+            if requireGuildOwner:
+                if not ctx.author.id == ctx.guild.owner.id:
+                    await sendError("Only the server owner can do this command!")
+                    return
+            
+            if requireGuildAdmin:
+                async def checkAdmin():
+                    try:
+                        adminRole = fi.getData(['guildData', ctx.guild.id, 'mainData', 'adminRole'])
+                        adminRole = int(adminRole)
+                    except ce.FirebaseNoEntry:
+                        return False
+
+                    for role in ctx.author.roles:
+                        if role.id == adminRole:
+                            return True
+                    return False
+                
+                if not await checkAdmin():
+                    await sendError("Only admins of this server may do this command!")
+                    return
+
+            if not showCondition(ctx):
+                ctx.command.reset_cooldown(ctx)
                 return
             return await func(*args, **kwargs)
-
 
         wrapper = cmds.command(name=func.__name__, aliases=aliases)(wrapper)
 
@@ -48,9 +90,6 @@ def command(
 
         if cooldown > 0:
             wrapper = cmds.cooldown(1, cooldown, cooldownType)(wrapper)
-        
-        if requireAdmin:
-            wrapper = cmds.has_role(vars.adminRole)(wrapper)
 
 
         cdTypeGotten = cooldownType
@@ -71,7 +110,7 @@ def command(
                 "length": cooldown,
                 "type": cdTypeGot
             },
-            "requireAdmin": requireAdmin,
+            "requireAdmin": requireGuildAdmin,
             "showCondition": showCondition,
             "exampleUsage": exampleUsage
         }

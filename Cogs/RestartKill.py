@@ -12,7 +12,7 @@ class RestartKill(cmds.Cog):
         category=cw.Categories.botControl,
         description="Restarts the bot.",
         aliases=["sr"],
-        requireAdmin=True
+        requireDev=True
     )
     async def switchrestart(self, ctx):
         await ctx.send("*Restarting...*")
@@ -24,7 +24,7 @@ class RestartKill(cmds.Cog):
         category=cw.Categories.botControl,
         description="Shuts down the bot.",
         aliases=["sk"],
-        requireAdmin=True
+        requireDev=True
     )
     async def switchkill(self, ctx):
         await ctx.send("O- *baiii-*")
