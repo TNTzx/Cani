@@ -26,6 +26,14 @@ class Hello(cmds.Cog):
     @cmds.Cog.listener()
     async def on_guild_join(self, guild):
         await updateData()
+    
+    @cw.command(
+        category=cw.Categories.botControl,
+        description="Updates the database juuuust in case my owner messed up.",
+        requireDev=True
+    )
+    async def updatedatabase(self, ctx):
+        await updateData()
 
 
     @cw.command(
@@ -40,17 +48,12 @@ class Hello(cmds.Cog):
     async def ping(self, ctx):
         await ctx.send(f"*Pong! <@{ctx.author.id}> :D*")
     
-    @cw.command(
-        category=cw.Categories.botControl,
-        description="Updates the database juuuust in case my owner messed up.",
-        requireGuildAdmin=True)
-    async def updatedatabase(self, ctx):
-        self.newDefault()
     
     @cw.command(
         category=cw.Categories.botControl,
         description="Causes an error! D:",
-        requireGuildAdmin=True)
+        requireDev=True
+    )
     async def causeerror(self, ctx):
         raise ValueError('funky error')
 

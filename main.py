@@ -6,7 +6,11 @@ import KeepAlive
 
 commandPrefix = "++"
 bot = discord.Client()
-bot = commands.Bot(command_prefix=commandPrefix)
+
+intents = discord.Intents.default()
+intents.members = True
+
+bot = commands.Bot(command_prefix=commandPrefix, intents=intents)
 bot.remove_command("help")
 
 

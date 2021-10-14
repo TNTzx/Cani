@@ -61,7 +61,7 @@ class ChannelClaim(cmds.Cog):
                 newTitle = f"__#{channel.name}__: {title}"
                 embed.add_field(name=newTitle, value=description, inline=False)
         else:
-            embed.add_field(name="No RP channels! :(", value=f"Ask the moderators to go add one using {main.commandPrefix}claimchanneledit add.", inline=False)
+            embed.add_field(name="No RP channels! :(", value=f"Ask the moderators to go add one using `{main.commandPrefix}claimchanneledit add`.", inline=False)
 
         embedInfo = fi.getData(path +  ["embedInfo"])
         if embedInfo["channel"] == "null":
@@ -92,7 +92,7 @@ class ChannelClaim(cmds.Cog):
             return
 
         async def claim():
-            if place == None:
+            if place == None or place == "":
                 await ef.sendError(ctx, f"*You didn't specify what the `<location>` is! Type `{main.commandPrefix}help` to get help! >:(*", resetCooldown=True, sendToAuthor=True)
                 return
             await ctx.send(f"*Claiming channel...*")
@@ -153,7 +153,7 @@ class ChannelClaim(cmds.Cog):
 
 
         async def add():
-            if channel.id in claimChannels:
+            if str(channel.id) in claimChannels:
                 await ef.sendError(ctx, f"*That channel is already added! >:(*")
                 return
 
@@ -162,13 +162,14 @@ class ChannelClaim(cmds.Cog):
             await updateData(claimChannels)
             await ctx.send("*The channel has been added as an RP channel! :D*")
 
+
         async def remove():
-            if not channel.id in claimChannels:
+            if not str(channel.id) in claimChannels:
                 await ef.sendError(ctx, f"*That channel hasn't been added yet! >:(*")
                 return
 
             await ctx.send("*Removing channel as an RP channel...*")
-            claimChannels.pop(channel.id)
+            claimChannels.pop(str(channel.id))
             await updateData(claimChannels)
             await ctx.send("*The channel has been removed as an RP channel! :D*")
   

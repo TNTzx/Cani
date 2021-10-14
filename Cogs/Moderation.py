@@ -19,11 +19,11 @@ class Moderation(cmds.Cog):
         try:
             int(id)
         except ValueError:
-            await ef.sendError(ctx, "You didn't send a valid role ID!")
+            await ef.sendError(ctx, "*You didn't send a valid role ID!*")
             return
 
         fi.editData(['guilds', ctx.guild.id, 'mainData'], {'adminRole': id})
-        await ctx.send("The admin role for this server has been set.")
+        await ctx.send("*The admin role for this server has been set! :D*")
 
 
 def setup(bot):

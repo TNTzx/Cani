@@ -64,7 +64,7 @@ def command(
             if requireGuildAdmin:
                 async def checkAdmin():
                     try:
-                        adminRole = fi.getData(['guildData', ctx.guild.id, 'mainData', 'adminRole'])
+                        adminRole = fi.getData(['guilds', ctx.guild.id, 'mainData', 'adminRole'])
                         adminRole = int(adminRole)
                     except ce.FirebaseNoEntry:
                         return False
