@@ -1,4 +1,5 @@
 import discord
+from discord import guild
 import discord.ext.commands as cmds
 import functools as fc
 
@@ -14,12 +15,43 @@ class Categories:
     fun = "Fun"
     moderation = "Moderation"
     botControl = "Bot Control"
+
+
+class Cooldown:
+    length = 0
+    typeOfCooldown = cmds.BucketType.channel
+
+class Require:
+    def __init__(self):
+        self.guildOwner = False
+        self.guildAdmin = False
+        self.dev = False
+
+class Helps:
+    def __init__(self):
+        self.category = ""
+        self.description = ""
+        self.parameters = {}
+        self.aliases = []
+        self.guildOnly = True
+        self.cooldown = Cooldown()
+        self.require = Require()
+        self.showCondition = lambda ctx: True
+        self.exampleUsage = []
     
-helpData = {}
+class CustomCommandClass:
+    def __init__(self):
+        self.name = ""
+        self.help = Helps()
+
+class ListOfCommands:
+    commandsAll = {}
+    commands = {}
+
 
 for attribute in dir(Categories):
     if not attribute.startswith("__"):
-        helpData[getattr(Categories, attribute)] = {}
+        ListOfCommands.commandsAll[getattr(Categories, attribute)] = []
 
 
 def command(
@@ -97,33 +129,40 @@ def command(
 
         if cooldown > 0:
             wrapper = cmds.cooldown(1, cooldown, cooldownType)(wrapper)
+        
 
+        cmd = CustomCommandClass()
+        
+        cmd.name = func.__name__
+        help = cmd.help
 
-        cdTypeGotten = cooldownType
-        if cdTypeGotten == cmds.BucketType.user:
-            cdTypeGot = "User"
-        elif cdTypeGotten == cmds.BucketType.guild:
-            cdTypeGot = "Entire Server"
-        else:
-            cdTypeGot = "Not Defined"
+        help.category = category
+        help.description = description
+        help.parameters = parameters
+        help.aliases = aliases
+        help.cooldown.length = cooldown
+        help.cooldown.typeOfCooldown = cooldownType
+        help.guildOnly = guildOnly
 
+        require = help.require
+        require.dev = requireDev
+        require.guildAdmin = requireGuildAdmin
+        require.guildOwner = requireGuildOwner
+        help.require = require
 
-        cmdData = {
-            "description": description,
-            "parameters": parameters,
-            "aliases": aliases,
-            "guildOnly": guildOnly,
-            "cooldown": {
-                "length": cooldown,
-                "type": cdTypeGot
-            },
-            "requireAdmin": requireGuildAdmin,
-            "showCondition": showCondition,
-            "exampleUsage": exampleUsage
-        }
-        helpData[category][func.__name__] = cmdData
+        help.showCondition = showCondition
+        help.exampleUsage = exampleUsage
 
+        cmd.help = help
 
+        if not cmd.name in ListOfCommands.commandsAll[category]:
+            ListOfCommands.commandsAll[category].append(cmd.name)
+
+        if not cmd.name in ListOfCommands.commands.keys():
+            ListOfCommands.commands[cmd.name] = cmd
+        for alias in aliases:
+            if not alias in ListOfCommands.commands.keys():
+                ListOfCommands.commands[alias] = cmd
         return wrapper
 
     return decorator

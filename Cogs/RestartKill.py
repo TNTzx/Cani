@@ -5,6 +5,7 @@ import os, sys
 import main
 from Functions import CommandWrappingFunction as cw
 
+
 class RestartKill(cmds.Cog):
     def __init__(self, bot):
         self.bot = bot
