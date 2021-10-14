@@ -52,16 +52,16 @@ def command(
 
 
             async def checkAdmin():
-                    try:
-                        adminRole = fi.getData(['guilds', ctx.guild.id, 'mainData', 'adminRole'])
-                        adminRole = int(adminRole)
-                    except ce.FirebaseNoEntry:
-                        return False
-
-                    for role in ctx.author.roles:
-                        if role.id == adminRole:
-                            return True
+                try:
+                    adminRole = fi.getData(['guilds', str(ctx.guild.id), 'mainData', 'adminRole'])
+                    adminRole = int(adminRole)
+                except ce.FirebaseNoEntry:
                     return False
+
+                for role in ctx.author.roles:
+                    if role.id == adminRole:
+                        return True
+                return False
             
             async def checkOwner():
                 return ctx.author.id == ctx.guild.owner.id
