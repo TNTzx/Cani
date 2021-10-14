@@ -5,12 +5,7 @@ default = {
                 "adminRole": "0"
             },
             "claimChannelData": {
-                "availableChannels": {
-                    "channel": {
-                        "claimStatus": False,
-                        "location": "Unknown"
-                    }
-                },
+                "availableChannels": "null",
                 "embedInfo": {
                     "channel": "null",
                     "messageId": "null"
@@ -18,11 +13,7 @@ default = {
             },
             "fun": {
                 "barking": {
-                    "users": {
-                        "user": {
-                            "barkCount": 0
-                        }
-                    },
+                    "users": "null",
                     "totalBarks": 0,
                     "barkMilestone": 0
                 }, 
@@ -31,7 +22,7 @@ default = {
     },
     "mainData": {
         "devs": [
-            279803094722674693
+            "279803094722674693"
         ]
     }
 }

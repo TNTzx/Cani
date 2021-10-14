@@ -33,7 +33,6 @@ def command(
         requireGuildOwner=False,
         requireGuildAdmin=False,
         requireDev=False,
-        requirePAModerator=False,
 
         showCondition=lambda ctx: True,
         exampleUsage=[]
@@ -48,21 +47,11 @@ def command(
             devs = fi.getData(['mainData', 'devs'])
 
             async def sendError(suffix):
-                await ef.sendError(ctx, f"You don't have proper permissions! {suffix}")
+                await ef.sendError(ctx, f"*You don't have proper permissions!* {suffix}")
                 return
 
-            if requireDev:
-                if not str(ctx.author.id) in devs:
-                    await sendError("Only developers of this bot may do this command!")
-                    return
 
-            if requireGuildOwner:
-                if not ctx.author.id == ctx.guild.owner.id:
-                    await sendError("Only the server owner can do this command!")
-                    return
-            
-            if requireGuildAdmin:
-                async def checkAdmin():
+            async def checkAdmin():
                     try:
                         adminRole = fi.getData(['guilds', ctx.guild.id, 'mainData', 'adminRole'])
                         adminRole = int(adminRole)
@@ -73,9 +62,27 @@ def command(
                         if role.id == adminRole:
                             return True
                     return False
-                
-                if not await checkAdmin():
-                    await sendError("Only admins of this server may do this command!")
+            
+            async def checkOwner():
+                return ctx.author.id == ctx.guild.owner.id
+            
+            async def checkDev():
+                return str(ctx.author.id) in devs
+
+
+            if requireDev:
+                if not await checkDev():
+                    await sendError("*Only developers of this bot may do this command! >:(*")
+                    return
+
+            if requireGuildOwner:
+                if not await checkOwner():
+                    await sendError("*Only the server owner can do this command! >:(*")
+                    return
+            
+            if requireGuildAdmin:
+                if not (await checkAdmin() or await checkOwner()):
+                    await sendError("*Only admins of this server may do this command! >:(*")
                     return
 
             if not showCondition(ctx):

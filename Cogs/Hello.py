@@ -1,4 +1,5 @@
 import discord
+from discord import guild
 import discord.ext.commands as cmds
 
 import main
@@ -9,9 +10,9 @@ from Functions import FirebaseInteraction as fi
 async def updateData():
     for guild in main.bot.guilds:
         if not fi.isDataExists(["guilds", guild.id]):
-            defaultValues = defaults.default["guildId"]
+            defaultValues = defaults.default["guilds"]["guildId"]
             defaultValues = {guild.id: defaultValues}
-            fi.createData(["guilds"], defaultValues)
+            fi.editData(["guilds"], defaultValues)
 
 class Hello(cmds.Cog):
     def __init__(self, bot):
@@ -30,10 +31,13 @@ class Hello(cmds.Cog):
     @cw.command(
         category=cw.Categories.botControl,
         description="Updates the database juuuust in case my owner messed up.",
+        guildOnly=False,
         requireDev=True
     )
     async def updatedatabase(self, ctx):
+        await ctx.send("*Updating Database...*")
         await updateData()
+        await ctx.send("*Updated! :D*")
 
 
     @cw.command(

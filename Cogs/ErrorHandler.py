@@ -14,24 +14,22 @@ class ErrorHandler(cmds.Cog):
 
         def checkexc(type):
             return isinstance(exc, type)
-        
-        isRp = await cc.ChannelClaim(main.bot).isRpChannel(ctx)
     
         if checkexc(cmds.CommandOnCooldown):
             time = ef.formatTime(int(str(round(exc.retry_after, 0))[:-2]))
-            await ef.sendError(ctx, f"*The command is on cooldown for `{time}` more! >:(*", sendToAuthor=isRp, resetCooldown=isRp)
+            await ef.sendError(ctx, f"*The command is on cooldown for `{time}` more! >:(*")
             return
 
         elif checkexc(cmds.MissingRole):
-            await ef.sendError(ctx, f"*You don't have the `{exc.missing_role}` role! >:(*", sendToAuthor=isRp, resetCooldown=isRp)
+            await ef.sendError(ctx, f"*You don't have the `{exc.missing_role}` role! >:(*")
             return
     
         elif checkexc(cmds.MissingRequiredArgument):
-            await ef.sendError(ctx, f"*Make sure you have the correct parameters! Use `{main.commandPrefix}help` to get help!*", sendToAuthor=isRp, resetCooldown=isRp)
+            await ef.sendError(ctx, f"*Make sure you have the correct parameters! Use `{main.commandPrefix}help` to get help!*")
             return
 
         elif checkexc(cmds.ExpectedClosingQuoteError) or checkexc(cmds.InvalidEndOfQuotedStringError) or checkexc(cmds.UnexpectedQuoteError):
-            await ef.sendError(ctx, "*Your quotation marks (`\"`) are wrong! Double-check the command if you have missing quotation marks! >:(*", sendToAuthor=isRp, resetCooldown=isRp)
+            await ef.sendError(ctx, "*Your quotation marks (`\"`) are wrong! Double-check the command if you have missing quotation marks! >:(*")
             return
         
         elif checkexc(cmds.NoPrivateMessage):
@@ -46,7 +44,7 @@ class ErrorHandler(cmds.Cog):
         elif checkexc(cmds.CommandNotFound):
             return
 
-        await ef.sendError(ctx, "*Something went wrong! D:*\n*This error has been reported to the owner of the bot.*", exc=exc, resetCooldown=isRp, sendToOwner=True, printToConsole=True)
+        await ef.sendError(ctx, "*Something went wrong! D:*\n*This error has been reported to the owner of the bot.*", exc=exc, resetCooldown=True, sendToOwner=True, printToConsole=True)
 
 def setup(bot):
     bot.add_cog(ErrorHandler(bot))
