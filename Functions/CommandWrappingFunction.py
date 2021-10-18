@@ -18,35 +18,35 @@ class Categories:
 
 
 class Cooldown:
-    length = 0
-    typeOfCooldown = cmds.BucketType.channel
+    length: int = 0
+    typeOfCooldown: str = cmds.BucketType.channel
 
 class Require:
     def __init__(self):
-        self.guildOwner = False
-        self.guildAdmin = False
-        self.dev = False
+        self.guildOwner: bool = False
+        self.guildAdmin: bool = False
+        self.dev: bool = False
 
 class Helps:
     def __init__(self):
-        self.category = ""
-        self.description = ""
-        self.parameters = {}
-        self.aliases = []
-        self.guildOnly = True
-        self.cooldown = Cooldown()
-        self.require = Require()
-        self.showCondition = lambda ctx: True
-        self.exampleUsage = []
+        self.category: str = ""
+        self.description: str = ""
+        self.parameters: dict[str, str] = {}
+        self.aliases: list[str] = []
+        self.guildOnly: bool = True
+        self.cooldown: Cooldown = Cooldown()
+        self.require: Require = Require()
+        self.showCondition: function = lambda ctx: True
+        self.exampleUsage: list[str] = []
     
 class CustomCommandClass:
     def __init__(self):
-        self.name = ""
-        self.help = Helps()
+        self.name: str = ""
+        self.help: Helps = Helps()
 
 class ListOfCommands:
-    commandsAll = {}
-    commands = {}
+    commandsAll: dict[str, str] = {}
+    commands: dict[str, CustomCommandClass] = {}
 
 
 for attribute in dir(Categories):

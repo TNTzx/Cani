@@ -25,18 +25,29 @@ class Help(cmds.Cog):
                 description=f"what the dog doin\n**__Command Prefix: {main.commandPrefix}__**",
                 color=0x4e5d94
             )
-            for category, name in cw.ListOfCommands.commandsAll.items():
-                nameFormat = f"`{'`, `'.join(name)}`"
+            for category, names in cw.ListOfCommands.commandsAll.items():
+
+                nameList = []
+                for name in names:
+                    if cw.ListOfCommands.commands[name].help.showCondition(ctx):
+                        nameList.append(name)
+                
+                nameFormat = f"`{'`, `'.join(nameList)}`"
                 embed.add_field(name=category, value=nameFormat, inline=False)
             await ctx.send(embed=embed)
 
             
         async def specific():
             if not command in cw.ListOfCommands.commands:
-                await ef.sendError(ctx, "This command doesn't exist! Make sure you typed it correctly!")
+                await ef.sendError(ctx, "*This command doesn't exist! Make sure you typed it correctly!*")
                 return
 
             cmd: cw.CustomCommandClass = cw.ListOfCommands.commands[command]
+
+            if not cmd.help.showCondition(ctx):
+                await ef.sendError(ctx, "*This command doesn't exist! Make sure you typed it correctly!*")
+                return
+
             help = cmd.help
 
             embed = discord.Embed(
@@ -93,9 +104,11 @@ class Help(cmds.Cog):
                     cooldownType = "Per channel category"
                 elif cooldown.typeOfCooldown == cmds.BucketType.role:
                     cooldownType = "Per role"
+                elif cooldown.typeOfCooldown == cmds.BucketType.user:
+                    cooldownType = "Per user"
                 else:
                     cooldownType = "TNTz messed up, they didn't add another edge case, please ping him"
-                cooldownForm = f"Duration: `{help.cooldown.length}`\nApplies to: {cooldownType}"
+                cooldownForm = f"Duration: `{ef.formatTime(help.cooldown.length)}`\nApplies to: `{cooldownType}`"
                 embed.add_field(name=f"Cooldown Info:", value=f"{cooldownForm}")
 
             if not len(help.exampleUsage) == 0:
