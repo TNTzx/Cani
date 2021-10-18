@@ -3,6 +3,8 @@ from discord import guild
 import discord.ext.commands as cmds
 import functools as fc
 
+import typing as ty
+
 from GlobalVariables import variables as varss
 from Functions import FirebaseInteraction as fi
 from Functions import CustomExceptions as ce
@@ -31,8 +33,8 @@ class Helps:
     def __init__(self):
         self.category: str = ""
         self.description: str = ""
-        self.parameters: dict[str, str] = {}
-        self.aliases: list[str] = []
+        self.parameters: ty.Dict[str, str] = {}
+        self.aliases: ty.List[str] = []
         self.guildOnly: bool = True
         self.cooldown: Cooldown = Cooldown()
         self.require: Require = Require()
@@ -45,8 +47,8 @@ class CustomCommandClass:
         self.help: Helps = Helps()
 
 class ListOfCommands:
-    commandsAll: dict[str, str] = {}
-    commands: dict[str, CustomCommandClass] = {}
+    commandsAll: ty.Dict[str, str] = {}
+    commands: ty.Dict[str, CustomCommandClass] = {}
 
 
 for attribute in dir(Categories):
