@@ -1,50 +1,56 @@
-import discord
-import discord.ext.commands as commands
+"""Where the bot starts its life."""
+
+# pylint: disable=assigning-non-slot
+
 import os
+import nextcord as nx
+import nextcord.ext.commands as cmds
 
-import KeepAlive
-
-commandPrefix = "++"
-bot = discord.Client()
-
-intents = discord.Intents.default()
-intents.members = True
-
-bot = commands.Bot(command_prefix=commandPrefix, intents=intents)
-bot.remove_command("help")
+import global_vars.variables as vrs
 
 
-# Load all cogs
-print("Loading cogs...")
-def allCogs():
-    return os.listdir(os.path.join(os.path.dirname(__file__), ".", "Cogs"))
+def main():
+    """...main!"""
+    bot = nx.Client()
 
-for filename in allCogs():
-    if filename.endswith(".py"):
-        print(f"Loading cog '{filename}'...")
-        bot.load_extension(f"Cogs.{filename[:-3]}")
+    intents = nx.Intents.default()
+    intents.reactions = True
+    intents.members = True
+    intents.guilds = True
 
-print("Loaded all cogs!")
+    bot = cmds.Bot(command_prefix=vrs.CMD_PREFIX, intents=intents)
+    bot.remove_command("help")
+
+    vrs.global_bot = bot
 
 
-def restartSwitch():
-    for filename in allCogs():
-            if filename.endswith(".py"):
-                newName = f"Cogs.{filename[:-3]}"
-                try:
-                    bot.unload_extension(newName)
-                except commands.errors.ExtensionNotLoaded:
-                    continue
-                bot.load_extension(newName)
-    
-    print("\n \n Restart break! -------------------------------------- \n \n")
+    # Load all cogs
+    print("Loading cogs...")
 
-# # Server
-# print("Initializing server...")
-# # KeepAlive.keep_alive()
-# print("Initialized server!...")
+    def all_cogs():
+        """Returns all cogs."""
+        return os.listdir(os.path.join(os.path.dirname(__file__), ".", "cogs"))
 
-# Log in
-print("Logging into bot...")
-botToken = os.environ['CANITOKEN']
-bot.run(botToken)
+    for filename in all_cogs():
+        if filename.endswith(".py"):
+            if filename == "__init__.py":
+                continue
+            print(f"Loading cog '{filename}'...")
+            bot.load_extension(f"cogs.{filename[:-3]}")
+
+    print("Loaded all cogs!")
+
+
+    # def test_for_commands(command):
+    #     """Prints the commands registered."""
+    #     print(bot.all_commands.keys(), command in bot.all_commands.keys())
+
+    # testForCommands("test")
+
+    # Log in
+    print("Logging into bot...")
+    bot_token = os.environ['FadbToken']
+    bot.run(bot_token)
+
+if __name__ == "__main__":
+    main()

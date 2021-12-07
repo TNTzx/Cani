@@ -1,183 +1,189 @@
-import discord
-import discord.ext.commands as cmds
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=line-too-long
+# pylint: disable=unused-argument
+# pylint: disable=no-self-use
 
-import main
-from Functions import FirebaseInteraction as fi
-from Functions import ExtraFunctions as ef
-from Functions import CommandWrappingFunction as cw
+import nextcord as nx
+import nextcord.ext.commands as cmds
+
+import global_vars.variables as vrs
+import functions.firebase.firebase_interaction as f_i
+import functions.other_functions as e_f
+import functions.command_related.command_wrapper as c_w
 
 
 class Barking(cmds.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    def barkPath(self, ctx):
-        return ["guilds", ctx.guild.id, "fun", "barking"]
-        
+    def bark_path(self, ctx: cmds.Context):
+        return ["guilds", str(ctx.guild.id), "fun", "barking"]
 
-    async def specialEvents(self, ctx):
-        path = self.barkPath(ctx)
 
-        async def eventTrigger(milestone, message):
-            if fi.getData(path + ["totalBarks"]) >= milestone and (not fi.getData(path + ["barkMilestone"]) == milestone):
+    async def special_events(self, ctx: cmds.Context):
+        path = self.bark_path(ctx)
+
+        async def event_trigger(milestone, message):
+            if f_i.get_data(path + ["totalBarks"]) >= milestone and (not f_i.get_data(path + ["barkMilestone"]) == milestone):
                 await ctx.send("*>>> Oh? Something's happening...*")
-                fi.editData(path, {"barkMilestone": milestone})
+                f_i.edit_data(path, {"barkMilestone": milestone})
                 await ctx.send(message)
 
-        await eventTrigger(7500, ">>> YAYYAYAYAYYAAYAYA- AM HAPPY!! :D!!\n*Cani likes this server! The command `++pat` has been unlocked!*\n*Use `++help pat` for more information.*")
+        await event_trigger(7500, ">>> YAYYAYAYAYYAAYAYA- AM HAPPY!! :D!!\n*Cani likes this server! The command `++pat` has been unlocked!*\n*Use `++help pat` for more information.*")
 
 
-    async def updateBark(self, ctx, added):
-        path = self.barkPath(ctx)
+    async def update_bark(self, ctx: cmds.Context, add: int):
+        path = self.bark_path(ctx)
 
-        async def checkIfNegative(barkCount):
-            if barkCount < 0:
-                barkCount = 0
-            return barkCount
-        
-        
-        if fi.isDataExists(path + ["users", ctx.author.id]):
-            barkTotal = fi.getData(path + ["totalBarks"])
-            barkTotal += added
-            barkTotal = await checkIfNegative(barkTotal)
-            fi.editData(path, {"totalBarks": barkTotal})
+        async def check_if_negative(bark_count):
+            if bark_count < 0:
+                bark_count = 0
+            return bark_count
 
-            barkUser = fi.getData(path + ["users", ctx.author.id, "barkCount"])
-            barkUser += added
-            barkUser = await checkIfNegative(barkUser)
-            fi.editData(path + ["users", ctx.author.id], {"barkCount": barkUser})
+
+        if f_i.is_data_exists(path + ["users", str(ctx.author.id)]):
+            bark_total = f_i.get_data(path + ["totalBarks"])
+            bark_total += add
+            bark_total = await check_if_negative(bark_total)
+            f_i.edit_data(path, {"totalBarks": bark_total})
+
+            bark_user = f_i.get_data(path + ["users", str(ctx.author.id), "barkCount"])
+            bark_user += add
+            bark_user = await check_if_negative(bark_user)
+            f_i.edit_data(path + ["users", str(ctx.author.id)], {"barkCount": bark_user})
         else:
-            barkTotal = fi.getData(path + ["totalBarks"])
-            barkTotal += await checkIfNegative(added)
-            fi.editData(path, {"totalBarks": barkTotal})
+            bark_total = f_i.get_data(path + ["totalBarks"])
+            bark_total += await check_if_negative(add)
+            f_i.edit_data(path, {"totalBarks": bark_total})
 
-            barkUser = await checkIfNegative(added)
-            defaultData = {
-                ctx.author.id: {
-                    "barkCount": barkUser
+            bark_user = await check_if_negative(add)
+            default_data = {
+                str(ctx.author.id): {
+                    "barkCount": bark_user
                 }
             }
-            fi.editData(path + ["users"], defaultData)
+            f_i.edit_data(path + ["users"], default_data)
 
-        await self.specialEvents(ctx)
+        await self.special_events(ctx)
 
 
-    @cw.command(
-        category=cw.Categories.barking,
+    @c_w.command(
+        category=c_w.Categories.barking,
         description="Bark! :D",
         aliases=["b"],
-        cooldown=2, cooldownType=cmds.BucketType.user,
+        cooldown=2, cooldown_type=cmds.BucketType.user,
     )
-    async def bark(self, ctx):
-        await ctx.send(f"*Bark! :D*")
-        await self.updateBark(ctx, 1)
-    
+    async def bark(self, ctx: cmds.Context):
+        await ctx.send("*Bark! :D*")
+        await self.update_bark(ctx, 1)
 
-    @cw.command(
-        category=cw.Categories.barking,
+
+    @c_w.command(
+        category=c_w.Categories.barking,
         description="Patpat! :D",
-        cooldown=60 * 60 * 12, cooldownType=cmds.BucketType.guild,
-        showCondition=lambda ctx: fi.getData(Barking.barkPath(Barking(main.bot), ctx) + ["barkMilestone"]) >= 7500
+        cooldown=60 * 60 * 12, cooldown_type=cmds.BucketType.guild,
+        show_condition=lambda ctx: f_i.get_data(Barking.bark_path(Barking(vrs.global_bot), ctx) + ["barkMilestone"]) >= 7500
     )
     async def pat(self, ctx: cmds.Context):
-        path = self.barkPath(ctx)
-        addBark = 50
+        add_bark = 50
 
         await ctx.send("https://cdn.discordapp.com/emojis/889713240714649650.gif")
-        await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+{addBark} barks {ctx.author.mention}!)*""")
-        await self.updateBark(ctx, addBark)
-        
-    
-    @cw.command(
-        category=cw.Categories.barking,
+        await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+{add_bark} barks to {ctx.author.mention}!)*""")
+        await self.update_bark(ctx, add_bark)
+
+
+    @c_w.command(
+        category=c_w.Categories.barking,
         description="Shows barking leaderboards!",
         aliases=["br"],
-        cooldown=60 * 2, cooldownType=cmds.BucketType.guild
+        cooldown=60 * 2, cooldown_type=cmds.BucketType.guild
     )
-    async def barkrank(self, ctx):
+    async def barkrank(self, ctx: cmds.Context):
         await ctx.send("*Getting leaderboard...*")
-        path = self.barkPath(ctx)
+        path = self.bark_path(ctx)
 
-        users = fi.getData(path + ["users"])
+        users = f_i.get_data(path + ["users"])
         if users == "null":
-            await ef.sendError(ctx, "*There wasn't anyone that made me bark yet. Be the first one!*")
+            await e_f.sendError(ctx, "*There wasn't anyone that made me bark yet. Be the first one!*")
             return
 
-        userSort = sorted(users, key=lambda x: users[x]["barkCount"])
-        userSort.reverse()
+        user_sort = sorted(users, key=lambda x: users[x]["barkCount"])
+        user_sort.reverse()
 
-        totalBarks = fi.getData(path + ["totalBarks"])
+        total_barks = f_i.get_data(path + ["totalBarks"])
 
-        embed = discord.Embed(name="Leaderboard", title=f"Barking Leaderboard!", color=0x00FFFF)
-        embed.add_field(name=f"Total Barks: {totalBarks}", value=f"`----------`", inline=False)
+        embed = nx.Embed(title="Leaderboard", title="Barking Leaderboard!", color=0x00FFFF)
+        embed.add_field(name=f"Total Barks: {total_barks}", value="`----------`", inline=False)
 
-        formatList = []
-        for userId in userSort:
-            userObj = await main.bot.fetch_user(userId)
-            userBarks = users[userId]["barkCount"]
-            formatList.append(f"{userSort.index(userId) + 1}. {userObj.name}: {userBarks}")
+        form_list = []
+        for user_id in user_sort:
+            user = await vrs.global_bot.fetch_user(user_id)
+            user_barks = users[user_id]["barkCount"]
+            form_list.append(f"{user_sort.index(user_id) + 1}. {user.name}: {user_barks}")
 
-        formatStr = "\n".join(formatList)   
-        embed.add_field(name=f"Leaderboard:", value=f"```{formatStr}```", inline=False)
-        embed.add_field(name=f"`----------`", value=f"_ _", inline=False)
+        form_str = "\n".join(form_list)
+        embed.add_field(name="Leaderboard:", value=f"```{form_str}```", inline=False)
+        embed.add_field(name="`----------`", value="_ _", inline=False)
 
         if str(ctx.author.id) in users:
-            userYou = users[str(ctx.author.id)]["barkCount"]
-            userYouIndex = userSort.index(str(ctx.author.id))
-            userYouPos = userYouIndex + 1
+            user_you = users[str(ctx.author.id)]["barkCount"]
+            user_you_index = user_sort.index(str(ctx.author.id))
+            user_you_pos = user_you_index + 1
         else:
-            userYou = 0
-            userYouIndex = "?"
-            userYouPos = "?"
-        
-        async def barkRelative(pos, place):
-            async def getUser(pos, offset):
-                pos -= 1
-                user = await main.bot.fetch_user(userSort[pos + offset])
-                userBarks = users[str(user.id)]["barkCount"]
-                return user, userBarks
-            
-            if place == "up":
-                user, userBarks = await getUser(pos, -1)
-                return f"Next place up: `{pos - 1}. {user.name}: {userBarks}`"
-            elif place == "down":
-                user, userBarks = await getUser(pos, 1)
-                return f"Previous place down: `{pos + 1}. {user.name}: {userBarks}`"
-        
+            user_you = 0
+            user_you_index = "?"
+            user_you_pos = "?"
 
-        if userYouIndex == "?":
-            descFirst = await barkRelative(len(userSort), "up")
-            descLast = "You didn't make me bark yet!"
-        elif userYouIndex == 0:
-            descFirst = await barkRelative(userYouPos, "down")
-            descLast = "You're #1!"
-        elif userYouIndex == (len(userSort) - 1):
-            descFirst = await barkRelative(userYouPos, "up")
-            descLast = "You're last place!"
+        async def bark_relative(pos, place):
+            async def get_user(pos, offset):
+                pos -= 1
+                user = await vrs.global_bot.fetch_user(user_sort[pos + offset])
+                user_barks = users[str(user.id)]["barkCount"]
+                return user, user_barks
+
+            if place == "up":
+                user, user_barks = await get_user(pos, -1)
+                return f"Next place up: `{pos - 1}. {user.name}: {user_barks}`"
+            elif place == "down":
+                user, user_barks = await get_user(pos, 1)
+                return f"Previous place down: `{pos + 1}. {user.name}: {user_barks}`"
+
+
+        if user_you_index == "?":
+            desc_first = await bark_relative(len(user_sort), "up")
+            desc_last = "You didn't make me bark yet!"
+        elif user_you_index == 0:
+            desc_first = await bark_relative(user_you_pos, "down")
+            desc_last = "You're #1!"
+        elif user_you_index == (len(user_sort) - 1):
+            desc_first = await bark_relative(user_you_pos, "up")
+            desc_last = "You're last place!"
         else:
-            descFirst = await barkRelative(userYouPos, "up")
-            descLast = await barkRelative(userYouPos, "down")
-        
-        embed.add_field(name=f"Your total barks: {userYou} (#{userYouPos})", value=f"{descFirst}\n{descLast}", inline=False)
+            desc_first = await bark_relative(user_you_pos, "up")
+            desc_last = await bark_relative(user_you_pos, "down")
+
+        embed.add_field(name=f"Your total barks: {user_you} (#{user_you_pos})", value=f"{desc_first}\n{desc_last}", inline=False)
 
         await ctx.send(embed=embed)
 
 
-    @cw.command(
-        category=cw.Categories.barking,
+    @c_w.command(
+        category=c_w.Categories.barking,
         description="No. No. Please don't.",
-        cooldown=60 * 2, cooldownType=cmds.BucketType.guild
+        cooldown=60 * 2, cooldown_type=cmds.BucketType.guild
     )
     async def meow(self, ctx):
-        await ef.delayMessage(ctx, f"...")
-        await ef.delayMessage(ctx, f"...what did you just make me do.")
-        await ef.delayMessage(ctx, f"*grrrrrrrrrrRRRRRR**RRRRRRRRRR***", duration=1)
+        await e_f.delay_message(ctx, "...")
+        await e_f.delay_message(ctx, "...what did you just make me do.")
+        await e_f.delay_message(ctx, "*grrrrrrrrrrRRRRRR**RRRRRRRRRR***", duration=1)
         await ctx.send("*(Art by glasses!)*")
-        await ef.delayMessage(ctx, f"https://cdn.discordapp.com/attachments/588692481001127936/867477895924154378/image0.png", duration=0.5)
-        await ef.delayMessage(ctx, f"**FEEL THE WRATH OF MY MACHINE GUN ATTACHMENTS, HUMAN**", duration=1)
-        await ef.delayMessage(ctx, f"*BULLET RAIN (-10 barks >:( )*", duration=2)
-        await self.updateBark(ctx, -10)
-    
+        await e_f.delay_message(ctx, "https://cdn.discordapp.com/attachments/588692481001127936/867477895924154378/image0.png", duration=0.5)
+        await e_f.delay_message(ctx, "**FEEL THE WRATH OF MY MACHINE GUN ATTACHMENTS, HUMAN**", duration=1)
+        await e_f.delay_message(ctx, "*BULLET RAIN (-10 barks >:( )*", duration=2)
+        await self.update_bark(ctx, -10)
+
 
 def setup(bot):
     bot.add_cog(Barking(bot))
