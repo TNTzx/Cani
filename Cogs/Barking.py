@@ -9,9 +9,10 @@ import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import global_vars.variables as vrs
-import functions.firebase.firebase_interaction as f_i
-import functions.other_functions as e_f
 import functions.command_related.command_wrapper as c_w
+import functions.exceptions.send_error as s_e
+import functions.firebase.firebase_interaction as f_i
+import functions.other_functions as o_f
 
 
 class Barking(cmds.Cog):
@@ -106,7 +107,7 @@ class Barking(cmds.Cog):
 
         users = f_i.get_data(path + ["users"])
         if users == "null":
-            await e_f.sendError(ctx, "*There wasn't anyone that made me bark yet. Be the first one!*")
+            await s_e.send_error(ctx, "*There wasn't anyone that made me bark yet. Be the first one!*")
             return
 
         user_sort = sorted(users, key=lambda x: users[x]["barkCount"])
@@ -114,7 +115,7 @@ class Barking(cmds.Cog):
 
         total_barks = f_i.get_data(path + ["totalBarks"])
 
-        embed = nx.Embed(title="Leaderboard", title="Barking Leaderboard!", color=0x00FFFF)
+        embed = nx.Embed(title="Barking Leaderboard!", color=0x00FFFF)
         embed.add_field(name=f"Total Barks: {total_barks}", value="`----------`", inline=False)
 
         form_list = []
@@ -175,13 +176,13 @@ class Barking(cmds.Cog):
         cooldown=60 * 2, cooldown_type=cmds.BucketType.guild
     )
     async def meow(self, ctx):
-        await e_f.delay_message(ctx, "...")
-        await e_f.delay_message(ctx, "...what did you just make me do.")
-        await e_f.delay_message(ctx, "*grrrrrrrrrrRRRRRR**RRRRRRRRRR***", duration=1)
+        await o_f.delay_message(ctx, "...")
+        await o_f.delay_message(ctx, "...what did you just make me do.")
+        await o_f.delay_message(ctx, "*grrrrrrrrrrRRRRRR**RRRRRRRRRR***", duration=1)
         await ctx.send("*(Art by glasses!)*")
-        await e_f.delay_message(ctx, "https://cdn.discordapp.com/attachments/588692481001127936/867477895924154378/image0.png", duration=0.5)
-        await e_f.delay_message(ctx, "**FEEL THE WRATH OF MY MACHINE GUN ATTACHMENTS, HUMAN**", duration=1)
-        await e_f.delay_message(ctx, "*BULLET RAIN (-10 barks >:( )*", duration=2)
+        await o_f.delay_message(ctx, "https://cdn.discordapp.com/attachments/588692481001127936/867477895924154378/image0.png", duration=0.5)
+        await o_f.delay_message(ctx, "**FEEL THE WRATH OF MY MACHINE GUN ATTACHMENTS, HUMAN**", duration=1)
+        await o_f.delay_message(ctx, "*BULLET RAIN (-10 barks >:( )*", duration=2)
         await self.update_bark(ctx, -10)
 
 

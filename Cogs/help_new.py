@@ -33,7 +33,7 @@ class Help(cmds.Cog):
                 title="Help!",
                 description=f"""**Command Prefix: `{vrs.CMD_PREFIX}`**
                     {"I'm created by //TNTz!"}""",
-                color=0xFFAEAE
+                color=nx.Colour.blurple()
             )
             for category, names in c_w.ListOfCommands.commands_all.items():
 
@@ -66,7 +66,7 @@ class Help(cmds.Cog):
 
             embed = nx.Embed(
                 title=f"Help: {help_docs.category} // {vrs.CMD_PREFIX}{cmd.name}",
-                color=0xFFAEAE
+                color=nx.Colour.blurple()
             )
 
             async def create_separator():
@@ -96,10 +96,8 @@ class Help(cmds.Cog):
             embed.add_field(name=f"Can be used {guild_only}", value="_ _", inline=False)
 
             require = help_docs.require
-            if require.guild_owner or require.guild_admin or require.dev or require.pa_mod:
+            if require.guild_owner or require.guild_admin or require.dev:
                 requirements = []
-                if require.pa_mod:
-                    requirements.append("Project Arrhythmia Moderators")
                 if require.guild_owner:
                     requirements.append("Server Owner")
                 if require.guild_admin:

@@ -26,7 +26,7 @@ fb_auth = fb.auth()
 env_auth = env_dict["auth"]
 fb_user = fb_auth.sign_in_with_email_and_password(env_auth["email"], env_auth["password"])
 
-def get_db_token():
+def get_token():
     """Gets the firebase token."""
     fb_token = fb_user['idToken']
     return fb_token
