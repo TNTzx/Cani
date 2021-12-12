@@ -1,4 +1,4 @@
-"""Stores dataclasses."""
+"""A library for dataclasses."""
 
 # pylint: disable=line-too-long
 # pylint: disable=unused-argument
@@ -6,11 +6,13 @@
 # pylint: disable=too-many-instance-attributes
 # pylint: disable=too-many-public-methods
 
-import dataclasses as dtc
+import abc
 import functions.other_functions as o_f
 
+
 class Dataclass():
-    """Contains functions for dataclasses."""
+    """Base class for dataclasses."""
+
     def get_dict(self):
         """Gets the dictionary object of the function."""
         return o_f.get_dict_attr(self)
@@ -18,6 +20,10 @@ class Dataclass():
     def from_dict(self, data: dict):
         """Returns an object with data given by a dictionary."""
         for key, value in data.items():
+            try:
+                getattr(self, key)
+            except AttributeError as exc:
+                raise AttributeError(f"Attribute '{key}' not found for object of type '{self.__class__.__name__}'") from exc
             if isinstance(value, dict):
                 obj: Dataclass = getattr(self, key)
                 setattr(self, key, obj.from_dict(value))
@@ -29,21 +35,46 @@ class Dataclass():
         return str(self.get_dict())
 
 
-@dtc.dataclass()
-class NewClass(Dataclass):
-    """test class"""
-    class NoBeans(Dataclass):
-        """test class"""
-        more_beans: int = 0
+class DataclassSub(Dataclass):
+    """Base class for dataclasses inside dataclasses."""
 
-    beans: int = 0
-    no_beans: NoBeans = NoBeans()
 
-newestest = NewClass().from_dict({
-    "beans": 1892361278931,
-    "no_beans": {
-        "more_beans": 10
-    }
-})
+class StandardDataclass(abc.ABC, Dataclass):
+    """Base class for standard dataclasses.
+    These are classes used as a base for other non-standard dataclasses."""
 
-print(newestest)
+    def default_data(self):
+        return self.get_dict()
+    
+    def end_init(self):
+        self.from_dict(self.default_data())
+
+class NonStandardDataclass(abc.ABC, Dataclass):
+    """Base class for non-standard dataclasses.
+    These are classes that are slight derivations from a standard dataclass."""
+
+    @abc.abstractproperty
+    def default_class(self):
+        """Default class to bind to."""
+
+    def __init__(self, data: StandardDataclass | dict = None) -> None:
+        super().__init__()
+
+    def get_default_dict(self):
+        """Gets the default dictionary for this dataclass."""
+        return self.__class__(self.default_class()).get_dict()
+
+    def dict_from_default(self, data: StandardDataclass):
+        """Returns a dictionary with default values of the default dataclass converted into this dataclass."""
+        return {}
+
+    def end_init(self, data: StandardDataclass | dict = None):
+        """Added to the end of the __init__ function to put the data into the dataclass's fields."""
+        if isinstance(data, self.default_class):
+            converted_data = self.dict_from_default(data)
+        elif isinstance(data, dict):
+            converted_data = data
+        else:
+            converted_data = self.dict_from_default(self.default_class())
+
+        self.from_dict(converted_data)
