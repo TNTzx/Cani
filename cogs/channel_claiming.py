@@ -28,9 +28,23 @@ class ChannelClaim(cmds.Cog):
         path = await self.path(ctx)
         data = f_i.get_data(path + ["availableChannels"])
         if not data == "null":
-            return data
+            return {
+                channel["channelId"]: {
+                    "claimStatus": channel["claimStatus"],
+                    "location": channel["location"]
+                    }
+                for channel in data}
         else:
             return {}
+    
+    async def edit_claims(self, ctx: cmds.Context, data: dict[int, dict[str, bool | str]]):
+        path = await self.path(ctx)
+        new_data = [{
+            "channelId": str(channel_id),
+            "claimStatus": channel_data["claimStatus"],
+            "location": channel_data["location"]
+        } for channel_id, channel_data in data.items()]
+        f_i.override_data(path + ["availableChannels"], new_data)
 
     async def is_rp_channel(self, ctx: cmds.Context):
         channels = await self.get_channels(ctx)
@@ -42,11 +56,10 @@ class ChannelClaim(cmds.Cog):
             await s_e.send_error(ctx, "*You can't have locations with more than 200 characters! >:(*")
             raise c_e.ExitFunction("Exited Function.")
 
-        path = await self.path(ctx)
         channels = await self.get_channels(ctx)
         channels[str(ctx.channel.id)]["claimStatus"] = claim_status
         channels[str(ctx.channel.id)]["location"] = place
-        f_i.edit_data(path + ["availableChannels"], channels)
+        await self.edit_claims(ctx, channels)
 
 
     async def update_embed(self, ctx: cmds.Context):
@@ -76,8 +89,8 @@ class ChannelClaim(cmds.Cog):
             await s_e.send_error(ctx, "*There hasn't been a channel added to display claimed channels. Please ask the moderators / admins to add one!*")
             return
 
-        embed_channel = vrs.global_bot.get_channel(embed_info["channel"])
-        embed_message = await embed_channel.fetch_message(embed_info["messageId"])
+        embed_channel = vrs.global_bot.get_channel(int(embed_info["channel"]))
+        embed_message = await embed_channel.fetch_message(int(embed_info["messageId"]))
 
         await embed_message.edit(embed=embed)
 
@@ -94,14 +107,14 @@ class ChannelClaim(cmds.Cog):
             f"{vrs.CMD_PREFIX}claimchannel claim \"Quaz's HQ\"",
             f"{vrs.CMD_PREFIX}claimchannel unclaim"
         ])
-    async def claimchannel(self, ctx: cmds.Context, action, *dump, place=None):
+    async def claimchannel(self, ctx: cmds.Context, action, place=None):
         if not await self.is_rp_channel(ctx):
             await s_e.send_error(ctx, "*This isn't an RP channel! >:(*", cooldown_reset=True)
             return
 
         async def claim():
-            if o_f.is_not_blank_str(place):
-                await s_e.send_error(ctx, f"*You didn't specify what the `<location>` is! Type `{vrs.CMD_PREFIX}help` to get help! >:(*", cooldown_reset=True, send_author=True)
+            if not o_f.is_not_blank_str(place):
+                await s_e.send_error(ctx, f"*You didn't specify what the `<location>` is! Type `{vrs.CMD_PREFIX}help` to get help! >:(*", cooldown_reset=True)
                 return
             await ctx.send("*Claiming channel...*")
             await self.edit_channel_database(ctx, True, place)
@@ -111,7 +124,7 @@ class ChannelClaim(cmds.Cog):
         async def unclaim():
             claim_channels = await self.get_channels(ctx)
             if not claim_channels[str(ctx.channel.id)]["claimStatus"]:
-                await s_e.send_error(ctx, "*This channel isn't claimed yet! >:(*", cooldown_reset=True, send_author=True)
+                await s_e.send_error(ctx, "*This channel isn't claimed yet! >:(*", cooldown_reset=True)
                 return
 
             await ctx.send("*Unclaiming channel...*")
@@ -124,7 +137,7 @@ class ChannelClaim(cmds.Cog):
         elif action == "unclaim":
             await unclaim()
         else:
-            await s_e.send_error(ctx, f"*`{action}` isn't a valid argument! Type `{vrs.CMD_PREFIX}help` for help!*", cooldown_reset=True, send_author=True)
+            await s_e.send_error(ctx, f"*`{action}` isn't a valid argument! Type `{vrs.CMD_PREFIX}help` for help!*", cooldown_reset=True)
             return
 
         await self.update_embed(ctx)
@@ -155,7 +168,7 @@ class ChannelClaim(cmds.Cog):
 
         async def update_data(data):
             if not len(data) == 0:
-                f_i.edit_data(path + ["availableChannels"], data)
+                await self.edit_claims(ctx, data)
             else:
                 f_i.edit_data(path, {"availableChannels": "null"})
 
@@ -212,8 +225,8 @@ class ChannelClaim(cmds.Cog):
         message = await channel.send(embed=nx.Embed(title="?", description="?"))
 
         f_i.edit_data(path + ["embedInfo"], {
-                "channel": channel.id,
-                "messageId": message.id
+                "channel": str(channel.id),
+                "messageId": str(message.id)
             })
 
         await ctx.send("*Changing claim display channel...*")
