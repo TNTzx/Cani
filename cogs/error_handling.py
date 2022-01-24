@@ -9,8 +9,8 @@
 import nextcord.ext.commands as cmds
 
 import global_vars.variables as vrs
-import functions.other_functions as o_f
-import functions.exceptions.send_error as s_e
+import backend.other_functions as o_f
+import backend.exceptions.send_error as s_e
 
 
 CMD_PREFIX = vrs.CMD_PREFIX

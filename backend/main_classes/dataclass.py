@@ -9,7 +9,7 @@
 from __future__ import annotations
 import abc
 
-import functions.other_functions as o_f
+import backend.other_functions as o_f
 
 
 class Dataclass():

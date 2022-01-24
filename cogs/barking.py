@@ -9,10 +9,10 @@ import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import global_vars.variables as vrs
-import functions.command_related.command_wrapper as c_w
-import functions.exceptions.send_error as s_e
-import functions.firebase.firebase_interaction as f_i
-import functions.other_functions as o_f
+import backend.command_related.command_wrapper as c_w
+import backend.exceptions.send_error as s_e
+import backend.firebase.firebase_interaction as f_i
+import backend.other_functions as o_f
 
 
 class Barking(cmds.Cog):

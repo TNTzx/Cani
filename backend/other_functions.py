@@ -13,7 +13,7 @@ import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import global_vars.variables as vrs
-import functions.exceptions.custom_exc as c_exc
+import backend.exceptions.custom_exc as c_exc
 
 
 class DataStructure:
