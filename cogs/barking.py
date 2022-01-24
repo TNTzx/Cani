@@ -72,6 +72,10 @@ class Barking(cmds.Cog):
         form_list = []
         for user_id in user_sort:
             user = await vrs.global_bot.fetch_user(user_id)
+            if user is not None:
+                user_name = user
+            else:
+                user_name = "<unknown user>"
             user_barks = users[user_id]["barkCount"]
             form_list.append(f"{user_sort.index(user_id) + 1}. {user.name}: {user_barks}")
 
