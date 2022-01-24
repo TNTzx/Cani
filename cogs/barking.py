@@ -49,7 +49,10 @@ class Barking(cmds.Cog):
 
     @c_w.command(
         category=c_w.Categories.barking,
-        description="Shows barking leaderboards!",
+        description="Shows barking leaderboards, as well as milestones!",
+        parameters={
+            "page": "Page number of the leaderboard."
+        },
         aliases=["br"],
         cooldown=30, cooldown_type=cmds.BucketType.guild
     )
