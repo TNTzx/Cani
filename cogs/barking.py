@@ -146,8 +146,8 @@ class Barking(cmds.Cog):
                 desc_first = await get_relative(author_index, -1)
                 desc_last = "You're last place!"
             else:
-                desc_first = await get_relative(author_index, 1)
-                desc_last = await get_relative(author_index, -1)
+                desc_first = await get_relative(author_index, -1)
+                desc_last = await get_relative(author_index, 1)
         else:
             desc_first = await get_relative(len(bark_datas_list), -1, display_bark_diff=False)
             desc_last = "You didn't make me bark yet!"
