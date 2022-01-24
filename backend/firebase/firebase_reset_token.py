@@ -1,8 +1,8 @@
 """Module that contains the function to reset the token."""
 
 import time
-import datetime
-import pytz
+# import datetime
+# import pytz
 
 import global_vars.variables as vrs
 import global_vars.loggers as lgr
