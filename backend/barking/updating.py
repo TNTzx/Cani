@@ -29,7 +29,7 @@ class SpecialEvent:
         """Triggers the event if the threshold has been met once."""
         path = bark_path(ctx)
         if (f_i.get_data(path + ["totalBarks"]) >= self.threshold) and \
-                (not f_i.get_data(path + ["barkMilestone"]) == self.threshold):
+                (not f_i.get_data(path + ["barkMilestone"]) >= self.threshold):
             await ctx.send("*>>> Oh? Something's happening...*")
             f_i.edit_data(path, {"barkMilestone": self.threshold})
             await ctx.send(self.message)
