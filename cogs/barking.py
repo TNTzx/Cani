@@ -97,8 +97,12 @@ class Barking(cmds.Cog):
         for idx, bark_data in enumerate(bark_datas_paged.items()):
             data_key = bark_data[0]
             user = vrs.global_bot.get_user(int(data_key))
+            if user is not None:
+                user_name = user.name
+            else:
+                user_name = "<unknown user>"
             data_value = bark_data[1]["barkCount"]
-            leaderboard.append(f"{idx + 1 + ((page - 1) * page_length)}. {user.name}: {data_value}")
+            leaderboard.append(f"{idx + 1 + ((page - 1) * page_length)}. {user_name}: {data_value}")
 
         leaderboard = '\n'.join(leaderboard)
         embed.add_field(name="Leaderboard:", value=f"```{leaderboard}```", inline=False)
@@ -142,8 +146,8 @@ class Barking(cmds.Cog):
                 desc_first = await get_relative(author_index, -1)
                 desc_last = "You're last place!"
             else:
-                desc_first = await get_relative(author_index, 1)
-                desc_last = await get_relative(author_index, -1)
+                desc_first = await get_relative(author_index, -1)
+                desc_last = await get_relative(author_index, 1)
         else:
             desc_first = await get_relative(len(bark_datas_list), -1, display_bark_diff=False)
             desc_last = "You didn't make me bark yet!"
