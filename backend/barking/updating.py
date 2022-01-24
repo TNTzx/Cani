@@ -47,7 +47,7 @@ async def trigger_special_events(ctx: cmds.Context):
     """Triggers a special event."""
 
     for event in special_events:
-        event.event_trigger(ctx)
+        await event.event_trigger(ctx)
 
     # async def event_trigger(milestone, message):
     #     if f_i.get_data(path + ["totalBarks"]) >= milestone and (not f_i.get_data(path + ["barkMilestone"]) == milestone):
