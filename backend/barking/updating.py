@@ -6,10 +6,10 @@
 # pylint: disable=line-too-long
 
 
-from typing import Callable
 # import nextcord as nx
 import nextcord.ext.commands as cmds
 
+import backend.barking.special_events as s_ev
 import backend.firebase.firebase_interaction as f_i
 
 
@@ -18,48 +18,11 @@ def bark_path(ctx: cmds.Context):
     return ["guilds", str(ctx.guild.id), "fun", "barking"]
 
 
-class SpecialEvent:
-    """Class for special events."""
-    def __init__(self, threshold: int, message: str, func: Callable = None):
-        self.threshold = threshold
-        self.message = message
-        self.func = func
-
-    async def event_trigger(self, ctx: cmds.Context):
-        """Triggers the event if the threshold has been met once."""
-        path = bark_path(ctx)
-        if (f_i.get_data(path + ["totalBarks"]) >= self.threshold) and \
-                (not f_i.get_data(path + ["barkMilestone"]) >= self.threshold):
-            await ctx.send("*>>> Oh? Something's happening...*")
-            f_i.edit_data(path, {"barkMilestone": self.threshold})
-            await ctx.send(self.message)
-
-special_events = [
-    SpecialEvent(2500, (
-        ">>> YAYYAYAYAYYAAYAYA- AM HAPPY!! :D!!\n"
-        "*Cani likes this server! The command `++pat` has been unlocked!*\n"
-        "*Use `++help pat` for more information.*"
-    ))
-]
-
-
 async def trigger_special_events(ctx: cmds.Context):
     """Triggers a special event."""
 
-    for event in special_events:
+    for event in s_ev.special_events:
         await event.event_trigger(ctx)
-
-    # async def event_trigger(milestone, message):
-    #     if f_i.get_data(path + ["totalBarks"]) >= milestone and (not f_i.get_data(path + ["barkMilestone"]) == milestone):
-    #         await ctx.send("*>>> Oh? Something's happening...*")
-    #         f_i.edit_data(path, {"barkMilestone": milestone})
-    #         await ctx.send(message)
-
-    # await event_trigger(2500, (
-    #     ">>> YAYYAYAYAYYAAYAYA- AM HAPPY!! :D!!\n"
-    #     "*Cani likes this server! The command `++pat` has been unlocked!*\n"
-    #     "*Use `++help pat` for more information.*"
-    # ))
 
 
 async def update_bark(ctx: cmds.Context, add: int):
