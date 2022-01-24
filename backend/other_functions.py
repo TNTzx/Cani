@@ -13,7 +13,7 @@ import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import global_vars.variables as vrs
-import functions.exceptions.custom_exc as c_exc
+import backend.exceptions.custom_exc as c_exc
 
 
 class DataStructure:
@@ -157,3 +157,27 @@ async def delay_message(ctx: cmds.Context, text: str, duration: int = 2, delete=
         await message.delete()
     else:
         return message
+
+def pr_print(value, htchar='\t', lfchar='\n', indent=0):
+    """Returns a string for pretty logging."""
+    nlch = lfchar + htchar * (indent + 1)
+    if isinstance(value, dict):
+        items = [
+            nlch + repr(key) + ': ' + pr_print(value[key], htchar, lfchar, indent + 1)
+            for key in value
+        ]
+        return '{%s}' % (','.join(items) + lfchar + htchar * indent)
+    if isinstance(value, list):
+        items = [
+            nlch + pr_print(item, htchar, lfchar, indent + 1)
+            for item in value
+        ]
+        return '[%s]' % (','.join(items) + lfchar + htchar * indent)
+    if isinstance(value, tuple):
+        items = [
+            nlch + pr_print(item, htchar, lfchar, indent + 1)
+            for item in value
+        ]
+        return '(%s)' % (','.join(items) + lfchar + htchar * indent)
+
+    return repr(value)

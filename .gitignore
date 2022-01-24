@@ -132,3 +132,5 @@ dmypy.json
 # Custom!
 testcode.py
 Archived/
+logs/
+.vscode/

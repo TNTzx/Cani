@@ -7,7 +7,7 @@ import nextcord as nx
 import nextcord.ext.commands as commands
 
 import global_vars.variables as vrs
-import functions.other_functions as o_f
+import backend.other_functions as o_f
 
 
 ERROR_PREFIX = "**Error!**\n"

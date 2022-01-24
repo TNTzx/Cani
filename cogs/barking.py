@@ -9,65 +9,16 @@ import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import global_vars.variables as vrs
-import functions.command_related.command_wrapper as c_w
-import functions.exceptions.send_error as s_e
-import functions.firebase.firebase_interaction as f_i
-import functions.other_functions as o_f
+import backend.command_related.command_wrapper as c_w
+import backend.barking.updating as b_u
+import backend.exceptions.send_error as s_e
+import backend.firebase.firebase_interaction as f_i
+import backend.other_functions as o_f
 
 
 class Barking(cmds.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    def bark_path(self, ctx: cmds.Context):
-        return ["guilds", str(ctx.guild.id), "fun", "barking"]
-
-
-    async def special_events(self, ctx: cmds.Context):
-        path = self.bark_path(ctx)
-
-        async def event_trigger(milestone, message):
-            if f_i.get_data(path + ["totalBarks"]) >= milestone and (not f_i.get_data(path + ["barkMilestone"]) == milestone):
-                await ctx.send("*>>> Oh? Something's happening...*")
-                f_i.edit_data(path, {"barkMilestone": milestone})
-                await ctx.send(message)
-
-        await event_trigger(7500, ">>> YAYYAYAYAYYAAYAYA- AM HAPPY!! :D!!\n*Cani likes this server! The command `++pat` has been unlocked!*\n*Use `++help pat` for more information.*")
-
-
-    async def update_bark(self, ctx: cmds.Context, add: int):
-        path = self.bark_path(ctx)
-
-        async def check_if_negative(bark_count):
-            if bark_count < 0:
-                bark_count = 0
-            return bark_count
-
-
-        if f_i.is_data_exists(path + ["users", str(ctx.author.id)]):
-            bark_total = f_i.get_data(path + ["totalBarks"])
-            bark_total += add
-            bark_total = await check_if_negative(bark_total)
-            f_i.edit_data(path, {"totalBarks": bark_total})
-
-            bark_user = f_i.get_data(path + ["users", str(ctx.author.id), "barkCount"])
-            bark_user += add
-            bark_user = await check_if_negative(bark_user)
-            f_i.edit_data(path + ["users", str(ctx.author.id)], {"barkCount": bark_user})
-        else:
-            bark_total = f_i.get_data(path + ["totalBarks"])
-            bark_total += await check_if_negative(add)
-            f_i.edit_data(path, {"totalBarks": bark_total})
-
-            bark_user = await check_if_negative(add)
-            default_data = {
-                str(ctx.author.id): {
-                    "barkCount": bark_user
-                }
-            }
-            f_i.edit_data(path + ["users"], default_data)
-
-        await self.special_events(ctx)
 
 
     @c_w.command(
@@ -78,21 +29,21 @@ class Barking(cmds.Cog):
     )
     async def bark(self, ctx: cmds.Context):
         await ctx.send("*Bark! :D*")
-        await self.update_bark(ctx, 1)
+        await b_u.update_bark(ctx, 1)
 
 
     @c_w.command(
         category=c_w.Categories.barking,
         description="Patpat! :D",
         cooldown=60 * 60 * 12, cooldown_type=cmds.BucketType.guild,
-        show_condition=lambda ctx: f_i.get_data(Barking.bark_path(Barking(vrs.global_bot), ctx) + ["barkMilestone"]) >= 7500
+        show_condition=lambda ctx: f_i.get_data(b_u.bark_path(ctx) + ["barkMilestone"]) >= 2500
     )
     async def pat(self, ctx: cmds.Context):
         add_bark = 50
 
         await ctx.send("https://cdn.discordapp.com/emojis/889713240714649650.gif")
         await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+{add_bark} barks to {ctx.author.mention}!)*""")
-        await self.update_bark(ctx, add_bark)
+        await b_u.update_bark(ctx, add_bark)
 
 
     @c_w.command(
@@ -103,7 +54,7 @@ class Barking(cmds.Cog):
     )
     async def barkrank(self, ctx: cmds.Context):
         await ctx.send("*Getting leaderboard...*")
-        path = self.bark_path(ctx)
+        path = b_u.bark_path(ctx)
 
         users = f_i.get_data(path + ["users"])
         if users == "null":
@@ -183,7 +134,7 @@ class Barking(cmds.Cog):
         await o_f.delay_message(ctx, "https://cdn.discordapp.com/attachments/588692481001127936/867477895924154378/image0.png", duration=0.5)
         await o_f.delay_message(ctx, "**FEEL THE WRATH OF MY MACHINE GUN ATTACHMENTS, HUMAN**", duration=1)
         await o_f.delay_message(ctx, "*BULLET RAIN (-10 barks >:( )*", duration=2)
-        await self.update_bark(ctx, -10)
+        await b_u.update_bark(ctx, -10)
 
 
 def setup(bot):

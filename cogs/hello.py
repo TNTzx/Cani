@@ -10,8 +10,8 @@ import nextcord.ext.commands as cmds
 
 import global_vars.variables as vrs
 import global_vars.defaultstuff as defs
-import functions.command_related.command_wrapper as c_w
-import functions.firebase.firebase_interaction as f_i
+import backend.command_related.command_wrapper as c_w
+import backend.firebase.firebase_interaction as f_i
 
 
 async def update_data():
