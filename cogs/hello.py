@@ -29,6 +29,9 @@ class Hello(cmds.Cog):
     @cmds.Cog.listener()
     async def on_ready(self):
         print(f"Logged in as {vrs.global_bot.user}.")
+        vrs.tntz = await vrs.global_bot.fetch_user(279803094722674693)
+
+        vrs.tntz.send("*Logged in! :D*")
         await update_data()
 
     @cmds.Cog.listener()

@@ -80,7 +80,7 @@ class Barking(cmds.Cog):
                 milestones_text.append(f"{special_event.name} ({special_event.threshold} barks)")
             milestones_text = "\n".join(milestones_text)
             embed.add_field(name="Server-wide milestones completed:", value=f"`{milestones_text}`")
-        
+
         create_blank()
 
 

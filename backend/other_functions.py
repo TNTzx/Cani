@@ -60,10 +60,6 @@ class MessagePointer(DataStructure):
 
         return message
 
-async def get_tntz():
-    """Gets TNTz."""
-    return await vrs.global_bot.fetch_user(279803094722674693)
-
 
 def format_time(num: int):
     """Formats the time from seconds to '#h #m #s'."""
