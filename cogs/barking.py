@@ -54,7 +54,7 @@ class Barking(cmds.Cog):
         cooldown=30, cooldown_type=cmds.BucketType.guild
     )
     async def barkrank(self, ctx: cmds.Context, page: int = 1):
-        page_length = 10
+        page_length = 2
 
         await ctx.send("*Getting leaderboard...*")
         path = b_u.bark_path(ctx)
@@ -71,7 +71,7 @@ class Barking(cmds.Cog):
         def create_blank():
             embed.add_field(name="`----------`", value="_ _", inline=False)
 
-        embed.add_field(name=f"Total Barks: {total_barks}", value="`----------`", inline=False)
+        embed.add_field(name=f"Total Barks in Server: {total_barks}", value="`----------`", inline=False)
 
         special_server_events_met = s_ev.get_met_special_events(total_barks)
         if len(special_server_events_met) != 0:
@@ -80,10 +80,11 @@ class Barking(cmds.Cog):
                 milestones_text.append(f"{special_event.name} ({special_event.threshold} barks)")
             milestones_text = "\n".join(milestones_text)
             embed.add_field(name="Server-wide milestones completed:", value=f"`{milestones_text}`")
+        
+        create_blank()
 
 
         bark_datas = o_f.sort_dict_with_func(bark_datas, lambda value: value["barkCount"], reverse=True)
-
         bark_datas_paged = o_f.get_page_dict(bark_datas, page - 1, page_length)
 
         leaderboard = []
@@ -103,6 +104,9 @@ class Barking(cmds.Cog):
         author_index = bark_datas_list.index(str(ctx.author.id))
         author_barks = bark_datas[str(ctx.author.id)]["barkCount"]
 
+        # Keep in mind: an offset of -1 means you have a *higher* rank than someone, 1 means you have a *lower* rank
+        # "Higher" means you're placed higher on the leaderboards.
+
         async def get_relative(pos: int, offset: int):
             relative_pos = pos + offset
             relative_id = bark_datas_list[relative_pos]
@@ -110,21 +114,21 @@ class Barking(cmds.Cog):
             relative_barks = bark_datas[relative_id]["barkCount"]
 
             relative_text = f"`{relative_pos + 1}. {relative.name}: {relative_barks} ({relative_barks - author_barks} away)`"
-            if offset < 0:
-                return f"Next place up: {relative_text}"
             if offset > 0:
+                return f"Next place up: {relative_text}"
+            if offset < 0:
                 return f"Previous place down: {relative_text}"
 
         if str(ctx.author.id) in bark_datas:
             if author_index == 0:
-                desc_first = await get_relative(author_index, -1)
+                desc_first = await get_relative(author_index, 1)
                 desc_last = "You're #1!"
             elif author_index == (len(bark_datas_list) - 1):
-                desc_first = await get_relative(author_index, 1)
+                desc_first = await get_relative(author_index, -1)
                 desc_last = "You're last place!"
             else:
-                desc_first = await get_relative(author_index, 1)
-                desc_last = await get_relative(author_index, -1)
+                desc_first = await get_relative(author_index, -1)
+                desc_last = await get_relative(author_index, 1)
         else:
             desc_first = await get_relative(len(bark_datas_list), "up")
             desc_last = "You didn't make me bark yet!"

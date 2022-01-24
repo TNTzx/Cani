@@ -31,7 +31,8 @@ class SpecialEvent:
             f_i.edit_data(path, {"barkMilestone": self.threshold})
             await ctx.send(self.message)
 
-            self.func()
+            if self.func is not None:
+                self.func()
 
     def has_met_threshold(self, bark_count: int):
         """Returns true if the threshold has been met."""
