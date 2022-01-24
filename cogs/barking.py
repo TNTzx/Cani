@@ -54,7 +54,7 @@ class Barking(cmds.Cog):
         cooldown=30, cooldown_type=cmds.BucketType.guild
     )
     async def barkrank(self, ctx: cmds.Context, page: int = 1):
-        page_length = 2
+        page_length = 10
 
         await ctx.send("*Getting leaderboard...*")
         path = b_u.bark_path(ctx)
