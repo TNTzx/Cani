@@ -201,7 +201,7 @@ def get_page_dict(_dict: dict, page: int, page_length: int):
 
 def page_amount(_list: list, page_length: int):
     """Gets the amount of pages available for the list."""
-    return math.floor(len(_list) / page_length) + 1
+    return math.ceil(len(_list) / page_length)
 
 
 def sort_dict_with_func(_dict: dict, func, reverse = False):

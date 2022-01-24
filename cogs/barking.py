@@ -54,7 +54,7 @@ class Barking(cmds.Cog):
         cooldown=30, cooldown_type=cmds.BucketType.guild
     )
     async def barkrank(self, ctx: cmds.Context, page: int = 1):
-        page_length = 2
+        page_length = 10
 
         await ctx.send("*Getting leaderboard...*")
         path = b_u.bark_path(ctx)
@@ -79,7 +79,7 @@ class Barking(cmds.Cog):
             for special_event in special_server_events_met:
                 milestones_text.append(f"{special_event.name} ({special_event.threshold} barks)")
             milestones_text = "\n".join(milestones_text)
-            embed.add_field(name="Server-wide milestones completed:", value=f"`{milestones_text}`")
+            embed.add_field(name="Server-wide milestones completed:", value=f"`{milestones_text}`", inline=False)
 
         create_blank()
 
@@ -130,9 +130,9 @@ class Barking(cmds.Cog):
 
             relative_text = f"`{relative_pos + 1}. {relative.name}: {relative_barks}{bark_diff_display}`"
             if offset > 0:
-                return f"Next place up: {relative_text}"
-            if offset < 0:
                 return f"Previous place down: {relative_text}"
+            if offset < 0:
+                return f"Next place up: {relative_text}"
 
         if str(ctx.author.id) in bark_datas:
             if author_index == 0:
@@ -142,8 +142,8 @@ class Barking(cmds.Cog):
                 desc_first = await get_relative(author_index, -1)
                 desc_last = "You're last place!"
             else:
-                desc_first = await get_relative(author_index, -1)
-                desc_last = await get_relative(author_index, 1)
+                desc_first = await get_relative(author_index, 1)
+                desc_last = await get_relative(author_index, -1)
         else:
             desc_first = await get_relative(len(bark_datas_list), -1, display_bark_diff=False)
             desc_last = "You didn't make me bark yet!"
@@ -152,7 +152,7 @@ class Barking(cmds.Cog):
         embed.add_field(name=f"Your total barks: {author_barks} (#{author_place})", value=f"{desc_first}\n{desc_last}", inline=False)
 
         if page_amount > 1:
-            embed.set_footer(text=f"Page {page} of {page_amount}. Use {vrs.CMD_PREFIX}barkrank <page> to select page.")
+            embed.set_footer(text=f"Page {page} of {page_amount}. Use {vrs.CMD_PREFIX}barkrank <page> to select a page.")
 
         await ctx.send(embed=embed)
 
