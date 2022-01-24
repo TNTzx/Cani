@@ -56,7 +56,7 @@ def main():
 
     # Log in
     log_something("Logging into bot...")
-    bot_token = os.environ['FadbToken']
+    bot_token = os.environ['CaniToken']
     bot.run(bot_token)
 
 if __name__ == "__main__":
