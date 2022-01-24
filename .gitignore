@@ -133,3 +133,4 @@ dmypy.json
 testcode.py
 Archived/
 logs/
+.vscode/
