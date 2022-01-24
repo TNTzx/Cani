@@ -11,6 +11,7 @@ import nextcord.ext.commands as cmds
 import global_vars.variables as vrs
 import backend.command_related.command_wrapper as c_w
 import backend.barking.updating as b_u
+import backend.barking.special_events as s_ev
 import backend.exceptions.send_error as s_e
 import backend.firebase.firebase_interaction as f_i
 import backend.other_functions as o_f
@@ -67,11 +68,21 @@ class Barking(cmds.Cog):
         total_barks = f_i.get_data(path + ["totalBarks"])
 
         embed = nx.Embed(title="Barking Leaderboard!", color=0x00FFFF)
-        embed.add_field(name=f"Total Barks: {total_barks}", value="`----------`", inline=False)
         def create_blank():
             embed.add_field(name="`----------`", value="_ _", inline=False)
 
-        bark_datas = o_f.sort_dict_with_func(bark_datas, lambda value: value["barkCount"])
+        embed.add_field(name=f"Total Barks: {total_barks}", value="`----------`", inline=False)
+
+        special_server_events_met = s_ev.get_met_special_events(total_barks)
+        if len(special_server_events_met) != 0:
+            milestones_text = []
+            for special_event in special_server_events_met:
+                milestones_text.append(f"{special_event.name} ({special_event.threshold} barks)")
+            milestones_text = "\n".join(milestones_text)
+            embed.add_field(name="Server-wide milestones completed:", value=f"`{milestones_text}`")
+
+
+        bark_datas = o_f.sort_dict_with_func(bark_datas, lambda value: value["barkCount"], reverse=True)
 
         bark_datas_paged = o_f.get_page_dict(bark_datas, page - 1, page_length)
 
@@ -80,7 +91,7 @@ class Barking(cmds.Cog):
             data_key = bark_data[0]
             user = vrs.global_bot.get_user(int(data_key))
             data_value = bark_data[1]["barkCount"]
-            leaderboard.append(f"{idx + (page * page_length)}. {user.name}: {data_value}")
+            leaderboard.append(f"{idx + 1 + ((page - 1) * page_length)}. {user.name}: {data_value}")
 
         leaderboard = '\n'.join(leaderboard)
         embed.add_field(name="Leaderboard:", value=f"```{leaderboard}```", inline=False)
@@ -98,10 +109,10 @@ class Barking(cmds.Cog):
             relative = vrs.global_bot.get_user(int(relative_id))
             relative_barks = bark_datas[relative_id]["barkCount"]
 
-            relative_text = f"`{relative_pos}. {relative.name}: {relative_barks} ({relative_barks - author_barks} away)`"
-            if offset > 0:
-                return f"Next place up: {relative_text}"
+            relative_text = f"`{relative_pos + 1}. {relative.name}: {relative_barks} ({relative_barks - author_barks} away)`"
             if offset < 0:
+                return f"Next place up: {relative_text}"
+            if offset > 0:
                 return f"Previous place down: {relative_text}"
 
         if str(ctx.author.id) in bark_datas:
