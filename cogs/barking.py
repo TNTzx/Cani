@@ -54,7 +54,7 @@ class Barking(cmds.Cog):
         cooldown=30, cooldown_type=cmds.BucketType.guild
     )
     async def barkrank(self, ctx: cmds.Context, page: int = 1):
-        page_length = 10
+        page_length = 2
 
         await ctx.send("*Getting leaderboard...*")
         path = b_u.bark_path(ctx)
@@ -85,6 +85,12 @@ class Barking(cmds.Cog):
 
 
         bark_datas = o_f.sort_dict_with_func(bark_datas, lambda value: value["barkCount"], reverse=True)
+        page_amount = o_f.page_amount(bark_datas, page_length)
+
+        if page > page_amount:
+            await s_e.send_error(ctx, "*There's no more pages past that! >:(*")
+            return
+
         bark_datas_paged = o_f.get_page_dict(bark_datas, page - 1, page_length)
 
         leaderboard = []
@@ -101,19 +107,28 @@ class Barking(cmds.Cog):
 
 
         bark_datas_list = list(bark_datas.keys())
-        author_index = bark_datas_list.index(str(ctx.author.id))
-        author_barks = bark_datas[str(ctx.author.id)]["barkCount"]
+        try:
+            author_index = bark_datas_list.index(str(ctx.author.id))
+            author_place = author_index + 1
+            author_barks = bark_datas[str(ctx.author.id)]["barkCount"]
+        except ValueError:
+            author_place = author_barks = "?"
 
         # Keep in mind: an offset of -1 means you have a *higher* rank than someone, 1 means you have a *lower* rank
         # "Higher" means you're placed higher on the leaderboards.
 
-        async def get_relative(pos: int, offset: int):
+        async def get_relative(pos: int, offset: int, display_bark_diff=True):
             relative_pos = pos + offset
             relative_id = bark_datas_list[relative_pos]
             relative = vrs.global_bot.get_user(int(relative_id))
             relative_barks = bark_datas[relative_id]["barkCount"]
 
-            relative_text = f"`{relative_pos + 1}. {relative.name}: {relative_barks} ({relative_barks - author_barks} away)`"
+            if display_bark_diff:
+                bark_diff_display = f" ({relative_barks - author_barks} away)"
+            else:
+                bark_diff_display = ""
+
+            relative_text = f"`{relative_pos + 1}. {relative.name}: {relative_barks}{bark_diff_display}`"
             if offset > 0:
                 return f"Next place up: {relative_text}"
             if offset < 0:
@@ -130,12 +145,14 @@ class Barking(cmds.Cog):
                 desc_first = await get_relative(author_index, -1)
                 desc_last = await get_relative(author_index, 1)
         else:
-            desc_first = await get_relative(len(bark_datas_list), "up")
+            desc_first = await get_relative(len(bark_datas_list), -1, display_bark_diff=False)
             desc_last = "You didn't make me bark yet!"
 
-        embed.add_field(name=f"Your total barks: {author_barks} (#{author_index + 1})", value=f"{desc_first}\n{desc_last}", inline=False)
 
-        embed.set_footer(text=f"Page {page} of {o_f.page_amount(bark_datas_list, page_length)}. Use {vrs.CMD_PREFIX}barkrank <page> to select page.")
+        embed.add_field(name=f"Your total barks: {author_barks} (#{author_place})", value=f"{desc_first}\n{desc_last}", inline=False)
+
+        if page_amount > 1:
+            embed.set_footer(text=f"Page {page} of {page_amount}. Use {vrs.CMD_PREFIX}barkrank <page> to select page.")
 
         await ctx.send(embed=embed)
 
