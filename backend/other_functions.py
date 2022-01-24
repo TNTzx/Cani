@@ -7,6 +7,7 @@
 # pylint: disable=too-many-public-methods
 
 
+import math
 import asyncio
 import datetime
 import nextcord as nx
@@ -58,10 +59,6 @@ class MessagePointer(DataStructure):
             return None
 
         return message
-
-async def get_tntz():
-    """Gets TNTz."""
-    return await vrs.global_bot.fetch_user(279803094722674693)
 
 
 def format_time(num: int):
@@ -181,3 +178,38 @@ def pr_print(value, htchar='\t', lfchar='\n', indent=0):
         return '(%s)' % (','.join(items) + lfchar + htchar * indent)
 
     return repr(value)
+
+
+def get_page(_list: list, page: int, page_length: int):
+    """Gets the page of a list. `page` is zero-indexed. Make sure list is ordered. Returns the list with the page."""
+    left = page_length * page
+    right = left + page_length
+
+    if right > len(_list):
+        new_list = _list[left:]
+    new_list = _list[left : right]
+
+    if len(new_list) == 0:
+        raise IndexError(f"Page {page} with page length {page_length} exceeded for list of length {len(_list)} (trying to find left mark at index {left})")
+
+    return new_list
+
+def get_page_dict(_dict: dict, page: int, page_length: int):
+    """Same as `get_page`, but with a dictionary."""
+    keys_paged = get_page(list(_dict.keys()), page, page_length)
+    return {key: _dict[key] for key in keys_paged}
+
+def page_amount(_list: list, page_length: int):
+    """Gets the amount of pages available for the list."""
+    return math.ceil(len(_list) / page_length)
+
+
+def sort_dict_with_func(_dict: dict, func, reverse = False):
+    """Sorts a dictionary using a function.
+    Function must take one argument in which the value of a key is put into."""
+
+    sorted_keys = sorted(_dict, key=lambda key: func(_dict[key]), reverse=reverse)
+
+    sorted_dict = {key: _dict[key] for key in sorted_keys}
+
+    return sorted_dict
