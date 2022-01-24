@@ -77,7 +77,7 @@ class Barking(cmds.Cog):
             else:
                 user_name = "<unknown user>"
             user_barks = users[user_id]["barkCount"]
-            form_list.append(f"{user_sort.index(user_id) + 1}. {user.name}: {user_barks}")
+            form_list.append(f"{user_sort.index(user_id) + 1}. {user_name}: {user_barks}")
 
         form_str = "\n".join(form_list)
         embed.add_field(name="Leaderboard:", value=f"```{form_str}```", inline=False)
