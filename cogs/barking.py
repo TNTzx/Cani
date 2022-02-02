@@ -128,6 +128,10 @@ class Barking(cmds.Cog):
             relative_pos = pos + offset
             relative_id = bark_datas_list[relative_pos]
             relative = vrs.global_bot.get_user(int(relative_id))
+            if relative is not None:
+                relative_name = relative.name
+            else:
+                relative_name = "<unknown user>"
             relative_barks = bark_datas[relative_id]["barkCount"]
 
             if display_bark_diff:
@@ -135,7 +139,7 @@ class Barking(cmds.Cog):
             else:
                 bark_diff_display = ""
 
-            relative_text = f"`{relative_pos + 1}. {relative.name}: {relative_barks}{bark_diff_display}`"
+            relative_text = f"`{relative_pos + 1}. {relative_name}: {relative_barks}{bark_diff_display}`"
             if offset > 0:
                 return f"Previous place down: {relative_text}"
             if offset < 0:
