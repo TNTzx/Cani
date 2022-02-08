@@ -1,9 +1,5 @@
-# pylint: disable=missing-module-docstring
-# pylint: disable=missing-function-docstring
-# pylint: disable=missing-class-docstring
-# pylint: disable=line-too-long
-# pylint: disable=unused-argument
-# pylint: disable=no-self-use
+"""Contains error handling."""
+
 
 import asyncio
 import traceback as tr
@@ -17,14 +13,13 @@ import backend.exceptions.send_error as s_e
 import backend.other_functions as o_f
 
 
-CMD_PREFIX = vrs.CMD_PREFIX
-
-class ErrorHandler(cmds.Cog):
+class Cog(cmds.Cog):
+    """Cog."""
     def __init__(self, bot):
         self.bot = bot
 
     @cmds.Cog.listener()
-    async def on_command_error(self, ctx: cmds.Context, exc: Exception | cmds.CommandInvokeError):
+    async def on_command_error(self, ctx: cmds.Context, exc: Exception | cmds.CommandInvokeError | cmds.CommandError):
         def checkexc(exc_type):
             return isinstance(exc, exc_type)
 
@@ -38,7 +33,7 @@ class ErrorHandler(cmds.Cog):
             return
 
         if checkexc(cmds.MissingRequiredArgument) or checkexc(cmds.BadArgument):
-            await s_e.send_error(ctx, f"Make sure you have the correct parameters! Use `{CMD_PREFIX}help` to get help!", cooldown_reset=True)
+            await s_e.send_error(ctx, f"Make sure you have the correct parameters! Use `{vrs.CMD_PREFIX}help` to get help!", cooldown_reset=True)
             return
 
         if checkexc(cmds.ExpectedClosingQuoteError) or checkexc(cmds.InvalidEndOfQuotedStringError) or checkexc(cmds.UnexpectedQuoteError):
@@ -46,7 +41,7 @@ class ErrorHandler(cmds.Cog):
             return
 
         if checkexc(cmds.MissingRequiredArgument):
-            await s_e.send_error(ctx, f"Make sure you have the correct parameters! Use `{vrs.CMD_PREFIX}help` to get help!")
+            await s_e.send_error(ctx, f"Make sure you have the correct parameters! Use `{vrs.vrs.CMD_PREFIX}help` to get help!")
             return
 
         if checkexc(cmds.NoPrivateMessage):
@@ -79,5 +74,6 @@ class ErrorHandler(cmds.Cog):
         await s_e.send_error(ctx, "Something went wrong. This error has been reported to the owner of the bot.", exc=exc, send_owner=True, send_console=True)
 
 
-def setup(bot):
-    bot.add_cog(ErrorHandler(bot))
+def setup(bot: nx.Client):
+    """Setup."""
+    bot.add_cog(Cog(bot))

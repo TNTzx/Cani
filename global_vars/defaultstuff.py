@@ -1,3 +1,6 @@
+"""Default JSON."""
+
+
 default = {
     "guilds": {
         "guildId": {

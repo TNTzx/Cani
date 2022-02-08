@@ -1,10 +1,5 @@
-# pylint: disable=missing-module-docstring
-# pylint: disable=missing-function-docstring
-# pylint: disable=missing-class-docstring
-# pylint: disable=line-too-long
-# pylint: disable=unused-argument
-# pylint: disable=no-self-use
-# pylint: disable=too-many-branches
+"""Contains commands for bot control."""
+
 
 import os
 import sys
@@ -16,7 +11,8 @@ import global_vars.variables as vrs
 import backend.command_related.command_wrapper as c_w
 
 
-class RestartKill(cmds.Cog):
+class Cog(cmds.Cog):
+    """Cog."""
     def __init__(self, bot: nx.Client):
         self.bot = bot
 
@@ -28,6 +24,7 @@ class RestartKill(cmds.Cog):
         req_dev=True,
     )
     async def switchrestart(self, ctx):
+        """Restarts the bot."""
         await ctx.send("Restarting bot...")
         for file in os.listdir(os.path.dirname(__file__)):
             if file.endswith(".py"):
@@ -52,6 +49,7 @@ class RestartKill(cmds.Cog):
         req_dev=True
     )
     async def switchkill(self, ctx):
+        """Shuts the bot down."""
         await ctx.send("Terminated bot.")
         await self.bot.close()
         exit()
@@ -65,11 +63,12 @@ class RestartKill(cmds.Cog):
         req_dev=True
     )
     async def switchrestarthard(self, ctx):
+        """Restarts the bot harshly."""
         await ctx.send("Restart initiated!")
         print("\n \n Restart break! Hard! -------------------------------------- \n \n")
         args = ['python'] + [f"\"{sys.argv[0]}\""]
         os.execv(sys.executable, args)
 
 def setup(bot):
-    """Sets the bot up."""
-    bot.add_cog(RestartKill(bot))
+    """Setup."""
+    bot.add_cog(Cog(bot))

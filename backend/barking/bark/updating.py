@@ -1,10 +1,5 @@
 """Backend for barking."""
 
-# pylint: disable=too-few-public-methods
-# pylint: disable=too-many-arguments
-# pylint: disable=too-many-statements
-# pylint: disable=line-too-long
-
 
 # import nextcord as nx
 import nextcord.ext.commands as cmds

@@ -1,19 +1,15 @@
-# pylint: disable=missing-module-docstring
-# pylint: disable=missing-function-docstring
-# pylint: disable=missing-class-docstring
-# pylint: disable=line-too-long
-# pylint: disable=unused-argument
-# pylint: disable=no-self-use
-# pylint: disable=too-many-branches
+"""Moderation."""
 
-# import nextcord
+
+import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import backend.command_related.command_wrapper as c_w
 import backend.firebase.firebase_interaction as fi
 import backend.exceptions.send_error as s_e
 
-class Moderation(cmds.Cog):
+class Cog(cmds.Cog):
+    """Cog."""
     def __init__(self, bot):
         self.bot = bot
 
@@ -24,6 +20,7 @@ class Moderation(cmds.Cog):
         req_guild_owner=True
     )
     async def setadmin(self, ctx: cmds.Context, role_id):
+        """Sets the admin for the server."""
         try:
             int(role_id)
         except ValueError:
@@ -34,5 +31,6 @@ class Moderation(cmds.Cog):
         await ctx.send("*The admin role for this server has been set! :D*")
 
 
-def setup(bot):
-    bot.add_cog(Moderation(bot))
+def setup(bot: nx.Client):
+    """Setup."""
+    bot.add_cog(Cog(bot))

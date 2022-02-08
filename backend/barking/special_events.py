@@ -1,9 +1,4 @@
-
-
-# pylint: disable=too-few-public-methods
-# pylint: disable=too-many-arguments
-# pylint: disable=too-many-statements
-# pylint: disable=line-too-long
+"""Library for special events."""
 
 
 from typing import Callable

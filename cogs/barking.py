@@ -1,23 +1,20 @@
-# pylint: disable=missing-module-docstring
-# pylint: disable=missing-function-docstring
-# pylint: disable=missing-class-docstring
-# pylint: disable=line-too-long
-# pylint: disable=unused-argument
-# pylint: disable=no-self-use
+"""Contains commands for barking."""
+
 
 import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import global_vars.variables as vrs
 import backend.command_related.command_wrapper as c_w
-import backend.barking.updating as b_u
+import backend.barking.bark.updating as b_u
 import backend.barking.special_events as s_ev
 import backend.exceptions.send_error as s_e
 import backend.firebase.firebase_interaction as f_i
 import backend.other_functions as o_f
 
 
-class Barking(cmds.Cog):
+class Cog(cmds.Cog):
+    """Cog."""
     def __init__(self, bot):
         self.bot = bot
 
@@ -29,6 +26,7 @@ class Barking(cmds.Cog):
         cooldown=2, cooldown_type=cmds.BucketType.user,
     )
     async def bark(self, ctx: cmds.Context):
+        """bork"""
         await ctx.send("*Bark! :D*")
         await b_u.update_bark(ctx, 1)
 
@@ -40,6 +38,7 @@ class Barking(cmds.Cog):
         show_condition=lambda ctx: f_i.get_data(b_u.bark_path(ctx) + ["barkMilestone"]) >= 2500
     )
     async def pat(self, ctx: cmds.Context):
+        """petpetpepteptpt"""
         add_bark = 50
 
         await ctx.send("https://cdn.discordapp.com/emojis/889713240714649650.gif")
@@ -57,6 +56,7 @@ class Barking(cmds.Cog):
         cooldown=30, cooldown_type=cmds.BucketType.guild
     )
     async def barkrank(self, ctx: cmds.Context, page: int = 1):
+        """Shows ranks for certain statistics."""
         page_length = 10
 
         await ctx.send("*Getting leaderboard...*")
@@ -174,6 +174,7 @@ class Barking(cmds.Cog):
         cooldown=60 * 2, cooldown_type=cmds.BucketType.guild
     )
     async def meow(self, ctx):
+        """mrow"""
         await o_f.delay_message(ctx, "...")
         await o_f.delay_message(ctx, "...what did you just make me do.")
         await o_f.delay_message(ctx, "*grrrrrrrrrrRRRRRR**RRRRRRRRRR***", duration=1)
@@ -185,4 +186,5 @@ class Barking(cmds.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Barking(bot))
+    """Setup."""
+    bot.add_cog(Cog(bot))

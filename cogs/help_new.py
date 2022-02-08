@@ -1,10 +1,5 @@
-# pylint: disable=missing-module-docstring
-# pylint: disable=missing-function-docstring
-# pylint: disable=missing-class-docstring
-# pylint: disable=line-too-long
-# pylint: disable=unused-argument
-# pylint: disable=no-self-use
-# pylint: disable=too-many-branches
+"""Help command."""
+
 
 import nextcord as nx
 import nextcord.ext.commands as cmds
@@ -15,7 +10,7 @@ import backend.other_functions as o_f
 import backend.exceptions.send_error as s_e
 
 
-class Help(cmds.Cog):
+class Cog(cmds.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -28,6 +23,7 @@ class Help(cmds.Cog):
         cooldown=1, cooldown_type=cmds.BucketType.user
     )
     async def help(self, ctx: cmds.Context, command=None):
+        """Help command."""
         async def show_all():
             embed = nx.Embed(
                 title="Help!",
@@ -141,4 +137,5 @@ class Help(cmds.Cog):
             await specific()
 
 def setup(bot: nx.Client):
-    bot.add_cog(Help(bot))
+    """Setup."""
+    bot.add_cog(Cog(bot))
