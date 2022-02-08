@@ -5,6 +5,7 @@ import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import global_vars.variables as vrs
+import global_vars.defaultstuff as df
 import backend.command_related.command_wrapper as c_w
 import backend.barking.bark.updating as b_u
 import backend.barking.special_events as s_ev
@@ -63,7 +64,7 @@ class Cog(cmds.Cog):
         path = b_u.bark_path(ctx)
 
         bark_datas = f_i.get_data(path + ["users"])
-        if bark_datas == "null":
+        if bark_datas == df.PLACEHOLDER:
             await s_e.send_error(ctx, "*There wasn't anyone that made me bark yet. Be the first one!*")
             return
 

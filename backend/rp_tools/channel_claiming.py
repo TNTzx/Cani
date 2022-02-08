@@ -5,6 +5,7 @@ import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import global_vars.variables as vrs
+import global_vars.defaultstuff as df
 import backend.exceptions.send_error as s_e
 import backend.exceptions.custom_exc as c_e
 import backend.firebase.firebase_interaction as f_i
@@ -19,7 +20,7 @@ async def get_channels(ctx: cmds.Context):
     """Gets all available claim channels."""
     path = await get_fb_path(ctx)
     data = f_i.get_data(path + ["availableChannels"])
-    if not data == "null":
+    if not data == df.PLACEHOLDER:
         return {
             channel["channelId"]: {
                 "claimStatus": channel["claimStatus"],
@@ -82,7 +83,7 @@ async def update_embed(ctx: cmds.Context):
         embed.add_field(name="No RP channels! :(", value=f"Ask the moderators to go add one using `{vrs.CMD_PREFIX}claimchanneledit add`.", inline=False)
 
     embed_info = f_i.get_data(path +  ["embedInfo"])
-    if embed_info["channel"] == "null":
+    if embed_info["channel"] == df.PLACEHOLDER:
         await s_e.send_error(ctx, "*There hasn't been a channel added to display claimed channels. Please ask the moderators / admins to add one!*")
         return
 

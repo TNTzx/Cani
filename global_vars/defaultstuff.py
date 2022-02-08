@@ -1,5 +1,7 @@
 """Default JSON."""
 
+PLACEHOLDER = [["placeholder"]]
+
 
 default = {
     "guilds": {
@@ -8,15 +10,15 @@ default = {
                 "adminRole": "0"
             },
             "claimChannelData": {
-                "availableChannels": "null",
+                "availableChannels": PLACEHOLDER,
                 "embedInfo": {
-                    "channel": "null",
-                    "messageId": "null"
+                    "channel": PLACEHOLDER,
+                    "messageId": PLACEHOLDER
                 }
             },
             "fun": {
                 "barking": {
-                    "users": "null",
+                    "users": PLACEHOLDER,
                     "totalBarks": 0,
                     "barkMilestone": 0
                 }, 

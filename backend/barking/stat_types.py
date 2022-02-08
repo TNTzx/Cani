@@ -1,6 +1,9 @@
 """Types of statistics."""
 
 
+import nextcord as nx
+import nextcord.ext.commands as cmds
+
 import backend.main_classes.str_variations as s_v
 
 
@@ -12,9 +15,10 @@ class BarkingStat():
         self.path_guild_total = path_guild_total
         self.path_user_total = path_user_total
 
+    def add_to_stat(self, ctx: cmds.Context, amount: int):
+        """Adds a value to the statistic."""
+
 
 class BarkingStats():
     """Contains barking statistics."""
-    bark = BarkingStat(
-        "bark", "barks", 
-    )
+    bark = BarkingStat("bark", "barks", "totalBarks", "barkCount")

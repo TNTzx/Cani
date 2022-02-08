@@ -5,6 +5,7 @@ import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import global_vars.variables as vrs
+import global_vars.defaultstuff as df
 import backend.command_related.command_wrapper as c_w
 import backend.rp_tools.channel_claiming as c_c
 import backend.firebase.firebase_interaction as f_i
@@ -95,7 +96,7 @@ class Cog(cmds.Cog):
             if not len(data) == 0:
                 await c_c.edit_claims(ctx, data)
             else:
-                f_i.edit_data(path, {"availableChannels": "null"})
+                f_i.edit_data(path, {"availableChannels": df.PLACEHOLDER})
 
 
         async def add():
