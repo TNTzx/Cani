@@ -67,3 +67,5 @@ class StatisticTypes():
             p_b.DEFAULT_PATH_BUNDLE,
             p_b.DEFAULT_PATH_BUNDLE
         )
+
+STAT_TYPES = StatisticTypes()

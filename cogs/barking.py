@@ -7,6 +7,7 @@ import nextcord.ext.commands as cmds
 import global_vars.variables as vrs
 import global_vars.defaultstuff as df
 import backend.command_related.command_wrapper as c_w
+import backend.barking.stat_types as s_t
 import backend.barking.bark.updating as b_u
 import backend.barking.special_events as s_ev
 import backend.exceptions.send_error as s_e
@@ -29,7 +30,7 @@ class Cog(cmds.Cog):
     async def bark(self, ctx: cmds.Context):
         """bork"""
         await ctx.send("*Bark! :D*")
-        await b_u.update_bark(ctx, 1)
+        await s_t.STAT_TYPES.barks.add_stat(ctx, 1)
 
 
     @c_w.command(
