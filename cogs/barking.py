@@ -37,7 +37,7 @@ class Barking(cmds.Cog):
         category=c_w.Categories.barking,
         description="Patpat! :D",
         cooldown=60 * 60 * 12, cooldown_type=cmds.BucketType.guild,
-        show_condition=lambda ctx: f_i.get_data(b_u.bark_path(ctx) + ["barkMilestone"]) >= 2500
+        show_condition=lambda ctx: s_t.STAT_TYPES.barks.get_server_special_event("++pat").has_met_threshold(ctx)
     )
     async def pat(self, ctx: cmds.Context):
         """petpetpepteptpt"""
@@ -45,7 +45,24 @@ class Barking(cmds.Cog):
 
         await ctx.send("https://cdn.discordapp.com/emojis/889713240714649650.gif")
         await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+{add_bark} barks to {ctx.author.mention}!)*""")
-        await b_u.update_bark(ctx, add_bark)
+        await s_t.STAT_TYPES.barks.add_stat(ctx, add_bark)
+
+
+    @c_w.command(
+        category=c_w.Categories.barking,
+        description="No. No. Please don't.",
+        cooldown=60 * 2, cooldown_type=cmds.BucketType.guild
+    )
+    async def meow(self, ctx: cmds.Context):
+        """mrow"""
+        await o_f.delay_message(ctx, "...")
+        await o_f.delay_message(ctx, "...what did you just make me do.")
+        await o_f.delay_message(ctx, "*grrrrrrrrrrRRRRRR**RRRRRRRRRR***", duration=1)
+        await ctx.send("*(Art by glasses!)*")
+        await o_f.delay_message(ctx, "https://cdn.discordapp.com/attachments/588692481001127936/867477895924154378/image0.png", duration=0.5)
+        await o_f.delay_message(ctx, "**FEEL THE WRATH OF MY MACHINE GUN ATTACHMENTS, HUMAN**", duration=1)
+        await o_f.delay_message(ctx, "*BULLET RAIN (-10 barks >:( )*", duration=2)
+        await b_u.update_bark(ctx, -10)
 
 
     @c_w.command(
@@ -168,23 +185,6 @@ class Barking(cmds.Cog):
             embed.set_footer(text=f"Page {page} of {page_amount}. Use {vrs.CMD_PREFIX}barkrank <page> to select a page.")
 
         await ctx.send(embed=embed)
-
-
-    @c_w.command(
-        category=c_w.Categories.barking,
-        description="No. No. Please don't.",
-        cooldown=60 * 2, cooldown_type=cmds.BucketType.guild
-    )
-    async def meow(self, ctx):
-        """mrow"""
-        await o_f.delay_message(ctx, "...")
-        await o_f.delay_message(ctx, "...what did you just make me do.")
-        await o_f.delay_message(ctx, "*grrrrrrrrrrRRRRRR**RRRRRRRRRR***", duration=1)
-        await ctx.send("*(Art by glasses!)*")
-        await o_f.delay_message(ctx, "https://cdn.discordapp.com/attachments/588692481001127936/867477895924154378/image0.png", duration=0.5)
-        await o_f.delay_message(ctx, "**FEEL THE WRATH OF MY MACHINE GUN ATTACHMENTS, HUMAN**", duration=1)
-        await o_f.delay_message(ctx, "*BULLET RAIN (-10 barks >:( )*", duration=2)
-        await b_u.update_bark(ctx, -10)
 
 
 def setup(bot):
