@@ -19,7 +19,7 @@ async def update_data():
             f_i.edit_data(["guilds"], def_values)
 
 
-class Cog(cmds.Cog):
+class Hello(cmds.Cog):
     """Cog."""
     def __init__(self, bot):
         self.bot = bot
@@ -78,4 +78,4 @@ class Cog(cmds.Cog):
 
 def setup(bot: nx.Client):
     """Setup."""
-    bot.add_cog(Cog(bot))
+    bot.add_cog(Hello(bot))

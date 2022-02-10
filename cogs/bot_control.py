@@ -11,7 +11,7 @@ import global_vars.variables as vrs
 import backend.command_related.command_wrapper as c_w
 
 
-class Cog(cmds.Cog):
+class BotControl(cmds.Cog):
     """Cog."""
     def __init__(self, bot: nx.Client):
         self.bot = bot
@@ -71,4 +71,4 @@ class Cog(cmds.Cog):
 
 def setup(bot):
     """Setup."""
-    bot.add_cog(Cog(bot))
+    bot.add_cog(BotControl(bot))

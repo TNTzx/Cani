@@ -15,7 +15,7 @@ import backend.firebase.firebase_interaction as f_i
 import backend.other_functions as o_f
 
 
-class Cog(cmds.Cog):
+class Barking(cmds.Cog):
     """Cog."""
     def __init__(self, bot):
         self.bot = bot
@@ -189,4 +189,4 @@ class Cog(cmds.Cog):
 
 def setup(bot):
     """Setup."""
-    bot.add_cog(Cog(bot))
+    bot.add_cog(Barking(bot))

@@ -8,7 +8,7 @@ import backend.command_related.command_wrapper as c_w
 import backend.firebase.firebase_interaction as fi
 import backend.exceptions.send_error as s_e
 
-class Cog(cmds.Cog):
+class Moderation(cmds.Cog):
     """Cog."""
     def __init__(self, bot):
         self.bot = bot
@@ -33,4 +33,4 @@ class Cog(cmds.Cog):
 
 def setup(bot: nx.Client):
     """Setup."""
-    bot.add_cog(Cog(bot))
+    bot.add_cog(Moderation(bot))
