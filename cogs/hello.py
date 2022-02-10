@@ -18,13 +18,16 @@ async def update_data():
             def_values = {guild.id: def_values}
             f_i.edit_data(["guilds"], def_values)
 
-class Hello(cmds.Cog):
+
+class Cog(cmds.Cog):
+    """Cog."""
     def __init__(self, bot):
         self.bot = bot
 
 
     @cmds.Cog.listener()
     async def on_ready(self):
+        """On log-in."""
         print(f"Logged in as {vrs.global_bot.user}.")
         vrs.tntz = await vrs.global_bot.fetch_user(279803094722674693)
 
@@ -33,6 +36,7 @@ class Hello(cmds.Cog):
 
     @cmds.Cog.listener()
     async def on_guild_join(self, guild: nx.Guild):
+        """On guild join."""
         await update_data()
 
     @c_w.command(
@@ -74,4 +78,4 @@ class Hello(cmds.Cog):
 
 def setup(bot: nx.Client):
     """Setup."""
-    bot.add_cog(Hello(bot))
+    bot.add_cog(Cog(bot))
