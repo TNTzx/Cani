@@ -11,11 +11,11 @@ import backend.firebase.firebase_interaction as f_i
 
 class SpecialEvent:
     """Class for special events."""
-    def __init__(self, name, threshold: int, message: str, func: Callable = None):
+    def __init__(self, name, threshold: int, message: str, on_met: Callable = None):
         self.name = name
         self.threshold = threshold
         self.message = message
-        self.func = func
+        self.func = on_met
 
     async def event_trigger(self, ctx: cmds.Context):
         """Triggers the event if the threshold has been met once."""

@@ -19,8 +19,7 @@ default = {
             "fun": {
                 "barking": {
                     "users": PLACEHOLDER,
-                    "totalBarks": 0,
-                    "barkMilestone": 0
+                    "server": PLACEHOLDER
                 },
             }
         }
