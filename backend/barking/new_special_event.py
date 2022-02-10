@@ -36,14 +36,14 @@ class SpecialEvent():
         if (f_i.get_data(path + self.path_bundle.total) >= self.raw.threshold) and \
                 (not f_i.get_data(path + self.path_bundle.milestone) >= self.raw.threshold):
             await ctx.send("*> Oh? Something's happening...*")
-            f_i.edit_data(path, {self.path_bundle.milestone: self.raw.threshold})
+            f_i.edit_data(path, {self.path_bundle.milestone[0]: self.raw.threshold})
             await ctx.send(self.raw.message)
 
             self.raw.on_met()
 
     def has_met_threshold(self, ctx: cmds.Context):
         """Returns true if the threshold has been met."""
-        return f_i.get_data(self.get_initial_path(ctx) + self.path_bundle.total) >= self.raw.threshold
+        return f_i.get_data(self.get_initial_path(ctx) + self.path_bundle.milestone) >= self.raw.threshold
 
 
 class ServerSpecialEvent(SpecialEvent):

@@ -60,13 +60,13 @@ class StatisticType():
         await add_on_scope(p_b.get_path_server, self.server_path, self.server_special_events)
         await add_on_scope(p_b.get_path_user, self.user_path, self.user_special_events)
 
- 
+
     def get_special_event(self, special_events: list[s_e.UserSpecialEvent | s_e.ServerSpecialEvent], name: str):
         """Gets the special event by name."""
         for special_event in special_events:
             if special_event.raw.name == name:
                 return special_event
- 
+
         raise ValueError(f"Special event \"{name}\" not found in list of special events.")
 
     def get_server_special_event(self, name: str):
@@ -83,8 +83,7 @@ class StatisticTypes():
     def __init__(self):
         self.barks = StatisticType(
             "bark",
-            p_b.DEFAULT_PATH_BUNDLE,
-            p_b.DEFAULT_PATH_BUNDLE,
+            p_b.DEFAULT_PATH_BUNDLE, p_b.DEFAULT_PATH_BUNDLE,
             server_raw_special_events = [
                 s_e.RawSpecialEvent(
                     "++pat", 2500, (
@@ -94,6 +93,11 @@ class StatisticTypes():
                     )
                 )
             ]
+        )
+
+        self.pats = StatisticType(
+            "pat",
+            p_b.DEFAULT_PATH_BUNDLE, p_b.DEFAULT_PATH_BUNDLE,
         )
 
 STAT_TYPES = StatisticTypes()

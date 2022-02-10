@@ -46,6 +46,7 @@ class Barking(cmds.Cog):
         await ctx.send("https://cdn.discordapp.com/emojis/889713240714649650.gif")
         await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+{add_bark} barks to {ctx.author.mention}!)*""")
         await s_t.STAT_TYPES.barks.add_stat(ctx, add_bark)
+        await s_t.STAT_TYPES.pats.add_stat(ctx, 1)
 
 
     @c_w.command(
