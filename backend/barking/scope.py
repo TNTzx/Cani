@@ -12,11 +12,12 @@ import backend.firebase.firebase_interaction as f_i
 
 class RawScope():
     """Parent class of raw scopes. Used to construct the scope later on."""
-    path_function: typ.Callable = None
-    special_events_cls: typ.Type[s_ev.SpecialEvent] = None
     def __init__(self, path_bundle: p_b.PathBundle, raw_special_events: list[s_ev.RawSpecialEvent] = None):
         if raw_special_events is None:
             raw_special_events = []
+
+        self.path_function: typ.Callable = None
+        self.special_events_cls: typ.Type[s_ev.SpecialEvent] = None
 
         self.path_bundle = path_bundle
         self.raw_special_events = raw_special_events
@@ -24,13 +25,18 @@ class RawScope():
 
 class ServerRawScope(RawScope):
     """Class for server-wide raw scopes."""
-    path_function = p_b.get_path_server
-    special_events_cls = s_ev.ServerSpecialEvent
+    def __init__(self, path_bundle: p_b.PathBundle, raw_special_events: list[s_ev.RawSpecialEvent] = None):
+        super().__init__(path_bundle, raw_special_events)
+        self.path_function = p_b.get_path_server
+        self.special_events_cls = s_ev.ServerSpecialEvent
+
 
 class UserRawScope(RawScope):
     """Class for user raw scopes."""
-    path_function = p_b.get_path_user
-    special_events_cls = s_ev.UserSpecialEvent
+    def __init__(self, path_bundle: p_b.PathBundle, raw_special_events: list[s_ev.RawSpecialEvent] = None):
+        super().__init__(path_bundle, raw_special_events)
+        self.path_function = p_b.get_path_user
+        self.special_events_cls = s_ev.UserSpecialEvent
 
 
 class Scope():
@@ -57,7 +63,7 @@ class Scope():
             await special_event.event_trigger(ctx)
 
 
-    async def get_special_event(self, name: str):
+    def get_special_event(self, name: str):
         """Gets a special event by name from this scope."""
         for special_event in self.special_events:
             if special_event.raw.name == name:
