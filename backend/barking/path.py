@@ -13,9 +13,13 @@ def get_path_server(ctx: cmds.Context, category: str):
     """Gets the path for the server-wide statistics."""
     return get_fb_path(ctx) + ["server", category]
 
+def get_path_users(ctx: cmds.Context):
+    """Gets the path for all users."""
+    return get_fb_path(ctx) + ["users"]
+
 def get_path_user(ctx: cmds.Context, category: str):
     """Gets the path for user statistics."""
-    return get_fb_path(ctx) + ["users", str(ctx.author.id), category]
+    return get_path_users(ctx) + [str(ctx.author.id), category]
 
 
 class PathBundle():

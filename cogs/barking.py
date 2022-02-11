@@ -7,9 +7,9 @@ import nextcord.ext.commands as cmds
 import global_vars.variables as vrs
 import global_vars.defaultstuff as df
 import backend.command_related.command_wrapper as c_w
+import backend.command_related.choice_param as c_p
+import backend.barking.path as p_b
 import backend.barking.stat_types as s_t
-import backend.barking.bark.updating as b_u
-import backend.barking.special_events as s_ev
 import backend.exceptions.send_error as s_e
 import backend.firebase.firebase_interaction as f_i
 import backend.other_functions as o_f
@@ -63,7 +63,7 @@ class Barking(cmds.Cog):
         await o_f.delay_message(ctx, "https://cdn.discordapp.com/attachments/588692481001127936/867477895924154378/image0.png", duration=0.5)
         await o_f.delay_message(ctx, "**FEEL THE WRATH OF MY MACHINE GUN ATTACHMENTS, HUMAN**", duration=1)
         await o_f.delay_message(ctx, "*BULLET RAIN (-10 barks >:( )*", duration=2)
-        await b_u.update_bark(ctx, -10)
+        await s_t.STAT_TYPES.barks.add_stat(ctx, -10)
 
 
     @c_w.command(
@@ -75,28 +75,40 @@ class Barking(cmds.Cog):
         aliases=["br"],
         cooldown=30, cooldown_type=cmds.BucketType.guild
     )
-    async def barkrank(self, ctx: cmds.Context, page: int = 1):
+    async def barkrank(self, ctx: cmds.Context, stat_type_name: str, page: int = 1):
         """Shows ranks for certain statistics."""
         page_length = 10
 
-        await ctx.send("*Getting leaderboard...*")
-        path = b_u.bark_path(ctx)
+        stat_type_names = [stat_type.name for stat_type in s_t.STAT_TYPES.get_stat_types()]
 
-        bark_datas = f_i.get_data(path + ["users"])
-        if bark_datas == df.PLACEHOLDER:
+        @c_p.choice_param_cmd(ctx, stat_type_name, stat_type_names)
+        async def name():
+            return s_t.STAT_TYPES.get_stat_type(stat_type_name)
+
+        stat_type = await name()
+
+        await ctx.send("*Getting leaderboard...*")
+        path = p_b.get_fb_path(ctx)
+
+        user_data = f_i.get_data(p_b.get_path_users(ctx))
+        if user_data == df.PLACEHOLDER:
             await s_e.send_error(ctx, "*There wasn't anyone that made me bark yet. Be the first one!*")
             return
 
 
-        total_barks = f_i.get_data(path + ["totalBarks"])
+        server_total = f_i.get_data(stat_type.get_path_server(ctx) + stat_type.server_path_bundle.total)
 
-        embed = nx.Embed(title="Barking Leaderboard!", color=0x00FFFF)
+        embed = nx.Embed(
+            title=f"Leaderboard! Currently displaying: `{stat_type.name_variations.case_sentence}` stats!",
+            color=0x00FFFF
+        )
+
         def create_blank():
             embed.add_field(name="`----------`", value="_ _", inline=False)
 
-        embed.add_field(name=f"Total Barks in Server: {total_barks}", value="`----------`", inline=False)
+        embed.add_field(name=f"Total Barks in Server: {server_total}", value="`----------`", inline=False)
 
-        special_server_events_met = s_ev.get_met_special_events(total_barks)
+        special_server_events_met = s_ev.get_met_special_events(server_total)
         if len(special_server_events_met) != 0:
             milestones_text = []
             for special_event in special_server_events_met:
@@ -107,14 +119,14 @@ class Barking(cmds.Cog):
         create_blank()
 
 
-        bark_datas = o_f.sort_dict_with_func(bark_datas, lambda value: value["barkCount"], reverse=True)
-        page_amount = o_f.page_amount(bark_datas, page_length)
+        user_data = o_f.sort_dict_with_func(user_data, lambda value: value["barkCount"], reverse=True)
+        page_amount = o_f.page_amount(user_data, page_length)
 
         if page > page_amount:
             await s_e.send_error(ctx, "*There's no more pages past that! >:(*")
             return
 
-        bark_datas_paged = o_f.get_page_dict(bark_datas, page - 1, page_length)
+        bark_datas_paged = o_f.get_page_dict(user_data, page - 1, page_length)
 
         leaderboard = []
         for idx, bark_data in enumerate(bark_datas_paged.items()):
@@ -133,11 +145,11 @@ class Barking(cmds.Cog):
         create_blank()
 
 
-        bark_datas_list = list(bark_datas.keys())
+        bark_datas_list = list(user_data.keys())
         try:
             author_index = bark_datas_list.index(str(ctx.author.id))
             author_place = author_index + 1
-            author_barks = bark_datas[str(ctx.author.id)]["barkCount"]
+            author_barks = user_data[str(ctx.author.id)]["barkCount"]
         except ValueError:
             author_place = author_barks = "?"
 
@@ -152,7 +164,7 @@ class Barking(cmds.Cog):
                 relative_name = relative.name
             else:
                 relative_name = "<unknown user>"
-            relative_barks = bark_datas[relative_id]["barkCount"]
+            relative_barks = user_data[relative_id]["barkCount"]
 
             if display_bark_diff:
                 bark_diff_display = f" ({relative_barks - author_barks} away)"
@@ -165,7 +177,7 @@ class Barking(cmds.Cog):
             if offset < 0:
                 return f"Next place up: {relative_text}"
 
-        if str(ctx.author.id) in bark_datas:
+        if str(ctx.author.id) in user_data:
             if author_index == 0:
                 desc_first = await get_relative(author_index, 1)
                 desc_last = "You're #1!"
