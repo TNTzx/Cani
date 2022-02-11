@@ -136,6 +136,6 @@ class Help(cmds.Cog):
         else:
             await specific()
 
-def setup(bot: nx.Client):
+def setup(bot: cmds.bot.Bot):
     """Setup."""
     bot.add_cog(Help(bot))

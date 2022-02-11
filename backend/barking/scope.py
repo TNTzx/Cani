@@ -63,6 +63,19 @@ class Scope():
             await special_event.event_trigger(ctx)
 
 
+    def get_path_value(self, ctx: cmds.Context, path_bundle_item: list[str]):
+        """Gets the data from a path."""
+        return f_i.get_data(self.get_path(ctx) + path_bundle_item)
+
+    def get_total(self, ctx: cmds.Context):
+        """Gets the total from this scope."""
+        return self.get_path_value(ctx, self.raw.path_bundle.total)
+
+    def get_milestone(self, ctx: cmds.Context):
+        """Gets the milestone from this scope."""
+        return self.get_path_value(ctx, self.raw.path_bundle.milestone)
+
+
     def get_special_event(self, name: str):
         """Gets a special event by name from this scope."""
         for special_event in self.special_events:
@@ -73,7 +86,7 @@ class Scope():
 
     def get_met_special_events(self, ctx: cmds.Context):
         """Gets all met special events from this scope."""
-        return [special_event.has_met_threshold(ctx) for special_event in self.special_events]
+        return [special_event for special_event in self.special_events if special_event.has_met_threshold(ctx)]
 
     def get_path(self, ctx: cmds.Context):
         """Gets the path to this scope."""

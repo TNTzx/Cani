@@ -20,7 +20,6 @@ class RawSpecialEvent():
 
 class SpecialEvent():
     """Parent class for special events."""
-
     def __init__(self, raw_special_event: RawSpecialEvent, path_bundle: p_b.PathBundle, category: str):
         self.raw = raw_special_event
         self.path_bundle = path_bundle

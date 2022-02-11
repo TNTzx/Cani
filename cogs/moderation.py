@@ -31,6 +31,6 @@ class Moderation(cmds.Cog):
         await ctx.send("*The admin role for this server has been set! :D*")
 
 
-def setup(bot: nx.Client):
+def setup(bot: cmds.bot.Bot):
     """Setup."""
     bot.add_cog(Moderation(bot))

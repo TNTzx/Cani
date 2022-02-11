@@ -15,9 +15,11 @@ import backend.firebase.firebase_interaction as f_i
 
 class StatisticType():
     """A class for a statistic type such as "barks" and "pats"."""
-    def __init__(self, name: str, server_raw_scope: sc.ServerRawScope, user_raw_scope: sc.UserRawScope):
+    def __init__(self, name: str, name_plural: str, server_raw_scope: sc.ServerRawScope, user_raw_scope: sc.UserRawScope):
         self.name = name
         self.name_variations = str_v.StrVariations(name)
+        self.name_plural = name_plural
+        self.name_plural_variations = str_v.StrVariations(name_plural)
 
         def get_scope(raw_scope: sc.RawScope):
             return sc.Scope(raw_scope, name)
@@ -31,13 +33,16 @@ class StatisticType():
         for scope in [self.server_scope, self.user_scope]:
             await scope.add_on_scope(ctx, amount)
 
+    def is_unlocked(self, ctx: cmds.Context):
+        """Checks if the stat is unlocked."""
+        return f_i.is_data_exists(self.server_scope.get_path(ctx))
 
 
 class StatisticTypes():
     """Contains the available statistic types."""
     def __init__(self):
         self.barks = StatisticType(
-            "bark",
+            "bark", "barks",
             server_raw_scope = sc.ServerRawScope(
                 p_b.DEFAULT_PATH_BUNDLE,
                 raw_special_events = [
@@ -56,7 +61,7 @@ class StatisticTypes():
         )
 
         self.pats = StatisticType(
-            "pat",
+            "pat", "pats",
             server_raw_scope = sc.ServerRawScope(
                 p_b.DEFAULT_PATH_BUNDLE
             ),
@@ -69,6 +74,11 @@ class StatisticTypes():
     def get_stat_types(self) -> list[StatisticType]:
         """Gets all stat types."""
         return list(self.__dict__.values())
+
+    def get_viewable_stat_types(self, ctx: cmds.Context):
+        """Get all unlocked stat types by context."""
+        return [stat_type for stat_type in self.get_stat_types() if stat_type.is_unlocked(ctx)]
+
 
     def get_stat_type(self, name: str):
         """Gets a stat type by name."""

@@ -76,6 +76,6 @@ class Hello(cmds.Cog):
         """MOM HELP I'M AAAAAAAAAAAAAAAAAA"""
         raise ValueError('funky error')
 
-def setup(bot: nx.Client):
+def setup(bot: cmds.bot.Bot):
     """Setup."""
     bot.add_cog(Hello(bot))

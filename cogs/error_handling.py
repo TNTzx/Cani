@@ -74,6 +74,6 @@ class ErrorHandling(cmds.Cog):
         await s_e.send_error(ctx, "Something went wrong. This error has been reported to the owner of the bot.", exc=exc, send_owner=True, send_console=True)
 
 
-def setup(bot: nx.Client):
+def setup(bot: cmds.bot.Bot):
     """Setup."""
     bot.add_cog(ErrorHandling(bot))

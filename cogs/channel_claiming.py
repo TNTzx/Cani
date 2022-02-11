@@ -173,6 +173,6 @@ class ChannelClaiming(cmds.Cog):
         await c_c.update_embed(ctx)
         await ctx.send("*Updated! :D*")
 
-def setup(bot: nx.Client):
+def setup(bot: cmds.bot.Bot):
     """Setup.."""
     bot.add_cog(ChannelClaiming(bot))

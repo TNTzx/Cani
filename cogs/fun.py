@@ -27,6 +27,6 @@ class Fun(cmds.Cog):
         await ctx.send("*Yum!*")
 
 
-def setup(bot: nx.Client):
+def setup(bot: cmds.bot.Bot):
     """Setup."""
     bot.add_cog(Fun(bot))
