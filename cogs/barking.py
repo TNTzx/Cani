@@ -58,7 +58,7 @@ class Barking(cmds.Cog):
     )
     async def fetch(self, ctx: cmds.Context):
         """Fetch a stick!"""
-        await ctx.send("*Hai, I have stick!")
+        await ctx.send("*Hai, I have stick!*")
         await s_t.STAT_TYPES.sticks.add_stat(ctx, 1)
 
 
