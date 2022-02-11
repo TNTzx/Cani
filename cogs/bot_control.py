@@ -69,6 +69,6 @@ class BotControl(cmds.Cog):
         args = ['python'] + [f"\"{sys.argv[0]}\""]
         os.execv(sys.executable, args)
 
-def setup(bot):
+def setup(bot: cmds.bot.Bot):
     """Setup."""
     bot.add_cog(BotControl(bot))

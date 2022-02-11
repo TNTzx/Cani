@@ -12,6 +12,7 @@ import backend.barking.path as p_b
 import backend.barking.stat_types as s_t
 import backend.barking.special_event as s_ev
 import backend.exceptions.send_error as s_e
+import backend.exceptions.custom_exc as c_e
 import backend.firebase.firebase_interaction as f_i
 import backend.other_functions as o_f
 
@@ -26,7 +27,7 @@ class BarkRank(cmds.Cog):
         category=c_w.Categories.barking,
         description="Shows barking leaderboards, as well as milestones!",
         parameters={
-            "statistic name": "What statistic you need to view. Example, \"bark\" for the bark count. To view all `statistic name`s, simply ",
+            "statistic name": "What statistic you need to view. Example, \"bark\" for the bark count. To view all `statistic name`s, simply type \"`++barkrank ?`\".",
             "[page]": "Page number of the leaderboard."
         },
         aliases=["br"],
@@ -38,6 +39,10 @@ class BarkRank(cmds.Cog):
 
         stat_type_names = [stat_type.name for stat_type in s_t.STAT_TYPES.get_viewable_stat_types(ctx)]
 
+        if stat_type_name == "?":
+            await ctx.send(f"*The following statistics available are: `{'`, `'.join(stat_type_names)}`.*")
+            return
+
         @c_p.choice_param_cmd(ctx, stat_type_name, stat_type_names)
         async def name():
             return s_t.STAT_TYPES.get_stat_type(stat_type_name)
@@ -46,10 +51,13 @@ class BarkRank(cmds.Cog):
 
         await ctx.send(f"*Getting leaderboard for `{stat_type.name}`...*")
 
-        users_data = f_i.get_data(p_b.get_path_users(ctx))
-        if users_data == df.PLACEHOLDER:
+        async def send_no_leaderboard_found():
             await s_e.send_error(ctx, f"*No leaderboard found for {stat_type.name}. Be the first one to be in that leaderboard!*")
-            return
+            raise c_e.ExitFunction()
+
+        users_data: dict[str, dict[str, dict[str, int]]] = f_i.get_data(p_b.get_path_users(ctx))
+        if users_data == df.PLACEHOLDER:
+            await send_no_leaderboard_found()
 
 
         server_total = stat_type.server_scope.get_total(ctx)
@@ -77,13 +85,27 @@ class BarkRank(cmds.Cog):
                     milestones_text.append(f"{special_event.raw.name} ({special_event.raw.threshold} {stat_type.name_plural})")
                 milestones_text = "\n".join(milestones_text)
                 embed.add_field(name=f"{initial_name} milestones completed:", value=f"`{milestones_text}`", inline=False)
+                return True
+            return False
 
-        met_special_events_text("Server-wide", stat_type.server_scope.get_met_special_events(ctx))
-        met_special_events_text("User", stat_type.user_scope.get_met_special_events(ctx))
+        has_met_special_events = [
+            met_special_events_text("Server-wide", stat_type.server_scope.get_met_special_events(ctx)),
+            met_special_events_text("User", stat_type.user_scope.get_met_special_events(ctx))
+        ]
+
+        if True not in has_met_special_events:
+            embed.add_field(name="No milestones completed.. :(", value="_ _", inline=False)
 
         create_blank()
 
-        users_data = f_i.get_data(p_b.get_path_users(ctx))
+        users_data = {
+            user_id: user_data
+            for user_id, user_data in users_data.items()
+            if stat_type.name in user_data
+        }
+        if len(users_data) == 0:
+            await send_no_leaderboard_found()
+
         users_data = o_f.sort_dict_with_func(users_data, get_total_from_user_data, reverse=True)
 
         page_amount = o_f.page_amount(users_data, page_length)
@@ -94,19 +116,23 @@ class BarkRank(cmds.Cog):
 
         users_data_paged = o_f.get_page_dict(users_data, page - 1, page_length)
 
-        leaderboard = []
-        for idx, bark_data in enumerate(users_data_paged.items()):
-            user_id = bark_data[0]
-            user = vrs.global_bot.get_user(int(user_id))
-            if user is not None:
-                user_name = user.name
-            else:
-                user_name = "<unknown user>"
-            user_total = bark_data[1]
-            leaderboard.append(f"{idx + 1 + ((page - 1) * page_length)}. {user_name}: {user_total}")
 
-        leaderboard = '\n'.join(leaderboard)
-        embed.add_field(name="Leaderboard:", value=f"```{leaderboard}```", inline=False)
+        def get_leaderboard():
+            leaderboard = []
+            for idx, user_data_tuple in enumerate(users_data_paged.items()):
+                user_id = user_data_tuple[0]
+                user = vrs.global_bot.get_user(int(user_id))
+                if user is not None:
+                    user_name = user.name
+                else:
+                    user_name = "<unknown user>"
+                user_total = get_total_from_user_data(user_data_tuple[1])
+                leaderboard.append(f"{idx + 1 + ((page - 1) * page_length)}. {user_name}: {user_total}")
+
+            leaderboard = '\n'.join(leaderboard)
+            return leaderboard
+
+        embed.add_field(name="Leaderboard:", value=f"```{get_leaderboard()}```", inline=False)
 
         create_blank()
 
@@ -124,7 +150,10 @@ class BarkRank(cmds.Cog):
 
         async def get_relative(pos: int, offset: int, display_bark_diff=True):
             relative_pos = pos + offset
-            relative_id = users_data_list[relative_pos]
+            try:
+                relative_id = users_data_list[relative_pos]
+            except IndexError:
+                return f"No one is {'above' if offset < 0 else 'below'} you!"
             relative = vrs.global_bot.get_user(int(relative_id))
             if relative is not None:
                 relative_name = relative.name
@@ -155,7 +184,7 @@ class BarkRank(cmds.Cog):
                 desc_last = await get_relative(author_index, 1)
         else:
             desc_first = await get_relative(len(users_data_list), -1, display_bark_diff=False)
-            desc_last = "You didn't make me bark yet!"
+            desc_last = f"You don't have a statistic here yet! Try `{vrs.CMD_PREFIX}help` to get help on how to enter!"
 
 
         embed.add_field(name=f"Your total {stat_type.name_plural}: {author_total} (#{author_place})", value=f"{desc_first}\n{desc_last}", inline=False)

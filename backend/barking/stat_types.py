@@ -47,10 +47,17 @@ class StatisticTypes():
                 p_b.DEFAULT_PATH_BUNDLE,
                 raw_special_events = [
                     s_ev.RawSpecialEvent(
-                        "++pat", 2500, (
+                        "++pat", 1000, (
                             ">>> YAYYAYAYAYYAAYAYA- AM HAPPY!! :D!!\n"
                             "*Cani likes this server! The command `++pat` has been unlocked!*\n"
                             f"*Use `{vrs.CMD_PREFIX}help pat` for more information.*"
+                        )
+                    ),
+                    s_ev.RawSpecialEvent(
+                        "++fetch", 2500, (
+                            ">>> ...oooh, a.. stick!\n"
+                            "*Cani found some sticks for this server! The command `++fetch` has been unlocked!*\n"
+                            f"*Use `{vrs.CMD_PREFIX}help fetch` for more information.*"
                         )
                     )
                 ]
@@ -62,6 +69,26 @@ class StatisticTypes():
 
         self.pats = StatisticType(
             "pat", "pats",
+            server_raw_scope = sc.ServerRawScope(
+                p_b.DEFAULT_PATH_BUNDLE
+            ),
+            user_raw_scope = sc.UserRawScope(
+                p_b.DEFAULT_PATH_BUNDLE
+            )
+        )
+
+        self.meows = StatisticType(
+            "meow", "meows",
+            server_raw_scope = sc.ServerRawScope(
+                p_b.DEFAULT_PATH_BUNDLE
+            ),
+            user_raw_scope = sc.UserRawScope(
+                p_b.DEFAULT_PATH_BUNDLE
+            )
+        )
+
+        self.sticks = StatisticType(
+            "stick", "sticks",
             server_raw_scope = sc.ServerRawScope(
                 p_b.DEFAULT_PATH_BUNDLE
             ),

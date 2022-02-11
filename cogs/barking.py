@@ -52,6 +52,18 @@ class Barking(cmds.Cog):
 
     @c_w.command(
         category=c_w.Categories.barking,
+        description="stick collection! :D",
+        cooldown=60, cooldown_type=cmds.BucketType.user,
+        show_condition=lambda ctx: s_t.STAT_TYPES.barks.server_scope.get_special_event("++fetch").has_met_threshold(ctx)
+    )
+    async def fetch(self, ctx: cmds.Context):
+        """Fetch a stick!"""
+        await ctx.send("*Hai, I have stick!")
+        await s_t.STAT_TYPES.sticks.add_stat(ctx, 1)
+
+
+    @c_w.command(
+        category=c_w.Categories.barking,
         description="No. No. Please don't.",
         cooldown=60 * 2, cooldown_type=cmds.BucketType.guild
     )
@@ -64,6 +76,8 @@ class Barking(cmds.Cog):
         await o_f.delay_message(ctx, "https://cdn.discordapp.com/attachments/588692481001127936/867477895924154378/image0.png", duration=0.5)
         await o_f.delay_message(ctx, "**FEEL THE WRATH OF MY MACHINE GUN ATTACHMENTS, HUMAN**", duration=1)
         await o_f.delay_message(ctx, "*BULLET RAIN (-10 barks >:( )*", duration=2)
+
+        await s_t.STAT_TYPES.meows.add_stat(ctx, 1)
         await s_t.STAT_TYPES.barks.add_stat(ctx, -10)
 
 
