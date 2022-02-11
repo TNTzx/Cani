@@ -1,11 +1,5 @@
 """Module that contains functions to check, add, and delete users using a command."""
 
-# pylint: disable=too-few-public-methods
-# pylint: disable=too-many-arguments
-# pylint: disable=too-many-statements
-# pylint: disable=line-too-long
-# pylint: disable=unused-argument
-
 
 import nextcord.ext.commands as cmds
 

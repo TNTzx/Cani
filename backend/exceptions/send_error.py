@@ -1,6 +1,5 @@
 """Contains sending errors."""
 
-# pylint: disable=line-too-long
 
 import traceback
 import nextcord as nx
@@ -29,7 +28,7 @@ async def send_error(ctx: commands.Context, suffix, exc="", other_data: nx.Messa
     if send_console:
         error = getattr(exc, 'original', exc)
         print(f"Ignoring exception in command {ctx.command}:")
-        # pylint: disable=no-member
+        
         traceback.print_exception(type(error), error, error.__traceback__)
         # pylint: enable=no-member
 

@@ -1,9 +1,5 @@
-# pylint: disable=missing-module-docstring
-# pylint: disable=missing-function-docstring
-# pylint: disable=missing-class-docstring
-# pylint: disable=line-too-long
-# pylint: disable=unused-argument
-# pylint: disable=no-self-use
+"""Contains events for on_ready and on_guild_join."""
+
 
 import nextcord as nx
 import nextcord.ext.commands as cmds
@@ -15,19 +11,23 @@ import backend.firebase.firebase_interaction as f_i
 
 
 async def update_data():
+    """Updates the data."""
     for guild in vrs.global_bot.guilds:
         if not f_i.is_data_exists(["guilds", guild.id]):
             def_values = defs.default["guilds"]["guildId"]
             def_values = {guild.id: def_values}
             f_i.edit_data(["guilds"], def_values)
 
+
 class Hello(cmds.Cog):
+    """Cog."""
     def __init__(self, bot):
         self.bot = bot
 
 
     @cmds.Cog.listener()
     async def on_ready(self):
+        """On log-in."""
         print(f"Logged in as {vrs.global_bot.user}.")
         vrs.tntz = await vrs.global_bot.fetch_user(279803094722674693)
 
@@ -36,6 +36,7 @@ class Hello(cmds.Cog):
 
     @cmds.Cog.listener()
     async def on_guild_join(self, guild: nx.Guild):
+        """On guild join."""
         await update_data()
 
     @c_w.command(
@@ -45,6 +46,7 @@ class Hello(cmds.Cog):
         req_dev=True
     )
     async def updatedatabase(self, ctx):
+        """Updates the database."""
         await ctx.send("*Updating Database...*")
         await update_data()
         await ctx.send("*Updated! :D*")
@@ -54,12 +56,14 @@ class Hello(cmds.Cog):
         category=c_w.Categories.basic_commands,
         description="Hello!")
     async def hello(self, ctx):
+        """Hello there."""
         await ctx.send("*Bark! I'm an actual bot! :D*")
 
     @c_w.command(
         category=c_w.Categories.basic_commands,
         description="I ping you back! :D")
     async def ping(self, ctx):
+        """ponge"""
         await ctx.send(f"*Pong! <@{ctx.author.id}> :D*")
 
 
@@ -69,7 +73,9 @@ class Hello(cmds.Cog):
         req_dev=True
     )
     async def causeerror(self, ctx):
+        """MOM HELP I'M AAAAAAAAAAAAAAAAAA"""
         raise ValueError('funky error')
 
-def setup(bot):
+def setup(bot: cmds.bot.Bot):
+    """Setup."""
     bot.add_cog(Hello(bot))
