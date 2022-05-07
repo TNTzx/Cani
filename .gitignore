@@ -131,6 +131,7 @@ dmypy.json
 
 # Custom!
 testcode.py
+database_manipulation.py
 Archived/
 logs/
 .vscode/

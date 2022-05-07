@@ -20,6 +20,9 @@ async def get_channels(ctx: cmds.Context):
     """Gets all available claim channels."""
     path = await get_fb_path(ctx)
     data = f_i.get_data(path + ["availableChannels"])
+    if data == "null":
+        f_i.override_data(path + ["availableChannels"], df.PLACEHOLDER)
+        return {}
     if not data == df.PLACEHOLDER:
         return {
             channel["channelId"]: {
@@ -27,8 +30,8 @@ async def get_channels(ctx: cmds.Context):
                 "location": channel["location"]
                 }
             for channel in data}
-    else:
-        return {}
+
+    return {}
 
 async def edit_claims(ctx: cmds.Context, data: dict[int, dict[str, bool | str]]):
     """Edits the claim."""
