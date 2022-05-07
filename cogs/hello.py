@@ -8,6 +8,7 @@ import global_vars.variables as vrs
 import global_vars.defaultstuff as defs
 import backend.command_related.command_wrapper as c_w
 import backend.firebase.firebase_interaction as f_i
+import backend.barking.stat_types as stats
 
 
 async def update_data():
@@ -15,6 +16,9 @@ async def update_data():
     for guild in vrs.global_bot.guilds:
         if not f_i.is_data_exists(["guilds", guild.id]):
             def_values = defs.default["guilds"]["guildId"]
+            def_values["fun"]["barking"]["server"] = {
+                stats.STAT_TYPES.barks.name: stats.STAT_TYPES.barks.server_scope.raw.path_bundle.get_dict()
+            }
             def_values = {guild.id: def_values}
             f_i.edit_data(["guilds"], def_values)
 

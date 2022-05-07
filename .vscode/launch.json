@@ -18,5 +18,12 @@
             "program": "${workspaceFolder}/testcode.py",
             "console": "integratedTerminal"
         },
+        {
+            "name": "Database Manipulation",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/database_manipulation.py",
+            "console": "integratedTerminal"
+        },
     ]
 }
