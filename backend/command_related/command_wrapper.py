@@ -5,7 +5,7 @@ import functools as fc
 # import nextcord as nx
 import nextcord.ext.commands as cmds
 
-import backend.firebase.firebase_interaction as f_i
+import backend.firebase_new as firebase
 import backend.exceptions.send_error as s_e
 import backend.exceptions.custom_exc as c_exc
 
@@ -92,7 +92,7 @@ def command(
 
             async def check_admin():
                 try:
-                    admin_role = f_i.get_data(['guilds', str(ctx.guild.id), "mainData", 'adminRole'])
+                    admin_role = firebase.get_data(['guilds', str(ctx.guild.id), "mainData", 'adminRole'])
                     admin_role = int(admin_role)
                 except c_exc.FirebaseNoEntry:
                     return False
@@ -106,7 +106,7 @@ def command(
                 return ctx.author.id == ctx.guild.owner.id
 
             async def check_dev():
-                devs = f_i.get_data(['mainData', 'devs'])
+                devs = firebase.get_data(['mainData', 'devs'])
                 return str(ctx.author.id) in devs
 
 

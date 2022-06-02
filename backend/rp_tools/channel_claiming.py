@@ -8,7 +8,7 @@ import global_vars.variables as vrs
 import global_vars.defaultstuff as df
 import backend.exceptions.send_error as s_e
 import backend.exceptions.custom_exc as c_e
-import backend.firebase.firebase_interaction as f_i
+import backend.firebase.firebase_interaction as firebase
 
 
 async def get_fb_path(ctx: cmds.Context):
@@ -19,9 +19,9 @@ async def get_fb_path(ctx: cmds.Context):
 async def get_channels(ctx: cmds.Context):
     """Gets all available claim channels."""
     path = await get_fb_path(ctx)
-    data = f_i.get_data(path + ["availableChannels"])
+    data = firebase.get_data(path + ["availableChannels"])
     if data == "null":
-        f_i.override_data(path + ["availableChannels"], df.PLACEHOLDER)
+        firebase.override_data(path + ["availableChannels"], df.PLACEHOLDER)
         return {}
     if not data == df.PLACEHOLDER:
         return {
@@ -41,7 +41,7 @@ async def edit_claims(ctx: cmds.Context, data: dict[int, dict[str, bool | str]])
         "claimStatus": channel_data["claimStatus"],
         "location": channel_data["location"]
     } for channel_id, channel_data in data.items()]
-    f_i.override_data(path + ["availableChannels"], new_data)
+    firebase.override_data(path + ["availableChannels"], new_data)
 
 
 async def is_rp_channel( ctx: cmds.Context):
@@ -85,7 +85,7 @@ async def update_embed(ctx: cmds.Context):
     else:
         embed.add_field(name="No RP channels! :(", value=f"Ask the moderators to go add one using `{vrs.CMD_PREFIX}claimchanneledit add`.", inline=False)
 
-    embed_info = f_i.get_data(path +  ["embedInfo"])
+    embed_info = firebase.get_data(path +  ["embedInfo"])
     if embed_info["channel"] == df.PLACEHOLDER:
         await s_e.send_error(ctx, "*There hasn't been a channel added to display claimed channels. Please ask the moderators / admins to add one!*")
         return

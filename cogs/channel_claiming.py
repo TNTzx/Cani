@@ -8,7 +8,7 @@ import global_vars.variables as vrs
 import global_vars.defaultstuff as df
 import backend.command_related.command_wrapper as c_w
 import backend.rp_tools.channel_claiming as c_c
-import backend.firebase.firebase_interaction as f_i
+import backend.firebase.firebase_interaction as firebase
 import backend.exceptions.send_error as s_e
 import backend.other_functions as o_f
 
@@ -96,7 +96,7 @@ class ChannelClaiming(cmds.Cog):
             if not len(data) == 0:
                 await c_c.edit_claims(ctx, data)
             else:
-                f_i.edit_data(path, {"availableChannels": df.PLACEHOLDER})
+                firebase.edit_data(path, {"availableChannels": df.PLACEHOLDER})
 
 
         async def add():
@@ -151,7 +151,7 @@ class ChannelClaiming(cmds.Cog):
 
         message = await channel.send(embed=nx.Embed(title="?", description="?"))
 
-        f_i.edit_data(path + ["embedInfo"], {
+        firebase.edit_data(path + ["embedInfo"], {
                 "channel": str(channel.id),
                 "messageId": str(message.id)
             })
