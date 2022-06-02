@@ -31,8 +31,8 @@ def get_data(path: list[str]):
         log_message = f"Received data from path {path}: {o_f.pr_print(value)}"
         lgr.log_firebase.info(log_message)
         return value
-    else:
-        raise c_exc.FirebaseNoEntry(f"Data doesn't exist for '{path}'.")
+
+    raise c_exc.FirebaseNoEntry(f"Data doesn't exist for '{path}'.")
 
 
 # Check if data already exists
