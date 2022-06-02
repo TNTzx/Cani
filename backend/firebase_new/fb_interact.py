@@ -1,5 +1,6 @@
 """Interacts with the Firebase Database."""
 
+
 import collections as cl
 import threading as thread
 

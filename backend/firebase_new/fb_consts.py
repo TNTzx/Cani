@@ -7,7 +7,7 @@ import json
 import pyrebase
 
 
-env = os.environ["FadbDBToken"]
+env = os.environ["CaniDBToken"]
 env_dict = json.loads(env)
 db_key = env_dict["databaseKey"]
 fb = pyrebase.initialize_app(db_key)

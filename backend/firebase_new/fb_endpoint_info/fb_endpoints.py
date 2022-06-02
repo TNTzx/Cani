@@ -11,7 +11,6 @@ class Root(endpoint.FBEndpointRoot):
         super().__init__()
 
         self.e_main = self.MainData(self)
-        self.e_artist = self.ArtistData(self)
         self.e_discord = self.DiscordData(self)
         self.e_test = self.Test(self)
 
@@ -35,48 +34,6 @@ class Root(endpoint.FBEndpointRoot):
                 """Contains the IDs of developers."""
                 def __init__(self, parent: endpoint.FBEndpoint):
                     super().__init__(name = "devs", parent = parent)
-
-
-    class ArtistData(endpoint.FBEndpointParent):
-        """Data relating to artists."""
-        def __init__(self, parent: endpoint.FBEndpoint):
-            super().__init__(name = "artist_data", parent = parent)
-
-            self.e_change_req = self.ChangeReq(self)
-
-
-        class ChangeReq(endpoint.FBEndpointParent):
-            """Change request storage."""
-            def __init__(self, parent: endpoint.FBEndpoint):
-                super().__init__(name = "change_request", parent = parent)
-
-                self.e_ch_reqs = self.ChangeRequests(self)
-                self.e_can_verify = self.CanVerify(self)
-
-
-            class ChangeRequests(endpoint.FBEndpointEnd):
-                """Contains the change requests."""
-                def __init__(self, parent: endpoint.FBEndpoint):
-                    super().__init__(name = "change_requests", parent = parent)
-
-
-            class CanVerify(endpoint.FBEndpointParent):
-                """Contains data for who can verify change requests."""
-                def __init__(self, parent: endpoint.FBEndpoint):
-                    super().__init__(name = "can_verify", parent = parent)
-
-                    self.e_server_roles = self.ServerRoles(self)
-                    self.e_users = self.Users(self)
-
-                class ServerRoles(endpoint.FBEndpointEnd):
-                    """Contains a list of servers and a list of their roles that have the privilege of being able to verify."""
-                    def __init__(self, parent: endpoint.FBEndpoint):
-                        super().__init__(name = "server_roles", parent = parent)
-
-                class Users(endpoint.FBEndpointEnd):
-                    """Contains a list of IDs of users that can verify."""
-                    def __init__(self, parent: endpoint.FBEndpoint):
-                        super().__init__(name = "users", parent = parent)
 
 
     class DiscordData(endpoint.FBEndpointParent):
@@ -111,10 +68,9 @@ class Root(endpoint.FBEndpointRoot):
             def get_default_data(self):
                 return {
                     "admin_role": 0,
-                    "logs": {
-                        "locations": {
-                            "dump": fb_consts.PLACEHOLDER_DATA,
-                            "live": fb_consts.PLACEHOLDER_DATA
+                    "fun": {
+                        "barking": {
+                            "server": fb_consts.PLACEHOLDER_DATA
                         }
                     }
                 }
@@ -146,9 +102,6 @@ ENDPOINTS = Root()
 class ShortEndpoint():
     """Contains shortcuts for the endpoints."""
     devs = ENDPOINTS.e_main.e_privileges.e_devs
-
-    artist_change_reqs = ENDPOINTS.e_artist.e_change_req.e_ch_reqs
-    artist_can_verify = ENDPOINTS.e_artist.e_change_req.e_can_verify
 
     discord_cmds = ENDPOINTS.e_discord.e_commands
     discord_guilds = ENDPOINTS.e_discord.e_guilds
