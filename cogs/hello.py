@@ -7,20 +7,22 @@ import nextcord.ext.commands as cmds
 import global_vars.variables as vrs
 import global_vars.defaultstuff as defs
 import backend.command_related.command_wrapper as c_w
-import backend.firebase.firebase_interaction as f_i
+import backend.firebase_new as firebase
 import backend.barking.stat_types as stats
 
 
-async def update_data():
-    """Updates the data."""
+# TEST
+async def add_new_to_database():
+    """Updates the database for joined servers."""
+    fb_path = firebase.ShortEndpoint.discord_guilds
+    default_json = fb_path.get_default_data()
+    default_json["fun"]["barking"]["server"] = {
+        stats.STAT_TYPES.barks.name: stats.STAT_TYPES.barks.server_scope.raw.path_bundle.get_dict()
+    }
+
     for guild in vrs.global_bot.guilds:
-        if not f_i.is_data_exists(["guilds", guild.id]):
-            def_values = defs.default["guilds"]["guildId"]
-            def_values["fun"]["barking"]["server"] = {
-                stats.STAT_TYPES.barks.name: stats.STAT_TYPES.barks.server_scope.raw.path_bundle.get_dict()
-            }
-            def_values = {guild.id: def_values}
-            f_i.edit_data(["guilds"], def_values)
+        if not firebase.is_data_exists(fb_path.get_path() + [guild.id]):
+            firebase.edit_data(fb_path.get_path() + [guild.id], {guild.id: default_json})
 
 
 class Hello(cmds.Cog):
@@ -36,12 +38,12 @@ class Hello(cmds.Cog):
         vrs.tntz = await vrs.global_bot.fetch_user(279803094722674693)
 
         await vrs.tntz.send("*Logged in! :D*")
-        await update_data()
+        await add_new_to_database()
 
     @cmds.Cog.listener()
     async def on_guild_join(self, guild: nx.Guild):
         """On guild join."""
-        await update_data()
+        await add_new_to_database()
 
     @c_w.command(
         category=c_w.Categories.bot_control,
@@ -52,7 +54,7 @@ class Hello(cmds.Cog):
     async def updatedatabase(self, ctx):
         """Updates the database."""
         await ctx.send("*Updating Database...*")
-        await update_data()
+        await add_new_to_database()
         await ctx.send("*Updated! :D*")
 
 

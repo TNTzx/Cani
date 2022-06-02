@@ -4,15 +4,8 @@
 import nextcord as nx
 import nextcord.ext.commands as cmds
 
-import global_vars.variables as vrs
-import global_vars.defaultstuff as df
 import backend.command_related.command_wrapper as c_w
-import backend.command_related.choice_param as c_p
-import backend.barking.path as p_b
 import backend.barking.stat_types as s_t
-import backend.barking.special_event as s_ev
-import backend.exceptions.send_error as s_e
-import backend.firebase.firebase_interaction as f_i
 import backend.other_functions as o_f
 
 

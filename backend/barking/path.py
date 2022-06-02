@@ -4,10 +4,12 @@
 import nextcord as nx
 import nextcord.ext.commands as cmds
 
+import backend.firebase_new as firebase
+
 
 def get_fb_path(ctx: cmds.Context):
     """Get the firebase path."""
-    return ["guilds", str(ctx.guild.id), "fun", "barking"]
+    return firebase.ShortEndpoint.discord_guilds.get_path() + [str(ctx.guild.id), "fun", "barking"]
 
 def get_path_server(ctx: cmds.Context, category: str):
     """Gets the path for the server-wide statistics."""
