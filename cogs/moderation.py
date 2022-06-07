@@ -26,7 +26,7 @@ class Moderation(cmds.Cog):
             await s_e.send_error(ctx, "*You didn't send a valid role ID!*")
             return
 
-        firebase.edit_data(firebase.ShortEndpoint.discord_guilds.get_path() + [ctx.guild.id, 'admin_role'], role_id)
+        firebase.override_data(firebase.ShortEndpoint.discord_guilds.get_path() + [ctx.guild.id, 'admin_role'], role_id)
         await ctx.send("*The admin role for this server has been set! :D*")
 
 
