@@ -1,8 +1,6 @@
 """Contains statistic types."""
 
 
-import typing as typ
-import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import global_vars.variables as vrs

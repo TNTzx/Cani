@@ -8,7 +8,7 @@ import global_vars.variables as vrs
 import global_vars.defaultstuff as df
 import backend.exceptions.send_error as s_e
 import backend.exceptions.custom_exc as c_e
-import backend.firebase.firebase_interaction as firebase
+import backend.firebase_new as firebase
 
 
 async def get_fb_path(ctx: cmds.Context):
@@ -23,7 +23,7 @@ async def get_channels(ctx: cmds.Context):
     if data == "null":
         firebase.override_data(path + ["availableChannels"], df.PLACEHOLDER)
         return {}
-    if not data == df.PLACEHOLDER:
+    if data != df.PLACEHOLDER:
         return {
             channel["channelId"]: {
                 "claimStatus": channel["claimStatus"],

@@ -13,7 +13,7 @@ import backend.barking.stat_types as s_t
 import backend.barking.special_event as s_ev
 import backend.exceptions.send_error as s_e
 import backend.exceptions.custom_exc as c_e
-import backend.firebase.firebase_interaction as firebase
+import backend.firebase_new as firebase
 import backend.other_functions as o_f
 
 

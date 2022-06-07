@@ -1,7 +1,6 @@
 """Defines path."""
 
 
-import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import backend.firebase_new as firebase

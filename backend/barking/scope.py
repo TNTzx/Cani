@@ -2,7 +2,7 @@
 
 
 import typing as typ
-import nextcord as nx
+
 import nextcord.ext.commands as cmds
 
 import backend.barking.path as p_b
