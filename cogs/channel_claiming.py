@@ -151,9 +151,9 @@ class ChannelClaiming(cmds.Cog):
 
         message = await channel.send(embed=nx.Embed(title="?", description="?"))
 
-        firebase.edit_data(path + ["embedInfo"], {
-                "channel": str(channel.id),
-                "messageId": str(message.id)
+        firebase.edit_data(path + ["embed_info"], {
+                "channel_id": str(channel.id),
+                "message_id": str(message.id)
             })
 
         await ctx.send("*Changing claim display channel...*")
