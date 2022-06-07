@@ -13,35 +13,32 @@ import backend.firebase_new as firebase
 
 async def get_fb_path(ctx: cmds.Context):
     """Gets the firebase path from the context."""
-    return firebase.ShortEndpoint.discord_guilds.get_path() + [str(ctx.guild.id), "claimChannelData"]
+    return firebase.ShortEndpoint.discord_guilds.get_path() + [str(ctx.guild.id), "claim_channel_data"]
 
 
 async def get_channels(ctx: cmds.Context):
     """Gets all available claim channels."""
     path = await get_fb_path(ctx)
-    data = firebase.get_data(path + ["availableChannels"])
-    if data == "null":
-        firebase.override_data(path + ["availableChannels"], df.PLACEHOLDER)
-        return {}
-    if data != df.PLACEHOLDER:
-        return {
-            channel["channelId"]: {
-                "claimStatus": channel["claimStatus"],
-                "location": channel["location"]
-                }
-            for channel in data}
-
-    return {}
+    data = firebase.get_data(path + ["available_channels"], default = {})
+    return {
+        channel["channel_id"]: {
+            "claim_status": channel["claim_status"],
+            "location": channel["location"]
+        }
+        for channel in data
+    }
 
 async def edit_claims(ctx: cmds.Context, data: dict[int, dict[str, bool | str]]):
     """Edits the claim."""
     path = await get_fb_path(ctx)
-    new_data = [{
-        "channelId": str(channel_id),
-        "claimStatus": channel_data["claimStatus"],
-        "location": channel_data["location"]
-    } for channel_id, channel_data in data.items()]
-    firebase.override_data(path + ["availableChannels"], new_data)
+    new_data = [
+        {
+            "channel_id": str(channel_id),
+            "claim_status": channel_data["claim_status"],
+            "location": channel_data["location"]
+        } for channel_id, channel_data in data.items()
+    ]
+    firebase.override_data(path + ["available_channels"], new_data)
 
 
 async def is_rp_channel( ctx: cmds.Context):
@@ -57,7 +54,7 @@ async def edit_channel_database(ctx: cmds.Context, claim_status, place, *dump):
         raise c_e.ExitFunction()
 
     channels = await get_channels(ctx)
-    channels[str(ctx.channel.id)]["claimStatus"] = claim_status
+    channels[str(ctx.channel.id)]["claim_status"] = claim_status
     channels[str(ctx.channel.id)]["location"] = place
     await edit_claims(ctx, channels)
 
@@ -71,7 +68,7 @@ async def update_embed(ctx: cmds.Context):
 
     if not len(claim_channels) == 0:
         for channel_id, data in claim_channels.items():
-            if data["claimStatus"]:
+            if data["claim_status"]:
                 title = "Claimed"
                 description = f"`Current location:` __{data['location']}__"
             else:
@@ -85,12 +82,12 @@ async def update_embed(ctx: cmds.Context):
     else:
         embed.add_field(name="No RP channels! :(", value=f"Ask the moderators to go add one using `{vrs.CMD_PREFIX}claimchanneledit add`.", inline=False)
 
-    embed_info = firebase.get_data(path +  ["embedInfo"])
-    if embed_info["channel"] == df.PLACEHOLDER:
+    embed_info = firebase.get_data(path +  ["embed_info"])
+    if embed_info["channel_id"] == df.PLACEHOLDER:
         await s_e.send_error(ctx, "*There hasn't been a channel added to display claimed channels. Please ask the moderators / admins to add one!*")
         return
 
-    embed_channel = vrs.global_bot.get_channel(int(embed_info["channel"]))
-    embed_message = await embed_channel.fetch_message(int(embed_info["messageId"]))
+    embed_channel = vrs.global_bot.get_channel(int(embed_info["channel_id"]))
+    embed_message = await embed_channel.fetch_message(int(embed_info["message_id"]))
 
     await embed_message.edit(embed=embed)
