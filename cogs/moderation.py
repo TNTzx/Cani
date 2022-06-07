@@ -5,7 +5,7 @@ import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import backend.command_related.command_wrapper as c_w
-import backend.firebase.firebase_interaction as fi
+import backend.firebase_new as firebase
 import backend.exceptions.send_error as s_e
 
 class Moderation(cmds.Cog):
@@ -27,7 +27,7 @@ class Moderation(cmds.Cog):
             await s_e.send_error(ctx, "*You didn't send a valid role ID!*")
             return
 
-        fi.edit_data(['guilds', ctx.guild.id, 'mainData'], {'adminRole': role_id})
+        firebase.edit_data(firebase.ShortEndpoint.discord_guilds.get_path() + [ctx.guild.id, 'admin_role'], role_id)
         await ctx.send("*The admin role for this server has been set! :D*")
 
 

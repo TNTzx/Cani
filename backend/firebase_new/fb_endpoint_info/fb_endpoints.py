@@ -68,6 +68,15 @@ class Root(endpoint.FBEndpointRoot):
             def get_default_data(self):
                 return {
                     "admin_role": 0,
+                    "claim_channel_data": {
+                        "available_channels": [
+                            fb_consts.PLACEHOLDER_DATA
+                        ],
+                        "embed_info": {
+                            "channel_id": fb_consts.PLACEHOLDER_DATA,
+                            "message_id": fb_consts.PLACEHOLDER_DATA
+                        }
+                    },
                     "fun": {
                         "barking": {
                             "server": fb_consts.PLACEHOLDER_DATA

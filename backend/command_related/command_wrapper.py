@@ -92,7 +92,7 @@ def command(
 
             async def check_admin():
                 try:
-                    admin_role = firebase.get_data(['guilds', str(ctx.guild.id), "mainData", 'adminRole'])
+                    admin_role = firebase.get_data(['guilds', str(ctx.guild.id), 'admin_role'])
                     admin_role = int(admin_role)
                 except c_exc.FirebaseNoEntry:
                     return False
