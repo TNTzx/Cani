@@ -12,7 +12,7 @@ import backend.firebase_new as firebase
 import backend.exceptions.send_error as s_e
 import backend.other_functions as o_f
 
-
+# REWRITE
 class ChannelClaiming(cmds.Cog):
     """Cog."""
     def __init__(self, bot):

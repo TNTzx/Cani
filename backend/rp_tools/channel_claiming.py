@@ -88,6 +88,11 @@ async def update_embed(ctx: cmds.Context):
         return
 
     embed_channel = vrs.global_bot.get_channel(int(embed_info["channel_id"]))
+
+    if embed_channel is None:
+        await s_e.send_error(ctx, "*The claim channel embed is invalid! Try setting it again using `++claimchannelembed`!*")
+        return
+
     embed_message = await embed_channel.fetch_message(int(embed_info["message_id"]))
 
     await embed_message.edit(embed=embed)
