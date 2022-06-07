@@ -31,8 +31,8 @@ class SpecialEvent():
     async def event_trigger(self, ctx: cmds.Context):
         """If the event meets the condition, the event is triggered."""
         path = self.get_initial_path(ctx)
-        if (firebase.get_data(path + self.path_bundle.total) >= self.raw.threshold) and \
-                (not firebase.get_data(path + self.path_bundle.milestone) >= self.raw.threshold):
+        if (firebase.get_data(path + self.path_bundle.total, 0) >= self.raw.threshold) and \
+                (not firebase.get_data(path + self.path_bundle.milestone, 0) >= self.raw.threshold):
             await ctx.send("*> Oh? Something's happening...*")
             firebase.edit_data(path, {self.path_bundle.milestone[0]: self.raw.threshold})
             await ctx.send(self.raw.message)
@@ -41,7 +41,7 @@ class SpecialEvent():
 
     def has_met_threshold(self, ctx: cmds.Context):
         """Returns true if the threshold has been met."""
-        return firebase.get_data(self.get_initial_path(ctx) + self.path_bundle.milestone) >= self.raw.threshold
+        return firebase.get_data(self.get_initial_path(ctx) + self.path_bundle.milestone, 0) >= self.raw.threshold
 
 
 class ServerSpecialEvent(SpecialEvent):

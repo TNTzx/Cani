@@ -40,7 +40,7 @@ LIST_OF_SUSTAINED_CMDS: list[SustainedCommand] = []
 def sustained_command():
     """A decorator factory for sustained commands."""
     def decorator(func):
-        path = ["commandData", "isUsingCommand", str(func.__name__)]
+        path = firebase.ShortEndpoint.discord_cmds.e_is_using.get_path() + [str(func.__name__)]
 
         if not firebase.is_data_exists(path):
             firebase.override_data(path, firebase.PLACEHOLDER_DATA)

@@ -55,7 +55,7 @@ class Scope():
         if not firebase.is_data_exists(path):
             firebase.override_data(path, self.raw.path_bundle.get_dict())
 
-        original_total = firebase.get_data(path + self.raw.path_bundle.total)
+        original_total = firebase.get_data(path + self.raw.path_bundle.total, 0)
         new_total = original_total + amount
         firebase.override_data(path + self.raw.path_bundle.total, new_total)
 

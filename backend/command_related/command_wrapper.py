@@ -91,11 +91,12 @@ def command(
                 return
 
             async def check_admin():
-                try:
-                    admin_role = firebase.get_data(['guilds', str(ctx.guild.id), 'admin_role'])
-                    admin_role = int(admin_role)
-                except c_exc.FirebaseNoEntry:
+                admin_role = firebase.get_data(['guilds', str(ctx.guild.id), 'admin_role'])
+
+                if admin_role is None:
                     return False
+
+                admin_role = int(admin_role)
 
                 for role in ctx.author.roles:
                     if role.id == admin_role:
@@ -106,7 +107,7 @@ def command(
                 return ctx.author.id == ctx.guild.owner.id
 
             async def check_dev():
-                devs = firebase.get_data(['mainData', 'devs'])
+                devs = firebase.get_data(firebase.ShortEndpoint.devs.get_path())
                 return str(ctx.author.id) in devs
 
 
