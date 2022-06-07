@@ -13,7 +13,7 @@ import backend.firebase_new as firebase
 
 async def get_fb_path(ctx: cmds.Context):
     """Gets the firebase path from the context."""
-    return ["guilds", str(ctx.guild.id), "claimChannelData"]
+    return firebase.ShortEndpoint.discord_guilds.get_path() + [str(ctx.guild.id), "claimChannelData"]
 
 
 async def get_channels(ctx: cmds.Context):

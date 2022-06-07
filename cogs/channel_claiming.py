@@ -8,7 +8,7 @@ import global_vars.variables as vrs
 import global_vars.defaultstuff as df
 import backend.command_related.command_wrapper as c_w
 import backend.rp_tools.channel_claiming as c_c
-import backend.firebase.firebase_interaction as firebase
+import backend.firebase_new as firebase
 import backend.exceptions.send_error as s_e
 import backend.other_functions as o_f
 
