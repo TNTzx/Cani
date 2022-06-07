@@ -105,7 +105,7 @@ class ChannelClaiming(cmds.Cog):
                 return
 
             await ctx.send("*Adding channel as an RP channel...*")
-            claim_channels[channel.id] = {"claimStatus": False, "location": "Unknown"}
+            claim_channels[channel.id] = {"claim_status": False, "location": "Unknown"}
             await update_data(claim_channels)
             await ctx.send("*The channel has been added as an RP channel! :D*")
 

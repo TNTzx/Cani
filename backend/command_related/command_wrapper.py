@@ -91,7 +91,7 @@ def command(
                 return
 
             async def check_admin():
-                admin_role = firebase.get_data(['guilds', str(ctx.guild.id), 'admin_role'])
+                admin_role = firebase.get_data(firebase.ShortEndpoint.discord_guilds.get_path() + [str(ctx.guild.id), 'admin_role'])
 
                 if admin_role is None:
                     return False
