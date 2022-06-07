@@ -5,7 +5,7 @@ import functools as fc
 # import nextcord as nx
 import nextcord.ext.commands as cmds
 
-import backend.firebase.firebase_interaction as f_i
+import backend.firebase_new as firebase
 import backend.exceptions.send_error as s_e
 import backend.exceptions.custom_exc as c_exc
 
@@ -91,11 +91,12 @@ def command(
                 return
 
             async def check_admin():
-                try:
-                    admin_role = f_i.get_data(['guilds', str(ctx.guild.id), "mainData", 'adminRole'])
-                    admin_role = int(admin_role)
-                except c_exc.FirebaseNoEntry:
+                admin_role = firebase.get_data(firebase.ShortEndpoint.discord_guilds.get_path() + [str(ctx.guild.id), 'admin_role'])
+
+                if admin_role is None:
                     return False
+
+                admin_role = int(admin_role)
 
                 for role in ctx.author.roles:
                     if role.id == admin_role:
@@ -106,7 +107,7 @@ def command(
                 return ctx.author.id == ctx.guild.owner.id
 
             async def check_dev():
-                devs = f_i.get_data(['mainData', 'devs'])
+                devs = firebase.get_data(firebase.ShortEndpoint.devs.get_path())
                 return str(ctx.author.id) in devs
 
 
@@ -179,11 +180,11 @@ def command(
         if cmd.name not in ListOfCommands.commands_all[category]:
             ListOfCommands.commands_all[category].append(cmd.name)
 
-        if cmd.name not in ListOfCommands.commands.keys():
+        if cmd.name not in ListOfCommands.commands:
             ListOfCommands.commands[cmd.name] = cmd
         if aliases is not None:
             for alias in aliases:
-                if alias not in ListOfCommands.commands.keys():
+                if alias not in ListOfCommands.commands:
                     ListOfCommands.commands[alias] = cmd
 
         return wrapper

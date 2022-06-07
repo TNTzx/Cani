@@ -2,12 +2,12 @@
 
 
 import typing as typ
-import nextcord as nx
+
 import nextcord.ext.commands as cmds
 
 import backend.barking.path as p_b
 import backend.barking.special_event as s_ev
-import backend.firebase.firebase_interaction as f_i
+import backend.firebase_new as firebase
 
 
 class RawScope():
@@ -52,12 +52,12 @@ class Scope():
     async def add_on_scope(self, ctx: cmds.Context, amount: int):
         """Adds the amount to the scope."""
         path: list[str] = self.raw.path_function(ctx, self.category)
-        if not f_i.is_data_exists(path):
-            f_i.override_data(path, self.raw.path_bundle.get_dict())
+        if not firebase.is_data_exists(path):
+            firebase.override_data(path, self.raw.path_bundle.get_dict())
 
-        original_total = f_i.get_data(path + self.raw.path_bundle.total)
+        original_total = firebase.get_data(path + self.raw.path_bundle.total, 0)
         new_total = original_total + amount
-        f_i.override_data(path + self.raw.path_bundle.total, new_total)
+        firebase.override_data(path + self.raw.path_bundle.total, new_total)
 
         for special_event in self.special_events:
             await special_event.event_trigger(ctx)
@@ -65,7 +65,7 @@ class Scope():
 
     def get_path_value(self, ctx: cmds.Context, path_bundle_item: list[str]):
         """Gets the data from a path."""
-        return f_i.get_data(self.get_path(ctx) + path_bundle_item)
+        return firebase.get_data(self.get_path(ctx) + path_bundle_item)
 
     def get_total(self, ctx: cmds.Context):
         """Gets the total from this scope."""

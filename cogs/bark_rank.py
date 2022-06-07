@@ -13,7 +13,7 @@ import backend.barking.stat_types as s_t
 import backend.barking.special_event as s_ev
 import backend.exceptions.send_error as s_e
 import backend.exceptions.custom_exc as c_e
-import backend.firebase.firebase_interaction as f_i
+import backend.firebase_new as firebase
 import backend.other_functions as o_f
 
 
@@ -55,7 +55,7 @@ class BarkRank(cmds.Cog):
             await s_e.send_error(ctx, f"*No leaderboard found for {stat_type.name}. Be the first one to be in that leaderboard!*")
             raise c_e.ExitFunction()
 
-        users_data: dict[str, dict[str, dict[str, int]]] = f_i.get_data(p_b.get_path_users(ctx))
+        users_data: dict[str, dict[str, dict[str, int]]] = firebase.get_data(p_b.get_path_users(ctx))
         if users_data == df.PLACEHOLDER:
             await send_no_leaderboard_found()
 
