@@ -82,7 +82,9 @@ async def update_embed(ctx: cmds.Context):
     else:
         embed.add_field(name="No RP channels! :(", value=f"Ask the moderators to go add one using `{vrs.CMD_PREFIX}claimchanneledit add`.", inline=False)
 
-    embed_info = firebase.get_data(path +  ["embed_info"])
+    embed_info = firebase.get_data(path + ["embed_info"])
+    if embed_info is None:
+        embed_info = {"channel_id": None}
     if embed_info["channel_id"] is None:
         await s_e.send_error(ctx, "*There hasn't been a channel added to display claimed channels. Please ask the moderators / admins to add one!*")
         return
