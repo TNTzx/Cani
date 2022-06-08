@@ -48,7 +48,7 @@ class ChannelClaiming(cmds.Cog):
 
         async def unclaim():
             claim_channels = await c_c.get_channels(ctx)
-            if not claim_channels[str(ctx.channel.id)]["claimStatus"]:
+            if not claim_channels[str(ctx.channel.id)]["claim_status"]:
                 await s_e.send_error(ctx, "*This channel isn't claimed yet! >:(*", cooldown_reset=True)
                 return
 
