@@ -6,7 +6,7 @@ import traceback as tr
 import nextcord as nx
 import nextcord.ext.commands as cmds
 
-import global_vars.variables as vrs
+import global_vars
 import backend.logging as lgr
 import backend.exceptions.custom_exc as c_e
 import backend.exceptions.send_error as s_e
@@ -36,7 +36,7 @@ class CogErrorHandling(cog.RegisteredCog):
             return
 
         if checkexc(cmds.MissingRequiredArgument) or checkexc(cmds.BadArgument):
-            await s_e.send_error(ctx, f"Make sure you have the correct parameters! Use `{vrs.CMD_PREFIX}help` to get help!", cooldown_reset=True)
+            await s_e.send_error(ctx, f"Make sure you have the correct parameters! Use `{global_vars.CMD_PREFIX}help` to get help!", cooldown_reset=True)
             return
 
         if checkexc(cmds.ExpectedClosingQuoteError) or checkexc(cmds.InvalidEndOfQuotedStringError) or checkexc(cmds.UnexpectedQuoteError):
@@ -44,7 +44,7 @@ class CogErrorHandling(cog.RegisteredCog):
             return
 
         if checkexc(cmds.MissingRequiredArgument):
-            await s_e.send_error(ctx, f"Make sure you have the correct parameters! Use `{vrs.CMD_PREFIX}help` to get help!")
+            await s_e.send_error(ctx, f"Make sure you have the correct parameters! Use `{global_vars.CMD_PREFIX}help` to get help!")
             return
 
         if checkexc(cmds.NoPrivateMessage):

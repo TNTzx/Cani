@@ -4,8 +4,7 @@
 import nextcord as nx
 import nextcord.ext.commands as cmds
 
-import global_vars.variables as vrs
-import global_vars.defaultstuff as df
+import global_vars
 import backend.command_related.command_wrapper as c_w
 import backend.command_related.choice_param as c_p
 import backend.barking.path as p_b
@@ -58,7 +57,7 @@ class CogBarkRank(cog.RegisteredCog):
             raise c_e.ExitFunction()
 
         users_data: dict[str, dict[str, dict[str, int]]] = firebase.get_data(p_b.get_path_users(ctx))
-        if users_data == df.PLACEHOLDER:
+        if users_data is None:
             await send_no_leaderboard_found()
 
 
@@ -123,7 +122,7 @@ class CogBarkRank(cog.RegisteredCog):
             leaderboard = []
             for idx, user_data_tuple in enumerate(users_data_paged.items()):
                 user_id = user_data_tuple[0]
-                user = vrs.global_bot.get_user(int(user_id))
+                user = global_vars.global_bot.get_user(int(user_id))
                 if user is not None:
                     user_name = user.name
                 else:
@@ -156,7 +155,7 @@ class CogBarkRank(cog.RegisteredCog):
                 relative_id = users_data_list[relative_pos]
             except IndexError:
                 return f"No one is {'above' if offset < 0 else 'below'} you!"
-            relative = vrs.global_bot.get_user(int(relative_id))
+            relative = global_vars.global_bot.get_user(int(relative_id))
             if relative is not None:
                 relative_name = relative.name
             else:
@@ -186,12 +185,12 @@ class CogBarkRank(cog.RegisteredCog):
                 desc_last = await get_relative(author_index, 1)
         else:
             desc_first = await get_relative(len(users_data_list), -1, display_bark_diff=False)
-            desc_last = f"You don't have a statistic here yet! Try `{vrs.CMD_PREFIX}help` to get help on how to enter!"
+            desc_last = f"You don't have a statistic here yet! Try `{global_vars.CMD_PREFIX}help` to get help on how to enter!"
 
 
         embed.add_field(name=f"Your total {stat_type.name_plural}: {author_total} (#{author_place})", value=f"{desc_first}\n{desc_last}", inline=False)
 
         if page_amount > 1:
-            embed.set_footer(text=f"Page {page} of {page_amount}. Use {vrs.CMD_PREFIX}barkrank {stat_type.name} <page> to select a page.")
+            embed.set_footer(text=f"Page {page} of {page_amount}. Use {global_vars.CMD_PREFIX}barkrank {stat_type.name} <page> to select a page.")
 
         await ctx.send(embed=embed)

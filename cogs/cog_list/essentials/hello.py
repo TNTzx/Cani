@@ -4,7 +4,7 @@
 import nextcord as nx
 import nextcord.ext.commands as cmds
 
-import global_vars.variables as vrs
+import global_vars
 import backend.command_related.command_wrapper as c_w
 import backend.firebase as firebase
 import backend.barking.stat_types as stats
@@ -21,7 +21,7 @@ async def add_new_to_database():
         stats.STAT_TYPES.barks.name: stats.STAT_TYPES.barks.server_scope.raw.path_bundle.get_dict()
     }
 
-    for guild in vrs.global_bot.guilds:
+    for guild in global_vars.global_bot.guilds:
         if not firebase.is_data_exists(fb_path.get_path() + [guild.id]):
             firebase.edit_data(fb_path.get_path() + [guild.id], {guild.id: default_json})
 
@@ -35,10 +35,10 @@ class CogEvents(cog.RegisteredCog):
     @cmds.Cog.listener()
     async def on_ready(self):
         """On log-in."""
-        print(f"Logged in as {vrs.global_bot.user}.")
-        vrs.tntz = await vrs.global_bot.fetch_user(279803094722674693)
+        print(f"Logged in as {global_vars.global_bot.user}.")
+        global_vars.tntz = await global_vars.global_bot.fetch_user(279803094722674693)
 
-        await vrs.tntz.send("*Logged in! :D*")
+        await global_vars.tntz.send("*Logged in! :D*")
         await add_new_to_database()
 
     @cmds.Cog.listener()

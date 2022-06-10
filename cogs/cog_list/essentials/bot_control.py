@@ -7,7 +7,7 @@ import sys
 import nextcord as nx
 import nextcord.ext.commands as cmds
 
-import global_vars.variables as vrs
+import global_vars
 import backend.command_related.command_wrapper as c_w
 
 from ... import utils as cog
@@ -59,7 +59,7 @@ class BotControl(cog.RegisteredCog):
 
     @c_w.command(
         category=c_w.Categories.bot_control,
-        description=f"Like {vrs.CMD_PREFIX}restart, but hard.",
+        description=f"Like {global_vars.CMD_PREFIX}restart, but hard.",
         aliases=["srh"],
         guild_only=False,
         req_dev=True

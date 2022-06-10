@@ -3,7 +3,7 @@
 
 import nextcord.ext.commands as cmds
 
-import global_vars.variables as vrs
+import global_vars
 import backend.firebase as firebase
 import backend.exceptions.custom_exc as c_e
 import backend.exceptions.send_error as s_e
@@ -49,7 +49,7 @@ def sustained_command():
             ctx: cmds.Context = args[1]
 
             if check_if_using_command(path, ctx.author.id):
-                await s_e.send_error(ctx, f"You're already using this command! Use {vrs.CMD_PREFIX}cancelall on your DMs with me to cancel the command.")
+                await s_e.send_error(ctx, f"You're already using this command! Use {global_vars.CMD_PREFIX}cancelall on your DMs with me to cancel the command.")
                 return
 
             add_is_using_command(path, ctx.author.id)

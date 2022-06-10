@@ -4,8 +4,7 @@
 import nextcord as nx
 import nextcord.ext.commands as cmds
 
-import global_vars.variables as vrs
-import global_vars.defaultstuff as df
+import global_vars
 import backend.command_related.command_wrapper as c_w
 import backend.rp_tools.channel_claiming as c_c
 import backend.firebase as firebase
@@ -31,8 +30,8 @@ class CogChannelClaiming(cog.RegisteredCog):
         }, aliases=["cc"],
         cooldown=60 * 2, cooldown_type=cmds.BucketType.user,
         example_usage=[
-            f"{vrs.CMD_PREFIX}claimchannel claim \"Quaz's HQ\"",
-            f"{vrs.CMD_PREFIX}claimchannel unclaim"
+            f"{global_vars.CMD_PREFIX}claimchannel claim \"Quaz's HQ\"",
+            f"{global_vars.CMD_PREFIX}claimchannel unclaim"
         ])
     async def claimchannel(self, ctx: cmds.Context, action, place=None):
         """Claims a channel to a location."""
@@ -42,7 +41,7 @@ class CogChannelClaiming(cog.RegisteredCog):
 
         async def claim():
             if not o_f.is_not_blank_str(place):
-                await s_e.send_error(ctx, f"*You didn't specify what the `<location>` is! Type `{vrs.CMD_PREFIX}help` to get help! >:(*", cooldown_reset=True)
+                await s_e.send_error(ctx, f"*You didn't specify what the `<location>` is! Type `{global_vars.CMD_PREFIX}help` to get help! >:(*", cooldown_reset=True)
                 return
             await ctx.send("*Claiming channel...*")
             await c_c.edit_channel_database(ctx, True, place)
@@ -65,7 +64,7 @@ class CogChannelClaiming(cog.RegisteredCog):
         elif action == "unclaim":
             await unclaim()
         else:
-            await s_e.send_error(ctx, f"*`{action}` isn't a valid argument! Type `{vrs.CMD_PREFIX}help` for help!*", cooldown_reset=True)
+            await s_e.send_error(ctx, f"*`{action}` isn't a valid argument! Type `{global_vars.CMD_PREFIX}help` for help!*", cooldown_reset=True)
             return
 
         await c_c.update_embed(ctx)
@@ -99,7 +98,7 @@ class CogChannelClaiming(cog.RegisteredCog):
             if not len(data) == 0:
                 await c_c.edit_claims(ctx, data)
             else:
-                firebase.edit_data(path, {"availableChannels": df.PLACEHOLDER})
+                firebase.edit_data(path, {"availableChannels": firebase.PLACEHOLDER_DATA})
 
 
         async def add():
@@ -129,7 +128,7 @@ class CogChannelClaiming(cog.RegisteredCog):
         elif action == "remove":
             await remove()
         else:
-            await s_e.send_error(ctx, f"*`{action}` isn't a valid argument! Type `{vrs.CMD_PREFIX}help` for help!*")
+            await s_e.send_error(ctx, f"*`{action}` isn't a valid argument! Type `{global_vars.CMD_PREFIX}help` for help!*")
             return
 
         await c_c.update_embed(ctx)

@@ -3,7 +3,7 @@
 
 import nextcord.ext.commands as cmds
 
-import global_vars.variables as vrs
+import global_vars
 import backend.barking.path as p_b
 import backend.barking.special_event as s_ev
 import backend.barking.scope as sc
@@ -48,14 +48,14 @@ class StatisticTypes():
                         "++pat", 1000, (
                             ">>> YAYYAYAYAYYAAYAYA- AM HAPPY!! :D!!\n"
                             "*Cani likes this server! The command `++pat` has been unlocked!*\n"
-                            f"*Use `{vrs.CMD_PREFIX}help pat` for more information.*"
+                            f"*Use `{global_vars.CMD_PREFIX}help pat` for more information.*"
                         )
                     ),
                     s_ev.RawSpecialEvent(
                         "++fetch", 2500, (
                             ">>> ...oooh, a.. stick!\n"
                             "*Cani found some sticks for this server! The command `++fetch` has been unlocked!*\n"
-                            f"*Use `{vrs.CMD_PREFIX}help fetch` for more information.*"
+                            f"*Use `{global_vars.CMD_PREFIX}help fetch` for more information.*"
                         )
                     )
                 ]

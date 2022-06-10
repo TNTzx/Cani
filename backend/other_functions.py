@@ -7,7 +7,7 @@ import datetime
 import nextcord as nx
 import nextcord.ext.commands as cmds
 
-import global_vars.variables as vrs
+import global_vars
 import backend.exceptions.custom_exc as c_exc
 
 
@@ -34,7 +34,7 @@ def format_time(num: int):
 async def get_channel_from_mention(mention: str):
     """Gets channel from a mention."""
     get_id = mention[2:-1]
-    obj = vrs.global_bot.get_channel(int(get_id))
+    obj = global_vars.global_bot.get_channel(int(get_id))
     return obj
 
 
