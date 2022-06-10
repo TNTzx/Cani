@@ -13,12 +13,14 @@ import backend.barking.stat_types as s_t
 import backend.barking.special_event as s_ev
 import backend.exceptions.send_error as s_e
 import backend.exceptions.custom_exc as c_e
-import backend.firebase_new as firebase
+import backend.firebase as firebase
 import backend.other_functions as o_f
 
+from ... import utils as cog
 
-class BarkRank(cmds.Cog):
-    """Cog."""
+
+class CogBarkRank(cog.RegisteredCog):
+    """Contains commands for bark rankings."""
     def __init__(self, bot):
         self.bot = bot
 
@@ -193,7 +195,3 @@ class BarkRank(cmds.Cog):
             embed.set_footer(text=f"Page {page} of {page_amount}. Use {vrs.CMD_PREFIX}barkrank {stat_type.name} <page> to select a page.")
 
         await ctx.send(embed=embed)
-
-def setup(bot: cmds.bot.Bot):
-    """Setup."""
-    bot.add_cog(BarkRank(bot))

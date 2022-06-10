@@ -1,4 +1,4 @@
 """Contains all fun commands."""
 
 
-from .fun import Fun
+from .fun import CogFun

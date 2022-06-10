@@ -5,10 +5,11 @@ import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import global_vars.variables as vrs
-import global_vars.defaultstuff as defs
 import backend.command_related.command_wrapper as c_w
-import backend.firebase_new as firebase
+import backend.firebase as firebase
 import backend.barking.stat_types as stats
+
+from ... import utils as cog
 
 
 # TEST
@@ -25,8 +26,8 @@ async def add_new_to_database():
             firebase.edit_data(fb_path.get_path() + [guild.id], {guild.id: default_json})
 
 
-class Hello(cmds.Cog):
-    """Cog."""
+class CogEvents(cog.RegisteredCog):
+    """A cog for events."""
     def __init__(self, bot):
         self.bot = bot
 
@@ -81,7 +82,3 @@ class Hello(cmds.Cog):
     async def causeerror(self, ctx):
         """MOM HELP I'M AAAAAAAAAAAAAAAAAA"""
         raise ValueError('funky error')
-
-def setup(bot: cmds.bot.Bot):
-    """Setup."""
-    bot.add_cog(Hello(bot))

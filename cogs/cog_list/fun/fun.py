@@ -7,9 +7,11 @@ import nextcord.ext.commands as cmds
 import backend.command_related.command_wrapper as c_w
 import backend.other_functions as o_f
 
+from ... import utils as cog
 
-class Fun(cmds.Cog):
-    """Cog."""
+
+class CogFun(cog.RegisteredCog):
+    """Fun cog!"""
     def __init__(self, bot):
         self.bot = bot
 
@@ -25,8 +27,3 @@ class Fun(cmds.Cog):
         await o_f.delay_message(ctx, "https://i.redd.it/bgmfikr8j9751.png", duration=2, delete=True)
         await o_f.delay_message(ctx, "https://thumbs.gfycat.com/GreedyCourageousKrill-max-1mb.gif", duration=2)
         await ctx.send("*Yum!*")
-
-
-def setup(bot: cmds.bot.Bot):
-    """Setup."""
-    bot.add_cog(Fun(bot))

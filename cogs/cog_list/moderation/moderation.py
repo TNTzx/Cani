@@ -4,11 +4,14 @@
 import nextcord.ext.commands as cmds
 
 import backend.command_related.command_wrapper as c_w
-import backend.firebase_new as firebase
+import backend.firebase as firebase
 import backend.exceptions.send_error as s_e
 
-class Moderation(cmds.Cog):
-    """Cog."""
+from ... import utils as cog
+
+
+class CogModeration(cog.RegisteredCog):
+    """Contains commands for moderation."""
     def __init__(self, bot):
         self.bot = bot
 
@@ -28,8 +31,3 @@ class Moderation(cmds.Cog):
 
         firebase.override_data(firebase.ShortEndpoint.discord_guilds.get_path() + [ctx.guild.id, 'admin_role'], role_id)
         await ctx.send("*The admin role for this server has been set! :D*")
-
-
-def setup(bot: cmds.bot.Bot):
-    """Setup."""
-    bot.add_cog(Moderation(bot))

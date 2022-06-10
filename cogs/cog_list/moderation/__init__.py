@@ -1,4 +1,4 @@
 """Contains all moderation commands."""
 
 
-from .moderation import Moderation
+from .moderation import CogModeration

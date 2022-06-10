@@ -2,6 +2,6 @@
 
 
 from .bot_control import BotControl
-from .error_handling import ErrorHandling
-from .hello import Hello
-from .help_new import Help
+from .error_handling import CogErrorHandling
+from .hello import CogEvents
+from .help_new import CogHelp

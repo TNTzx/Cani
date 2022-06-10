@@ -9,8 +9,11 @@ import backend.command_related.command_wrapper as c_w
 import backend.other_functions as o_f
 import backend.exceptions.send_error as s_e
 
+from ... import utils as cog
 
-class Help(cmds.Cog):
+
+class CogHelp(cog.RegisteredCog):
+    """Contains help."""
     def __init__(self, bot):
         self.bot = bot
 
@@ -138,4 +141,4 @@ class Help(cmds.Cog):
 
 def setup(bot: cmds.bot.Bot):
     """Setup."""
-    bot.add_cog(Help(bot))
+    bot.add_cog(CogHelp(bot))

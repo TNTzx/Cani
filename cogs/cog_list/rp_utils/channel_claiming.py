@@ -8,13 +8,16 @@ import global_vars.variables as vrs
 import global_vars.defaultstuff as df
 import backend.command_related.command_wrapper as c_w
 import backend.rp_tools.channel_claiming as c_c
-import backend.firebase_new as firebase
+import backend.firebase as firebase
 import backend.exceptions.send_error as s_e
 import backend.other_functions as o_f
 
+from ... import utils as cog
+
+
 # REWRITE
-class ChannelClaiming(cmds.Cog):
-    """Cog."""
+class CogChannelClaiming(cog.RegisteredCog):
+    """Contains commands for channel claiming."""
     def __init__(self, bot):
         self.bot = bot
 
@@ -172,7 +175,3 @@ class ChannelClaiming(cmds.Cog):
         await ctx.send("*Updating embed...*")
         await c_c.update_embed(ctx)
         await ctx.send("*Updated! :D*")
-
-def setup(bot: cmds.bot.Bot):
-    """Setup.."""
-    bot.add_cog(ChannelClaiming(bot))

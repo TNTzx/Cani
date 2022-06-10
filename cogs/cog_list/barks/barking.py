@@ -7,9 +7,11 @@ import backend.command_related.command_wrapper as c_w
 import backend.barking.stat_types as s_t
 import backend.other_functions as o_f
 
+from ... import utils as cog
 
-class Barking(cmds.Cog):
-    """Cog."""
+
+class CogBark(cog.RegisteredCog):
+    """Contains commands for barks."""
     def __init__(self, bot):
         self.bot = bot
 
@@ -71,8 +73,3 @@ class Barking(cmds.Cog):
 
         await s_t.STAT_TYPES.meows.add_stat(ctx, 1)
         await s_t.STAT_TYPES.barks.add_stat(ctx, -10)
-
-
-def setup(bot):
-    """Setup."""
-    bot.add_cog(Barking(bot))

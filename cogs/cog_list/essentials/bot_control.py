@@ -10,8 +10,10 @@ import nextcord.ext.commands as cmds
 import global_vars.variables as vrs
 import backend.command_related.command_wrapper as c_w
 
+from ... import utils as cog
 
-class BotControl(cmds.Cog):
+
+class BotControl(cog.RegisteredCog):
     """Cog."""
     def __init__(self, bot: nx.Client):
         self.bot = bot
@@ -68,7 +70,3 @@ class BotControl(cmds.Cog):
         print("\n \n Restart break! Hard! -------------------------------------- \n \n")
         args = ['python'] + [f"\"{sys.argv[0]}\""]
         os.execv(sys.executable, args)
-
-def setup(bot: cmds.bot.Bot):
-    """Setup."""
-    bot.add_cog(BotControl(bot))

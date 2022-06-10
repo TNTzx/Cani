@@ -12,14 +12,17 @@ import backend.exceptions.custom_exc as c_e
 import backend.exceptions.send_error as s_e
 import backend.other_functions as o_f
 
+from ... import utils as cog
 
-class ErrorHandling(cmds.Cog):
+
+class CogErrorHandling(cog.RegisteredCog):
     """Cog."""
     def __init__(self, bot):
         self.bot = bot
 
     @cmds.Cog.listener()
     async def on_command_error(self, ctx: cmds.Context, exc: Exception | cmds.CommandInvokeError | cmds.CommandError):
+        """Called whenever a command gets an uncaught error."""
         def checkexc(exc_type):
             return isinstance(exc, exc_type)
 
@@ -41,7 +44,7 @@ class ErrorHandling(cmds.Cog):
             return
 
         if checkexc(cmds.MissingRequiredArgument):
-            await s_e.send_error(ctx, f"Make sure you have the correct parameters! Use `{vrs.vrs.CMD_PREFIX}help` to get help!")
+            await s_e.send_error(ctx, f"Make sure you have the correct parameters! Use `{vrs.CMD_PREFIX}help` to get help!")
             return
 
         if checkexc(cmds.NoPrivateMessage):
@@ -72,8 +75,3 @@ class ErrorHandling(cmds.Cog):
 
         lgr.log_global_exc.error("".join(tr.format_exception(exc.original)))
         await s_e.send_error(ctx, "Something went wrong. This error has been reported to the owner of the bot.", exc=exc, send_owner=True, send_console=True)
-
-
-def setup(bot: cmds.bot.Bot):
-    """Setup."""
-    bot.add_cog(ErrorHandling(bot))
