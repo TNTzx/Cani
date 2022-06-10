@@ -5,7 +5,7 @@ import functools as fc
 # import nextcord as nx
 import nextcord.ext.commands as cmds
 
-import backend.firebase_new as firebase
+import backend.firebase as firebase
 import backend.exceptions.send_error as s_e
 import backend.exceptions.custom_exc as c_exc
 

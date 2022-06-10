@@ -7,7 +7,7 @@ import nextcord.ext.commands as cmds
 
 import backend.barking.path as p_b
 import backend.barking.special_event as s_ev
-import backend.firebase_new as firebase
+import backend.firebase as firebase
 
 
 class RawScope():

@@ -8,7 +8,7 @@ import global_vars.variables as vrs
 import global_vars.defaultstuff as df
 import backend.exceptions.send_error as s_e
 import backend.exceptions.custom_exc as c_e
-import backend.firebase_new as firebase
+import backend.firebase as firebase
 
 
 async def get_fb_path(ctx: cmds.Context):

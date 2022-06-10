@@ -4,7 +4,7 @@
 import typing as typ
 import nextcord.ext.commands as cmds
 
-import backend.firebase_new as firebase
+import backend.firebase as firebase
 import backend.barking.path as p_b
 
 

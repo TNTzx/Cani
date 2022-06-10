@@ -8,7 +8,7 @@ import backend.barking.path as p_b
 import backend.barking.special_event as s_ev
 import backend.barking.scope as sc
 import backend.main_classes.str_variations as str_v
-import backend.firebase_new as firebase
+import backend.firebase as firebase
 
 
 class StatisticType():

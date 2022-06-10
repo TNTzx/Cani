@@ -4,7 +4,7 @@
 import nextcord.ext.commands as cmds
 
 import global_vars.variables as vrs
-import backend.firebase_new as firebase
+import backend.firebase as firebase
 import backend.exceptions.custom_exc as c_e
 import backend.exceptions.send_error as s_e
 
