@@ -9,6 +9,8 @@ import nextcord.ext.commands as cmds
 import global_vars.variables as vrs
 import global_vars.loggers as lgr
 
+import cogs
+
 
 def log_something(log_str: str):
     """Logs something."""
@@ -33,18 +35,7 @@ def main():
 
     # Load all cogs
     log_something("Loading cogs...")
-
-    def all_cogs():
-        """Returns all cogs."""
-        return os.listdir(os.path.join(os.path.dirname(__file__), ".", "cogs"))
-
-    for filename in all_cogs():
-        if filename.endswith(".py"):
-            if filename == "__init__.py":
-                continue
-            log_something(f"Loading cog '{filename}'...")
-            bot.load_extension(f"cogs.{filename[:-3]}")
-
+    cogs.RegisteredCog.load_all_cogs_to_bot(bot)
     log_something("Loaded all cogs!")
 
 
