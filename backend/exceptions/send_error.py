@@ -28,7 +28,7 @@ async def send_error(ctx: commands.Context, suffix, exc="", other_data: nx.Messa
     if send_console:
         error = getattr(exc, 'original', exc)
         print(f"Ignoring exception in command {ctx.command}:")
-        
+
         traceback.print_exception(type(error), error, error.__traceback__)
         # pylint: enable=no-member
 

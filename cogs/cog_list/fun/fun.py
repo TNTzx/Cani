@@ -1,7 +1,6 @@
 """Fun commands!"""
 
 
-import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import backend.command_related.command_wrapper as c_w

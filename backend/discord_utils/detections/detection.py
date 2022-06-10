@@ -8,7 +8,7 @@ import enum
 import nextcord as nx
 
 import global_vars
-import backend.exc_utils as exc_utils
+import backend.exc_utils as exc_utils #TODO import exc utils
 
 from .. import disc_exc
 from . import detection_checks as w_f_ch

@@ -76,7 +76,8 @@ class NonStandardDataclass(abc.ABC, DataclassConvention):
     """Base class for non-standard dataclasses.
     These are classes that are slight derivations from a standard dataclass."""
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def default_class(self):
         """Default class to bind to."""
 

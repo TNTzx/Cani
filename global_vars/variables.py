@@ -1,8 +1,5 @@
 """Variables."""
 
-import json
-import os
-import pyrebase
 
 import nextcord as nx
 

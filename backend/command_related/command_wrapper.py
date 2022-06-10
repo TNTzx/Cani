@@ -7,7 +7,6 @@ import nextcord.ext.commands as cmds
 
 import backend.firebase as firebase
 import backend.exceptions.send_error as s_e
-import backend.exceptions.custom_exc as c_exc
 
 
 class Categories:
