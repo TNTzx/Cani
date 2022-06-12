@@ -3,7 +3,7 @@
 
 import nextcord.ext.commands as cmds
 
-import backend.command_related.command_wrapper as c_w
+import backend.discord_utils as disc_utils
 import backend.barking.stat_types as s_t
 import backend.other_functions as o_f
 
@@ -16,11 +16,16 @@ class CogBark(cog.RegisteredCog):
         self.bot = bot
 
 
-    @c_w.command(
-        category=c_w.Categories.barking,
-        description="Bark! :D",
-        aliases=["b"],
-        cooldown=2, cooldown_type=cmds.BucketType.user,
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryBarking,
+        cmd_info = disc_utils.CmdInfo(
+            description = "bark",
+            aliases = ["b"],
+            cooldown_info = disc_utils.CooldownInfo(
+                length = 2,
+                type_ = cmds.BucketType.user
+            )
+        )
     )
     async def bark(self, ctx: cmds.Context):
         """bork"""
@@ -28,11 +33,18 @@ class CogBark(cog.RegisteredCog):
         await s_t.STAT_TYPES.barks.add_stat(ctx, 1)
 
 
-    @c_w.command(
-        category=c_w.Categories.barking,
-        description="Patpat! :D",
-        cooldown=60 * 60 * 12, cooldown_type=cmds.BucketType.guild,
-        show_condition=lambda ctx: s_t.STAT_TYPES.barks.server_scope.get_special_event("++pat").has_met_threshold(ctx)
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryBarking,
+        cmd_info = disc_utils.CmdInfo(
+            description = "Patpat! :D",
+            cooldown_info = disc_utils.CooldownInfo(
+                length = 60 * 60 * 12,
+                type_ = cmds.BucketType.guild
+            ),
+            usability_info = disc_utils.UsabilityInfo(
+                usability_condition = lambda ctx: s_t.STAT_TYPES.barks.server_scope.get_special_event("++pat").has_met_threshold(ctx)
+            )
+        )
     )
     async def pat(self, ctx: cmds.Context):
         """petpetpepteptpt"""
@@ -44,11 +56,18 @@ class CogBark(cog.RegisteredCog):
         await s_t.STAT_TYPES.pats.add_stat(ctx, 1)
 
 
-    @c_w.command(
-        category=c_w.Categories.barking,
-        description="stick collection! :D",
-        cooldown=60, cooldown_type=cmds.BucketType.user,
-        show_condition=lambda ctx: s_t.STAT_TYPES.barks.server_scope.get_special_event("++fetch").has_met_threshold(ctx)
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryBarking,
+        cmd_info = disc_utils.CmdInfo(
+            description = "stick collection! :D",
+            cooldown_info = disc_utils.CooldownInfo(
+                length = 60,
+                type_ = cmds.BucketType.user
+            ),
+            usability_info = disc_utils.UsabilityInfo(
+                usability_condition = lambda ctx: s_t.STAT_TYPES.barks.server_scope.get_special_event("++fetch").has_met_threshold(ctx)
+            )
+        )
     )
     async def fetch(self, ctx: cmds.Context):
         """Fetch a stick!"""
@@ -56,10 +75,15 @@ class CogBark(cog.RegisteredCog):
         await s_t.STAT_TYPES.sticks.add_stat(ctx, 1)
 
 
-    @c_w.command(
-        category=c_w.Categories.barking,
-        description="No. No. Please don't.",
-        cooldown=60 * 2, cooldown_type=cmds.BucketType.guild
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryBarking,
+        cmd_info = disc_utils.CmdInfo(
+            description = "No. No. Please don't.",
+            cooldown_info = disc_utils.CooldownInfo(
+                length = 60 * 2,
+                type_ = cmds.BucketType.guild
+            )
+        )
     )
     async def meow(self, ctx: cmds.Context):
         """mrow"""

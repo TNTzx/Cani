@@ -5,14 +5,13 @@ import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import global_vars
-import backend.command_related.command_wrapper as c_w
+import backend.discord_utils as disc_utils
 import backend.firebase as firebase
 import backend.barking.stat_types as stats
 
 from ... import utils as cog
 
 
-# TEST
 async def add_new_to_database():
     """Updates the database for joined servers."""
     fb_path = firebase.ShortEndpoint.discord_guilds
@@ -46,11 +45,17 @@ class CogEvents(cog.RegisteredCog):
         """On guild join."""
         await add_new_to_database()
 
-    @c_w.command(
-        category=c_w.Categories.bot_control,
-        description="Updates the database juuuust in case my owner messed up.",
-        guild_only=False,
-        req_dev=True
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryBotControl,
+        cmd_info = disc_utils.CmdInfo(
+            description = "Updates the database juuuust in case my owner messed up.",
+            usability_info = disc_utils.UsabilityInfo(
+                guild_only = False
+            ),
+            perms = disc_utils.Permissions(
+                [disc_utils.PermDev]
+            )
+        )
     )
     async def updatedatabase(self, ctx):
         """Updates the database."""
@@ -59,25 +64,39 @@ class CogEvents(cog.RegisteredCog):
         await ctx.send("*Updated! :D*")
 
 
-    @c_w.command(
-        category=c_w.Categories.basic_commands,
-        description="Hello!")
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryBasics,
+        cmd_info = disc_utils.CmdInfo(
+            description = "Hello!",
+        )
+    )
     async def hello(self, ctx):
         """Hello there."""
         await ctx.send("*Bark! I'm an actual bot! :D*")
 
-    @c_w.command(
-        category=c_w.Categories.basic_commands,
-        description="I ping you back! :D")
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryBasics,
+        cmd_info = disc_utils.CmdInfo(
+            description = "I ping you back! :D",
+        )
+    )
     async def ping(self, ctx):
         """ponge"""
         await ctx.send(f"*Pong! <@{ctx.author.id}> :D*")
 
 
-    @c_w.command(
-        category=c_w.Categories.bot_control,
-        description="Causes an error! D:",
-        req_dev=True
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryBotControl,
+        cmd_info = disc_utils.CmdInfo(
+            description = "UAHEHG ERROR.",
+            usability_info = disc_utils.UsabilityInfo(
+                visible_in_help = False,
+                guild_only = False
+            ),
+            perms = disc_utils.Permissions(
+                [disc_utils.PermDev]
+            )
+        )
     )
     async def causeerror(self, ctx):
         """MOM HELP I'M AAAAAAAAAAAAAAAAAA"""
