@@ -19,3 +19,6 @@ class Timeouts:
     short = 10
     medium = 60
     long = 60 * 10
+
+
+DEFAULT_COLOR = 0x5865F2

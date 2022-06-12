@@ -57,7 +57,7 @@ class DiscordCommand():
 
         embed = nx.Embed(
             title = f"Help: {global_vars.CMD_PREFIX}{self.name}",
-            color = 0xFFAEAE
+            color = global_vars.DEFAULT_COLOR
         )
 
         embed.add_field(

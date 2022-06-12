@@ -5,4 +5,5 @@ from .variables import \
     global_bot, \
     tntz, \
     CMD_PREFIX, \
-    Timeouts
+    Timeouts, \
+    DEFAULT_COLOR

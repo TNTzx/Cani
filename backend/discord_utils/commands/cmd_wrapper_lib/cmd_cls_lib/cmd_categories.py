@@ -40,9 +40,9 @@ class CmdCategory():
                 f"**Command Prefix: `{global_vars.CMD_PREFIX}`**\n"
                 "This bot was made possible by Nao's website. Go check it out! [**VADB link**](https://fadb.live/)\n"
                 "This bot is created by //TNTz.\n\n"
-                "Use `##help <command>` to view help for that command!"
+                f"Use `{global_vars.CMD_PREFIX}help <command>` to view help for that command!"
             ),
-            color = 0xFFAEAE
+            color = global_vars.DEFAULT_COLOR
         )
 
         emb_all_categs = []
