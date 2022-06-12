@@ -4,4 +4,5 @@
 from .variables import \
     global_bot, \
     tntz, \
-    CMD_PREFIX
+    CMD_PREFIX, \
+    Timeouts

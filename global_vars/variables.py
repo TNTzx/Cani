@@ -12,3 +12,10 @@ tntz: nx.User = None
 
 # Command Prefix
 CMD_PREFIX = "++"
+
+
+class Timeouts:
+    """Class that contains common timeout durations."""
+    short = 10
+    medium = 60
+    long = 60 * 10

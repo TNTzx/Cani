@@ -8,7 +8,7 @@ import enum
 import nextcord as nx
 
 import global_vars
-import backend.exc_utils as exc_utils #TODO import exc utils
+import backend.exc_utils as exc_utils
 
 from .. import disc_exc
 from . import detection_checks as w_f_ch
@@ -26,7 +26,7 @@ async def wait_for_message(
         ):
     """Wait for a message then return the response."""
     try:
-        response: nx.Message = await global_vars.bot.wait_for(
+        response: nx.Message = await global_vars.global_bot.wait_for(
             "message",
             check = w_f_ch.check_message(author, channel),
             timeout = timeout
@@ -61,7 +61,7 @@ async def wait_for_view(
         ):
     """Waits for an interaction."""
     try:
-        await global_vars.bot.wait_for(
+        await global_vars.global_bot.wait_for(
             "interaction",
             check = w_f_ch.check_interaction(author, original_message),
             timeout = timeout
@@ -89,11 +89,11 @@ async def wait_for_message_view(
     """Waits for a message then returns (MessageViewCheck.message, message). If instead it was a view interaction, return (MessageViewCheck.view, view) of that interaction."""
 
     events = [
-        global_vars.bot.wait_for(
+        global_vars.global_bot.wait_for(
             "message",
             check = w_f_ch.check_message(author, channel)
         ),
-        global_vars.bot.wait_for(
+        global_vars.global_bot.wait_for(
             "interaction",
             check = w_f_ch.check_interaction(author, original_message)
         )
