@@ -5,7 +5,8 @@ from .cmd_cls import DiscordCommand
 
 from .cmd_categories import \
     CmdCategory, \
-        CategoryArtistManagement, CategoryBasics, CategoryBotControl, CategoryModeration
+        CategoryChannelClaiming, CategoryBarking, CategoryFun, \
+        CategoryBasics, CategoryBotControl, CategoryModeration
 
 from .cmd_exts import \
     CmdInfo, \
@@ -13,4 +14,4 @@ from .cmd_exts import \
 
 from .cmd_perms import \
     Permission, Permissions, \
-    PermNotBanned, PermDev, PermPAMod, PermGuildAdmin, PermGuildOwner
+    PermNotBanned, PermDev, PermGuildAdmin, PermGuildOwner

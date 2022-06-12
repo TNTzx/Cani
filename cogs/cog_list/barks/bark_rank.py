@@ -5,8 +5,7 @@ import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import global_vars
-import backend.command_related.command_wrapper as c_w
-import backend.command_related.choice_param as c_p
+import backend.discord_utils as disc_utils
 import backend.barking.path as p_b
 import backend.barking.stat_types as s_t
 import backend.barking.special_event as s_ev
@@ -24,6 +23,9 @@ class CogBarkRank(cog.RegisteredCog):
         self.bot = bot
 
 
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryChannelClaiming
+    )
     @c_w.command(
         category=c_w.Categories.barking,
         description="Shows barking leaderboards, as well as milestones!",

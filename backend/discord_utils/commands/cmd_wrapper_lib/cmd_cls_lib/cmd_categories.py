@@ -63,9 +63,17 @@ class CmdCategory():
 
 
 
-class CategoryArtistManagement(CmdCategory):
-    """Artist management."""
-    name = "artist management"
+class CategoryChannelClaiming(CmdCategory):
+    """Channel claiming."""
+    name = "channel claiming"
+
+class CategoryBarking(CmdCategory):
+    """Barking."""
+    name = "barking"
+
+class CategoryFun(CmdCategory):
+    """Fun."""
+    name = "fun"
 
 class CategoryBasics(CmdCategory):
     """Basic commands."""
