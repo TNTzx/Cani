@@ -3,13 +3,14 @@
 
 
 import os
+
 import nextcord as nx
-import nextcord.ext.commands as cmds
+import nextcord.ext.commands as nx_cmds
+
+import cogs
 
 import global_vars
 import backend.logging as lgr
-
-import cogs
 
 
 def log_something(log_str: str):
@@ -27,7 +28,7 @@ def main():
     intents.members = True
     intents.guilds = True
 
-    bot = cmds.Bot(command_prefix=global_vars.CMD_PREFIX, intents=intents)
+    bot = nx_cmds.Bot(command_prefix=global_vars.CMD_PREFIX, intents=intents)
     bot.remove_command("help")
 
     global_vars.global_bot = bot
