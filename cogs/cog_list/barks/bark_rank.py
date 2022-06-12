@@ -24,17 +24,29 @@ class CogBarkRank(cog.RegisteredCog):
 
 
     @disc_utils.command_wrap(
-        category = disc_utils.CategoryChannelClaiming
-    )
-    @c_w.command(
-        category=c_w.Categories.barking,
-        description="Shows barking leaderboards, as well as milestones!",
-        parameters={
-            "statistic name": "What statistic you need to view. Example, \"bark\" for the bark count. To view all `statistic name`s, simply type \"`++barkrank ?`\".",
-            "[page]": "Page number of the leaderboard."
-        },
-        aliases=["br"],
-        cooldown=30, cooldown_type=cmds.BucketType.guild
+        category = disc_utils.CategoryBarking,
+        cmd_info = disc_utils.CmdInfo(
+            description = "Shows barking leaderboards, as well as milestones!",
+            params = disc_utils.Params(
+                disc_utils.ParamOptional(
+                    disc_utils.ParamArgument(
+                        "statistic name",
+                        description = "What statistic you need to view. Example, \"bark\" for the bark count. To view all `statistic name`s, simply type \"`++barkrank ?`\"."
+                    )
+                ),
+                disc_utils.ParamOptional(
+                    disc_utils.ParamArgument(
+                        "page",
+                        description = "Page number of the leaderboard."
+                    )
+                )
+            ),
+            aliases = ["br"],
+            cooldown_info = disc_utils.CooldownInfo(
+                length = 30,
+                type_ = cmds.BucketType.guild
+            )
+        )
     )
     async def barkrank(self, ctx: cmds.Context, stat_type_name: str = "bark", page: int = 1):
         """Shows ranks for certain statistics."""
@@ -46,7 +58,7 @@ class CogBarkRank(cog.RegisteredCog):
             await ctx.send(f"*The following statistics available are: `{'`, `'.join(stat_type_names)}`.*")
             return
 
-        @c_p.choice_param_cmd(ctx, stat_type_name, stat_type_names)
+        @disc_utils.choice_param_cmd(ctx, stat_type_name, stat_type_names)
         async def name():
             return s_t.STAT_TYPES.get_stat_type(stat_type_name)
 
