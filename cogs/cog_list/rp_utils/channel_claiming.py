@@ -46,7 +46,8 @@ class CogChannelClaiming(cog.RegisteredCog):
                             "unclaim",
                             description = "Unclaims the current channel."
                         )
-                    )
+                    ),
+                    description = "Determines if the action is to claim or unclaim the channel."
                 )
             ),
             aliases = ["cc"],
