@@ -38,7 +38,6 @@ class CmdCategory():
             title = "Help!",
             description = (
                 f"**Command Prefix: `{global_vars.CMD_PREFIX}`**\n"
-                "This bot was made possible by Nao's website. Go check it out! [**VADB link**](https://fadb.live/)\n"
                 "This bot is created by //TNTz.\n\n"
                 f"Use `{global_vars.CMD_PREFIX}help <command>` to view help for that command!"
             ),
