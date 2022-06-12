@@ -1,144 +1,52 @@
-"""Help command."""
+"""Contains the help command."""
 
 
-import nextcord as nx
-import nextcord.ext.commands as cmds
+import nextcord.ext.commands as nx_cmds
 
-import global_vars
-import backend.command_related.command_wrapper as c_w
-import backend.other_functions as o_f
-import backend.exceptions.send_error as s_e
+import backend.discord_utils as disc_utils
+import backend.exc_utils as exc_utils
 
 from ... import utils as cog
 
 
 class CogHelp(cog.RegisteredCog):
-    """Contains help."""
-    def __init__(self, bot):
-        self.bot = bot
+    """Contains the help command."""
 
-    @c_w.command(
-        category = c_w.Categories.basic_commands,
-        description="WHAT IN THE ACTUAL LIVING ARTIST DID YOU DO",
-        parameters={"[command]": "DID YOU SERIOUSLY NEED HELP ON A HELP COMMAND"},
-        aliases=["h"],
-        guild_only=False,
-        cooldown=1, cooldown_type=cmds.BucketType.user
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryBasics,
+        cmd_info = disc_utils.CmdInfo(
+            description = "WHAT IN THE ACTUAL LIVING BARK DOG DID YOU DO",
+            params = disc_utils.Params(
+                disc_utils.ParamOptional(
+                    disc_utils.ParamArgument(
+                        "command",
+                        description = "DID YOU SERIOUSLY NEED HELP ON A HELP COMMAND"
+                    )
+                )
+            ),
+            aliases = ["h"],
+            cooldown_info = disc_utils.CooldownInfo(
+                length = 1,
+                type_ = nx_cmds.BucketType.user
+            ),
+            usability_info = disc_utils.UsabilityInfo(
+                guild_only = False
+            )
+        )
     )
-    async def help(self, ctx: cmds.Context, command=None):
-        """Help command."""
-        async def show_all():
-            embed = nx.Embed(
-                title="Help!",
-                description=f"""**Command Prefix: `{global_vars.CMD_PREFIX}`**
-                    {"I'm created by //TNTz!"}""",
-                color=nx.Colour.blurple()
-            )
-            for category, names in c_w.ListOfCommands.commands_all.items():
+    async def help(self, ctx: nx_cmds.Context, command_query: str = None):
+        """Used to display help on a command."""
+        if command_query is None:
+            await ctx.send(embed = disc_utils.CmdCategory.generate_embed_all_categories())
+            return
 
-                name_list = []
-                for name in names:
-                    cmd = c_w.ListOfCommands.commands[name]
-                    if cmd.help.show_condition(ctx) and cmd.help.show_help:
-                        name_list.append(name)
+        await ctx.send("Getting command help info...")
+        try:
+            command = disc_utils.DiscordCommand.get_from_name_alias(command_query)
+        except ValueError:
+            await exc_utils.SendFailedCmd(
+                error_place = exc_utils.ErrorPlace.from_context(ctx),
+                suffix = f"The command name / alias `{command_query}` cannot be found! Make sure you typed it correctly!"
+            ).send()
 
-                name_form = f"`{'`, `'.join(name_list)}`"
-                embed.add_field(name=category, value=name_form, inline=False)
-            await ctx.send(embed=embed)
-
-
-        async def specific():
-            async def send_not_exist():
-                await s_e.send_error(ctx, "*This command doesn't exist! Make sure you typed it correctly!*")
-
-            if not command in c_w.ListOfCommands.commands:
-                await send_not_exist()
-                return
-
-            cmd: c_w.CustomCommandClass = c_w.ListOfCommands.commands[command]
-
-            if not cmd.help.show_condition(ctx) or not cmd.help.show_help:
-                await send_not_exist()
-                return
-
-            help_docs = cmd.help
-
-            embed = nx.Embed(
-                title=f"Help: {help_docs.category} // {global_vars.CMD_PREFIX}{cmd.name}",
-                color=nx.Colour.blurple()
-            )
-
-            async def create_separator():
-                separator = f"{'-' * 20}"
-                embed.add_field(name=separator, value="_ _", inline=False)
-
-
-            embed.add_field(name="Description", value=help_docs.description, inline=False)
-
-            if len(help_docs.aliases) > 0:
-                aliases = "`, `".join(help_docs.aliases)
-                embed.add_field(name="Aliases:", value=f"`{aliases}`", inline=False)
-
-            await create_separator()
-
-            syntax_list = "> <".join(help_docs.parameters.keys())
-            syntax_list = f" `<{syntax_list}>`" if syntax_list != "" else "_ _"
-            embed.add_field(name="Syntax:", value=f"`{global_vars.CMD_PREFIX}{cmd.name}`{syntax_list}", inline=False)
-
-            if len(help_docs.parameters) > 0:
-                params_list = "\n".join([f"`<{param}>`: {paramDesc}" for param, paramDesc in help_docs.parameters.items()])
-                embed.add_field(name="Parameters:", value=f"{params_list}", inline=False)
-
-            await create_separator()
-
-            guild_only = "only in servers." if help_docs.guild_only else "in direct messages and servers."
-            embed.add_field(name=f"Can be used {guild_only}", value="_ _", inline=False)
-
-            require = help_docs.require
-            if require.guild_owner or require.guild_admin or require.dev:
-                requirements = []
-                if require.guild_owner:
-                    requirements.append("Server Owner")
-                if require.guild_admin:
-                    requirements.append("Server Owner / Admins")
-                if require.dev:
-                    requirements.append("Bot Developer")
-
-                req_form = "`, `".join(requirements)
-
-                embed.add_field(name="Only allowed for:", value=f"`{req_form}`")
-
-            cooldown = help_docs.cooldown
-            if cooldown.length > 0:
-                if cooldown.type == cmds.BucketType.guild:
-                    cooldown_type = "Entire server"
-                elif cooldown.type == cmds.BucketType.member:
-                    cooldown_type = "Per member"
-                elif cooldown.type == cmds.BucketType.channel:
-                    cooldown_type = "Per channel"
-                elif cooldown.type == cmds.BucketType.category:
-                    cooldown_type = "Per channel category"
-                elif cooldown.type == cmds.BucketType.role:
-                    cooldown_type = "Per role"
-                elif cooldown.type == cmds.BucketType.user:
-                    cooldown_type = "Per user"
-                else:
-                    cooldown_type = "TNTz messed up, he didn't add another edge case, please ping him"
-                cooldown_form = f"Duration: `{o_f.format_time(help_docs.cooldown.length)}`\nApplies to: `{cooldown_type}`"
-                embed.add_field(name="Cooldown Info:", value=f"{cooldown_form}")
-
-            if not len(help_docs.example_usage) == 0:
-                example_usage_form = "`\n`".join(help_docs.example_usage)
-                embed.add_field(name="Examples on How To Use:", value=f"`{example_usage_form}`", inline=False)
-
-            await ctx.send(embed=embed)
-
-
-        if command is None:
-            await show_all()
-        else:
-            await specific()
-
-def setup(bot: cmds.bot.Bot):
-    """Setup."""
-    bot.add_cog(CogHelp(bot))
+        await ctx.send(embed = command.generate_embed())

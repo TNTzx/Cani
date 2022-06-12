@@ -5,7 +5,7 @@ import nextcord as nx
 import nextcord.ext.commands as cmds
 
 import global_vars
-import backend.command_related.command_wrapper as c_w
+import backend.discord_utils as disc_utils
 import backend.rp_tools.channel_claiming as c_c
 import backend.firebase as firebase
 import backend.exceptions.send_error as s_e
@@ -21,18 +21,41 @@ class CogChannelClaiming(cog.RegisteredCog):
         self.bot = bot
 
 
-    @c_w.command(
-        category=c_w.Categories.channel_claiming,
-        description="Claims / unclaims the current RP channel to a specific location.",
-        parameters={
-            "[claim | unclaim]": "Tells if you want to claim or unclaim the current RP channel.",
-            "location": "The location of where you want the channel to be in. Surround the location with quotes (example: `\"Imagination Room\"`).\nNote that __this parameter doesn't have to be filled in when you're `unclaim`ing__ the channel."
-        }, aliases=["cc"],
-        cooldown=60 * 2, cooldown_type=cmds.BucketType.user,
-        example_usage=[
-            f"{global_vars.CMD_PREFIX}claimchannel claim \"Quaz's HQ\"",
-            f"{global_vars.CMD_PREFIX}claimchannel unclaim"
-        ])
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryChannelClaiming,
+        cmd_info = disc_utils.CmdInfo(
+            description = "Claims / unclaims the current RP channel to a specific location.",
+            example = [
+                f"{global_vars.CMD_PREFIX}claimchannel claim \"Quaz's HQ\"",
+                f"{global_vars.CMD_PREFIX}claimchannel unclaim"
+            ],
+            params = disc_utils.Params(
+                disc_utils.ParamsSplit(
+                    disc_utils.Params(
+                        disc_utils.ParamLiteral(
+                            "claim",
+                            description = "Claims this channel."
+                        ),
+                        disc_utils.ParamArgument(
+                            "location",
+                            description = "The location to claim this channel to."
+                        )
+                    ),
+                    disc_utils.Params(
+                        disc_utils.ParamLiteral(
+                            "unclaim",
+                            description = "Unclaims the current channel."
+                        )
+                    )
+                )
+            ),
+            aliases = ["cc"],
+            cooldown_info = disc_utils.CooldownInfo(
+                length = 60 * 2,
+                type_ = cmds.BucketType.user
+            )
+        )
+    )
     async def claimchannel(self, ctx: cmds.Context, action, place=None):
         """Claims a channel to a location."""
         if not await c_c.is_rp_channel(ctx):
@@ -70,15 +93,36 @@ class CogChannelClaiming(cog.RegisteredCog):
         await c_c.update_embed(ctx)
 
 
-    @c_w.command(
-        category=c_w.Categories.channel_claiming,
-        description="Adds / removes the channel as an RP channel.",
-        parameters={
-            "[add | remove]": "Tells if you want to add or remove a channel as an RP channel.",
-            "channel": "Channel that you want to add / remove as an RP channel."
-        },
-        aliases=["cce"],
-        req_guild_admin=True
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryChannelClaiming,
+        cmd_info = disc_utils.CmdInfo(
+            description = "Adds / removes the channel as an RP channel.",
+            params = disc_utils.Params(
+                disc_utils.ParamsSplit(
+                    disc_utils.Params(
+                        disc_utils.ParamLiteral(
+                            "add",
+                            description = "Adds a channel as an RP channel."
+                        )
+                    ),
+                    disc_utils.Params(
+                        disc_utils.ParamLiteral(
+                            "remove",
+                            description = "Removes a channel as an RP channel."
+                        )
+                    ),
+                    description = "Tells if you want to add or remove a channel as an RP channel."
+                ),
+                disc_utils.ParamArgument(
+                    "channel",
+                    description = "Channel to add / remove."
+                )
+            ),
+            aliases = ["cce"],
+            perms = disc_utils.Permissions(
+                [disc_utils.PermGuildAdmin]
+            )
+        )
     )
     async def claimchanneledit(self, ctx: cmds.Context, action: str, channel_mention: str, *dump):
         """Edits possible claim channels."""
@@ -133,14 +177,22 @@ class CogChannelClaiming(cog.RegisteredCog):
 
         await c_c.update_embed(ctx)
 
-    @c_w.command(
-        category=c_w.Categories.channel_claiming,
-        description="Changes where the embed for displaying claimed channels are sent.",
-        parameters={
-            "channel": "Channel where the embed will be put in."
-        },
-        aliases=["ccm"],
-        req_guild_admin=True
+
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryChannelClaiming,
+        cmd_info = disc_utils.CmdInfo(
+            description = "Changes where the embed for displaying claimed channels are sent.",
+            params = disc_utils.Params(
+                disc_utils.ParamArgument(
+                    "channel",
+                    description = "Channel where the embed will be put in."
+                )
+            ),
+            aliases = ["ccm"],
+            perms = disc_utils.Permissions(
+                [disc_utils.PermGuildAdmin]
+            )
+        )
     )
     async def claimchannelembed(self, ctx: cmds.Context, channel_mention: str, *dump):
         """Changes the embed for the claim channels."""
@@ -163,11 +215,15 @@ class CogChannelClaiming(cog.RegisteredCog):
         await ctx.send(f"*Changed claim display channel to {channel_mention}! :D*")
 
 
-    @c_w.command(
-        category=c_w.Categories.channel_claiming,
-        description="Updates the embed for displaying claimed channels.",
-        aliases=["ccu"],
-        req_guild_admin=True
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryChannelClaiming,
+        cmd_info = disc_utils.CmdInfo(
+            description = "Updates the embed for displaying claimed channels.",
+            aliases = ["ccu"],
+            perms = disc_utils.Permissions(
+                [disc_utils.PermGuildAdmin]
+            )
+        )
     )
     async def claimchannelupdate(self, ctx: cmds.Context):
         """Updates the embed."""
