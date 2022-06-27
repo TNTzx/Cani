@@ -46,14 +46,22 @@ class ClaimChannelManager(firebase.FBStruct):
         )
 
 
-    def update_claim_channels(self, guild_id: int):
+    async def update_embed(self, guild_id: int):
+        """Updates the embed for a certain guild."""
+        message = await self.embed_pointer.get_message()
+        await message.edit(embed = self.claim_channels.get_embed())
+
+
+    async def update_claim_channels(self, guild_id: int):
         """Updates the claim channel for a certain guild."""
         firebase.override_data(
             get_path_claim_channels(guild_id) + ["available_channels"],
             self.claim_channels.firebase_to_json()
         )
+        
+        await self.update_embed(guild_id)
 
-    def update_embed_pointer(self, guild_id: int):
+    async def update_embed_pointer(self, guild_id: int):
         """Updates the embed pointer for a certain guild."""
         firebase.override_data(
             get_path_claim_channels(guild_id) + ["embed_info"],
@@ -61,7 +69,7 @@ class ClaimChannelManager(firebase.FBStruct):
         )
 
 
-    def update_all(self, guild_id: int):
+    async def update_all(self, guild_id: int):
         """Updates all claim channel data for a certain guild."""
         for func in [self.update_claim_channels, self.update_embed_pointer]:
             func(guild_id)

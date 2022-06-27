@@ -47,13 +47,13 @@ class CogChannelClaiming(cog.RegisteredCog):
                 )
             ),
             aliases = ["cc"],
-            cooldown_info = disc_utils.CooldownInfo(
-                length = 60 * 2,
-                type_ = nx_cmds.BucketType.user
-            )
+            # cooldown_info = disc_utils.CooldownInfo(
+            #     length = 60 * 2,
+            #     type_ = nx_cmds.BucketType.user
+            # )
         )
     )
-    async def claimchannel(self, ctx: nx_cmds.Context, action, place = None):
+    async def claimchannel(self, ctx: nx_cmds.Context, action, place = claiming.DEFAULT_LOCATION):
         """Claims a channel to a location."""
         if action in ["claim", "unclaim"]:
             claim_status = action == "claim"

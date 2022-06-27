@@ -1,6 +1,8 @@
 """Contains stuff about a claim channel."""
 
 
+import nextcord as nx
+
 import global_vars
 import backend.firebase as firebase
 
@@ -101,3 +103,27 @@ class ClaimChannels(firebase.FBStruct):
                 return claim_channel
 
         raise ValueError(f"No claim channel found with given ID: {claim_channel_id}")
+
+
+    def get_embed(self):
+        """Generates an embed of all the claim channels."""
+        embed = nx.Embed(title = "RP Channels", color = global_vars.DEFAULT_COLOR)
+
+        if not len(self.claim_channels) == 0:
+            for claim_channel in self.claim_channels:
+                if claim_channel.claim_data.claim_status:
+                    title = "Claimed"
+                    description = f"`Current location:` __{claim_channel.claim_data.location}__"
+                else:
+                    title = "Unclaimed"
+                    description = "_ _"
+
+                channel = global_vars.global_bot.get_channel(int(claim_channel.channel_id))
+
+                new_title = f"__#{channel.name}__: {title}"
+                embed.add_field(name = new_title, value = description, inline = False)
+        else:
+            embed.add_field(name = "No RP channels! :(", value = f"Ask the moderators to go add one using `{global_vars.CMD_PREFIX}claimchanneledit add`.", inline = False)
+
+
+        return embed
