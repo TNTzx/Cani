@@ -2,13 +2,13 @@
 
 
 import global_vars
-import backend.other as other
+import backend.firebase as firebase
 
 
 DEFAULT_LOCATION = "Unknown"
 
 
-class ClaimChannel(other.JSONInterface):
+class ClaimChannel(firebase.FBStruct):
     """Represents a channel that can be claimed."""
     def __init__(
             self,
@@ -21,7 +21,7 @@ class ClaimChannel(other.JSONInterface):
         self.location = location
 
 
-    def to_json(self) -> list | dict:
+    def firebase_to_json(self) -> list | dict:
         return {
             "channel_id": str(self.channel_id),
             "claim_status": self.claim_status,
@@ -29,7 +29,7 @@ class ClaimChannel(other.JSONInterface):
         }
 
     @classmethod
-    def from_json(cls, json: list | dict) -> None:
+    def firebase_from_json(cls, json: list | dict) -> None:
         return cls(
             channel_id = int(json.get("channel_id")),
             claim_status = json.get("claim_status"),
@@ -42,7 +42,7 @@ class ClaimChannel(other.JSONInterface):
         return global_vars.global_bot.get_channel(self.channel_id)
 
 
-class ClaimChannels(other.JSONInterface):
+class ClaimChannels(firebase.FBStruct):
     """Contains all claim channels for a certain guild."""
     def __init__(
             self,
@@ -55,7 +55,7 @@ class ClaimChannels(other.JSONInterface):
 
 
     # TODO change name to "claim_channels"
-    def to_json(self) -> list | dict:
+    def firebase_to_json(self) -> list | dict:
         return {
             "available_channels": [
                 claim_channel.to_json() for claim_channel in self.claim_channels
@@ -63,7 +63,19 @@ class ClaimChannels(other.JSONInterface):
         }
 
     @classmethod
-    def from_json(cls, json: list | dict) -> None:
+    def firebase_from_json(cls, json: list | dict) -> None:
         return cls(
-            claim_channels = json.get("available_channels")
+            claim_channels = [
+                ClaimChannel.firebase_from_json(claim_channel)
+                for claim_channel in json.get("available_channels")
+            ]
         )
+
+
+    def get_claim_channel_by_id(self, claim_channel_id: int):
+        """Gets a claim channel using ID."""
+        for claim_channel in self.claim_channels:
+            if claim_channel_id == claim_channel.channel_id:
+                return claim_channel
+
+        raise ValueError(f"No claim channel found with given ID: {claim_channel_id}")
