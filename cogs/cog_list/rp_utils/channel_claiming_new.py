@@ -58,7 +58,7 @@ class CogChannelClaiming(cog.RegisteredCog):
         if action in ["claim", "unclaim"]:
             claim_status = action == "claim"
         else:
-            exc_utils.SendFailedCmd(
+            await exc_utils.SendFailedCmd(
                 error_place = exc_utils.ErrorPlace.from_context(ctx),
                 suffix = f"`{action}` is not a valid action!"
             ).send()
