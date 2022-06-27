@@ -6,9 +6,9 @@ import nextcord.ext.commands as cmds
 
 import global_vars
 import backend.discord_utils as disc_utils
-import backend.barking.path as p_b
+import backend.barking.path as path
 import backend.barking.stat_types as s_t
-import backend.barking.special_event as s_ev
+import backend.barking.special_event as special_events
 import backend.exc_utils as exc_utils
 import backend.firebase as firebase
 import backend.other_functions as o_f
@@ -71,7 +71,7 @@ class CogBarkRank(cog.RegisteredCog):
                 suffix = f"*No leaderboard found for {stat_type.name}. Be the first one to be in that leaderboard!*"
             ).send()
 
-        users_data: dict[str, dict[str, dict[str, int]]] = firebase.get_data(p_b.get_path_users(ctx))
+        users_data: dict[str, dict[str, dict[str, int]]] = firebase.get_data(path.get_path_users(ctx))
         if users_data is None:
             await send_no_leaderboard_found()
 
@@ -94,7 +94,7 @@ class CogBarkRank(cog.RegisteredCog):
         embed.add_field(name=f"Total {stat_type.name_plural_variations.case_sentence} in Server: {server_total}", value="`----------`", inline=False)
 
 
-        def met_special_events_text(initial_name: str, met_special_events: list[s_ev.SpecialEvent]):
+        def met_special_events_text(initial_name: str, met_special_events: list[special_events.SpecialEvent]):
             if len(met_special_events) != 0:
                 milestones_text = []
                 for special_event in met_special_events:
