@@ -10,19 +10,19 @@ import backend.firebase as firebase
 
 from . import path as path_m
 from . import special_events
-from . import scope
+from . import scope as scopes
 
 
 class StatisticType():
     """A class for a statistic type such as "barks" and "pats"."""
-    def __init__(self, name: str, name_plural: str, server_raw_scope: scope.ServerRawScope, user_raw_scope: scope.UserRawScope):
+    def __init__(self, name: str, name_plural: str, server_raw_scope: scopes.ServerRawScope, user_raw_scope: scopes.UserRawScope):
         self.name = name
         self.name_variations = str_v.StrVariations(name)
         self.name_plural = name_plural
         self.name_plural_variations = str_v.StrVariations(name_plural)
 
-        def get_scope(raw_scope: scope.RawScope):
-            return scope.Scope(raw_scope, name)
+        def get_scope(raw_scope: scopes.RawScope):
+            return scopes.Scope(raw_scope, name)
 
         self.server_scope = get_scope(server_raw_scope)
         self.user_scope = get_scope(user_raw_scope)
@@ -43,7 +43,7 @@ class StatisticTypes():
     def __init__(self):
         self.barks = StatisticType(
             "bark", "barks",
-            server_raw_scope = scope.ServerRawScope(
+            server_raw_scope = scopes.ServerRawScope(
                 path_m.DEFAULT_PATH_BUNDLE,
                 raw_special_events = [
                     special_events.RawSpecialEvent(
@@ -62,37 +62,37 @@ class StatisticTypes():
                     )
                 ]
             ),
-            user_raw_scope = scope.UserRawScope(
+            user_raw_scope = scopes.UserRawScope(
                 path_m.DEFAULT_PATH_BUNDLE
             )
         )
 
         self.pats = StatisticType(
             "pat", "pats",
-            server_raw_scope = scope.ServerRawScope(
+            server_raw_scope = scopes.ServerRawScope(
                 path_m.DEFAULT_PATH_BUNDLE
             ),
-            user_raw_scope = scope.UserRawScope(
+            user_raw_scope = scopes.UserRawScope(
                 path_m.DEFAULT_PATH_BUNDLE
             )
         )
 
         self.meows = StatisticType(
             "meow", "meows",
-            server_raw_scope = scope.ServerRawScope(
+            server_raw_scope = scopes.ServerRawScope(
                 path_m.DEFAULT_PATH_BUNDLE
             ),
-            user_raw_scope = scope.UserRawScope(
+            user_raw_scope = scopes.UserRawScope(
                 path_m.DEFAULT_PATH_BUNDLE
             )
         )
 
         self.sticks = StatisticType(
             "stick", "sticks",
-            server_raw_scope = scope.ServerRawScope(
+            server_raw_scope = scopes.ServerRawScope(
                 path_m.DEFAULT_PATH_BUNDLE
             ),
-            user_raw_scope = scope.UserRawScope(
+            user_raw_scope = scopes.UserRawScope(
                 path_m.DEFAULT_PATH_BUNDLE
             )
         )
