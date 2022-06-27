@@ -36,7 +36,7 @@ class ClaimChannelManager(firebase.FBStruct):
             claim_channels = m_claim_channels.ClaimChannels.firebase_to_json(json.get("available_channels")),
             embed_pointer = disc_utils.MessagePointer.firebase_to_json(json.get("embed_info"))
         )
-    
+
 
     @classmethod
     def from_guild_id(cls, guild_id: int):
