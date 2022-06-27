@@ -12,6 +12,6 @@ class JSONInterface():
         return self.__dict__
 
     @classmethod
-    def from_json(cls, data: list | dict) -> None:
+    def from_json(cls, json: list | dict) -> None:
         """Function that takes in a list or dictionary then returns the class instantiated version."""
         raise TypeError(f"\"{cls.__name__}\" does not implement dictionary conversion.")
