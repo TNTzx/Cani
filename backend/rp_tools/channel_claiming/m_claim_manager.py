@@ -5,6 +5,7 @@ import backend.discord_utils as disc_utils
 import backend.firebase as firebase
 
 from . import m_claim_channels
+from . import m_claim_excs
 
 
 def get_path_claim_channels(guild_id: int):
@@ -49,6 +50,9 @@ class ClaimChannelManager(firebase.FBStruct):
     async def update_embed(self, guild_id: int):
         """Updates the embed for a certain guild."""
         message = await self.embed_pointer.get_message()
+        if message is None:
+            raise m_claim_excs.MissingEmbed()
+
         await message.edit(embed = self.claim_channels.get_embed())
 
 
@@ -58,7 +62,7 @@ class ClaimChannelManager(firebase.FBStruct):
             get_path_claim_channels(guild_id) + ["available_channels"],
             self.claim_channels.firebase_to_json()
         )
-        
+
         await self.update_embed(guild_id)
 
     async def update_embed_pointer(self, guild_id: int):

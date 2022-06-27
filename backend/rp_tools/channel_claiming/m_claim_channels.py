@@ -6,6 +6,8 @@ import nextcord as nx
 import global_vars
 import backend.firebase as firebase
 
+from . import m_claim_excs
+
 
 DEFAULT_LOCATION = "Unknown"
 
@@ -102,7 +104,7 @@ class ClaimChannels(firebase.FBStruct):
             if claim_channel_id == claim_channel.channel_id:
                 return claim_channel
 
-        raise ValueError(f"No claim channel found with given ID: {claim_channel_id}")
+        raise m_claim_excs.NoFoundClaimableChannel(claim_channel_id)
 
 
     def get_embed(self):
