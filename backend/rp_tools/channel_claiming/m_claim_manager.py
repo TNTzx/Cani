@@ -33,8 +33,8 @@ class ClaimChannelManager(firebase.FBStruct):
     @classmethod
     def firebase_from_json(cls, json: dict | list):
         return cls(
-            claim_channels = m_claim_channels.ClaimChannels.firebase_to_json(json.get("available_channels")),
-            embed_pointer = disc_utils.MessagePointer.firebase_to_json(json.get("embed_info"))
+            claim_channels = m_claim_channels.ClaimChannels.firebase_from_json(json.get("available_channels")),
+            embed_pointer = disc_utils.MessagePointer.firebase_from_json(json.get("embed_info"))
         )
 
 
