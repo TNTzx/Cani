@@ -5,6 +5,8 @@ import nextcord.ext.commands as nx_cmds
 
 import global_vars
 import backend.discord_utils as disc_utils
+import backend.exc_utils as exc_utils
+import backend.rp_tools.channel_claiming as claiming
 
 from ... import utils as cog
 
@@ -53,4 +55,20 @@ class CogChannelClaiming(cog.RegisteredCog):
     )
     async def claimchannel(self, ctx: nx_cmds.Context, action, place = None):
         """Claims a channel to a location."""
+        if action in ["claim", "unclaim"]:
+            claim_status = action == "claim"
+        else:
+            exc_utils.SendFailedCmd(
+                error_place = exc_utils.ErrorPlace.from_context(ctx),
+                suffix = f"`{action}` is not a valid action!"
+            ).send()
 
+        claim_data = claiming.ClaimData(
+            claim_status = claim_status,
+            location = place
+        )
+
+
+        claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
+        claim_manager.claim_channels.get_claim_channel_by_id(ctx.channel.id).claim_data = claim_data
+        claim_manager.update_claim_channels(ctx.guild.id)
