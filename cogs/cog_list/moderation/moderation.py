@@ -5,7 +5,7 @@ import nextcord.ext.commands as cmds
 
 import backend.discord_utils as disc_utils
 import backend.firebase as firebase
-import backend.exceptions.send_error as s_e
+import backend.exc_utils as exc_utils
 
 from ... import utils as cog
 
@@ -35,8 +35,10 @@ class CogModeration(cog.RegisteredCog):
         try:
             int(role_id)
         except ValueError:
-            await s_e.send_error(ctx, "*You didn't send a valid role ID!*")
-            return
+            await exc_utils.SendFailedCmd(
+                error_place = exc_utils.ErrorPlace.from_context(ctx),
+                suffix = "*You didn't send a valid role ID!*"
+            ).send()
 
         firebase.override_data(firebase.ShortEndpoint.discord_guilds.get_path() + [ctx.guild.id, 'admin_role'], role_id)
         await ctx.send("*The admin role for this server has been set! :D*")
