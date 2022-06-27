@@ -68,7 +68,30 @@ class CogChannelClaiming(cog.RegisteredCog):
             location = place
         )
 
-
         claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
         claim_manager.claim_channels.get_claim_channel_by_id(ctx.channel.id).claim_data = claim_data
-        claim_manager.update_claim_channels(ctx.guild.id)
+        await claim_manager.update_claim_channels(ctx.guild.id)
+        await claim_manager.update_embed_safe(ctx)
+
+
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryChannelClaiming,
+        cmd_info = disc_utils.CmdInfo(
+            description = "Changes where the embed for displaying claimed channels are sent.",
+            params = disc_utils.Params(
+                disc_utils.ParamArgument(
+                    "channel",
+                    description = "Channel where the embed will be put in."
+                )
+            ),
+            aliases = ["ccm"],
+            perms = disc_utils.Permissions(
+                [disc_utils.PermGuildAdmin]
+            )
+        )
+    )
+    async def claimchannelembed(self, ctx: nx_cmds.Context, channel_mention: str):
+        """Changes the embed for the claim channels."""
+        claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
+        channel = await disc_utils.channel_from_id_warn(ctx, disc_utils.get_id_from_mention(channel_mention))
+        await claim_manager.set_embed(ctx.guild.id, channel)

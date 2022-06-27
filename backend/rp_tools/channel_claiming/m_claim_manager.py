@@ -1,8 +1,12 @@
 """Contains logic for managing claim channels."""
 
 
+import nextcord as nx
+import nextcord.ext.commands as nx_cmds
+
 import backend.discord_utils as disc_utils
 import backend.firebase as firebase
+import backend.exc_utils as exc_utils
 
 from . import m_claim_channels
 from . import m_claim_excs
@@ -47,13 +51,23 @@ class ClaimChannelManager(firebase.FBStruct):
         )
 
 
-    async def update_embed(self, guild_id: int):
-        """Updates the embed for a certain guild."""
+    async def update_embed(self):
+        """Updates the embed for the embed pointer."""
         message = await self.embed_pointer.get_message()
         if message is None:
             raise m_claim_excs.MissingEmbed()
 
         await message.edit(embed = self.claim_channels.get_embed())
+
+    async def update_embed_safe(self, ctx: nx_cmds.Context):
+        """Updates the embed, but with protection to missing embeds for a guild by sending an error to `ctx`."""
+        try:
+            self.update_embed()
+        except m_claim_excs.MissingEmbed:
+            await exc_utils.SendWarn(
+                error_place = exc_utils.ErrorPlace.from_context(ctx),
+                suffix = "There is no set up embed for this server, or the message for it has been deleted! Use `++claimchannelembed` to set it up!"
+            ).send()
 
 
     async def update_claim_channels(self, guild_id: int):
@@ -63,7 +77,6 @@ class ClaimChannelManager(firebase.FBStruct):
             self.claim_channels.firebase_to_json()
         )
 
-        await self.update_embed(guild_id)
 
     async def update_embed_pointer(self, guild_id: int):
         """Updates the embed pointer for a certain guild."""
@@ -71,6 +84,12 @@ class ClaimChannelManager(firebase.FBStruct):
             get_path_claim_channels(guild_id) + ["embed_info"],
             self.embed_pointer.firebase_to_json()
         )
+
+    async def set_embed(self, guild_id: int, channel: nx.TextChannel):
+        """Sets the embed for this server."""
+        message = await channel.send(embed = self.claim_channels.get_embed())
+        self.embed_pointer = disc_utils.MessagePointer.from_message(message)
+        self.update_embed_pointer(guild_id)
 
 
     async def update_all(self, guild_id: int):
