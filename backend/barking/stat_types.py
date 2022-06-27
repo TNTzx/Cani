@@ -5,7 +5,7 @@ import nextcord.ext.commands as cmds
 
 import global_vars
 
-import backend.main_classes.str_variations as str_v
+import backend.other as other
 import backend.firebase as firebase
 
 from . import path as path_m
@@ -17,9 +17,9 @@ class StatisticType():
     """A class for a statistic type such as "barks" and "pats"."""
     def __init__(self, name: str, name_plural: str, server_raw_scope: scopes.ServerRawScope, user_raw_scope: scopes.UserRawScope):
         self.name = name
-        self.name_variations = str_v.StrVariations(name)
+        self.name_variations = other.StrVariations(name)
         self.name_plural = name_plural
-        self.name_plural_variations = str_v.StrVariations(name_plural)
+        self.name_plural_variations = other.StrVariations(name_plural)
 
         def get_scope(raw_scope: scopes.RawScope):
             return scopes.Scope(raw_scope, name)
