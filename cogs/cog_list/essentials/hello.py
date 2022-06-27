@@ -7,7 +7,7 @@ import nextcord.ext.commands as cmds
 import global_vars
 import backend.discord_utils as disc_utils
 import backend.firebase as firebase
-import backend.barking.stat_types as stats
+import backend.barking as barking
 
 from ... import utils as cog
 
@@ -17,7 +17,7 @@ async def add_new_to_database():
     fb_path = firebase.ShortEndpoint.discord_guilds
     default_json = fb_path.get_default_data()
     default_json["fun"]["barking"]["server"] = {
-        stats.STAT_TYPES.barks.name: stats.STAT_TYPES.barks.server_scope.raw.path_bundle.get_dict()
+        barking.STAT_TYPES.barks.name: barking.STAT_TYPES.barks.server_scope.raw.path_bundle.get_dict()
     }
 
     for guild in global_vars.global_bot.guilds:

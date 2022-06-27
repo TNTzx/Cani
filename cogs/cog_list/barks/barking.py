@@ -4,7 +4,7 @@
 import nextcord.ext.commands as cmds
 
 import backend.discord_utils as disc_utils
-import backend.barking.stat_types as s_t
+import backend.barking as barking
 import backend.other_functions as o_f
 
 from ... import utils as cog
@@ -30,7 +30,7 @@ class CogBark(cog.RegisteredCog):
     async def bark(self, ctx: cmds.Context):
         """bork"""
         await ctx.send("*Bark! :D*")
-        await s_t.STAT_TYPES.barks.add_stat(ctx, 1)
+        await barking.STAT_TYPES.barks.add_stat(ctx, 1)
 
 
     @disc_utils.command_wrap(
@@ -42,7 +42,7 @@ class CogBark(cog.RegisteredCog):
                 type_ = cmds.BucketType.guild
             ),
             usability_info = disc_utils.UsabilityInfo(
-                usability_condition = lambda ctx: s_t.STAT_TYPES.barks.server_scope.get_special_event("++pat").has_met_threshold(ctx)
+                usability_condition = lambda ctx: barking.STAT_TYPES.barks.server_scope.get_special_event("++pat").has_met_threshold(ctx)
             )
         )
     )
@@ -52,8 +52,8 @@ class CogBark(cog.RegisteredCog):
 
         await ctx.send("https://cdn.discordapp.com/emojis/889713240714649650.gif")
         await ctx.send(f"""*:D!! Bark! Bark!*\n*I barked happily thanks to your pat! (+{add_bark} barks to {ctx.author.mention}!)*""")
-        await s_t.STAT_TYPES.barks.add_stat(ctx, add_bark)
-        await s_t.STAT_TYPES.pats.add_stat(ctx, 1)
+        await barking.STAT_TYPES.barks.add_stat(ctx, add_bark)
+        await barking.STAT_TYPES.pats.add_stat(ctx, 1)
 
 
     @disc_utils.command_wrap(
@@ -65,14 +65,14 @@ class CogBark(cog.RegisteredCog):
                 type_ = cmds.BucketType.user
             ),
             usability_info = disc_utils.UsabilityInfo(
-                usability_condition = lambda ctx: s_t.STAT_TYPES.barks.server_scope.get_special_event("++fetch").has_met_threshold(ctx)
+                usability_condition = lambda ctx: barking.STAT_TYPES.barks.server_scope.get_special_event("++fetch").has_met_threshold(ctx)
             )
         )
     )
     async def fetch(self, ctx: cmds.Context):
         """Fetch a stick!"""
         await ctx.send("*Hai, I have stick!*")
-        await s_t.STAT_TYPES.sticks.add_stat(ctx, 1)
+        await barking.STAT_TYPES.sticks.add_stat(ctx, 1)
 
 
     @disc_utils.command_wrap(
@@ -95,5 +95,5 @@ class CogBark(cog.RegisteredCog):
         await o_f.delay_message(ctx, "**FEEL THE WRATH OF MY MACHINE GUN ATTACHMENTS, HUMAN**", duration=1)
         await o_f.delay_message(ctx, "*BULLET RAIN (-10 barks >:( )*", duration=2)
 
-        await s_t.STAT_TYPES.meows.add_stat(ctx, 1)
-        await s_t.STAT_TYPES.barks.add_stat(ctx, -10)
+        await barking.STAT_TYPES.meows.add_stat(ctx, 1)
+        await barking.STAT_TYPES.barks.add_stat(ctx, -10)
