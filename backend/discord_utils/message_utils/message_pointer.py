@@ -43,7 +43,12 @@ class MessagePointer(firebase.FBStruct):
         channel: nx.TextChannel = global_vars.global_bot.get_channel(int(self.channel_id))
         if channel is None:
             return None
-        message: nx.Message = await channel.fetch_message(int(self.message_id))
+
+        try:
+            message: nx.Message = await channel.fetch_message(int(self.message_id))
+        except (nx.HTTPException, nx.NotFound, nx.Forbidden):
+            return None
+
         if message is None:
             return None
 

@@ -62,7 +62,7 @@ class ClaimChannelManager(firebase.FBStruct):
     async def update_embed_safe(self, ctx: nx_cmds.Context):
         """Updates the embed, but with protection to missing embeds for a guild by sending an error to `ctx`."""
         try:
-            self.update_embed()
+            await self.update_embed()
         except m_claim_excs.MissingEmbed:
             await exc_utils.SendWarn(
                 error_place = exc_utils.ErrorPlace.from_context(ctx),
@@ -78,7 +78,7 @@ class ClaimChannelManager(firebase.FBStruct):
         )
 
 
-    async def update_embed_pointer(self, guild_id: int):
+    def update_embed_pointer(self, guild_id: int):
         """Updates the embed pointer for a certain guild."""
         firebase.override_data(
             get_path_claim_channels(guild_id) + ["embed_info"],
@@ -96,4 +96,3 @@ class ClaimChannelManager(firebase.FBStruct):
         """Updates all claim channel data for a certain guild."""
         for func in [self.update_claim_channels, self.update_embed_pointer]:
             func(guild_id)
-

@@ -55,6 +55,7 @@ class CogChannelClaiming(cog.RegisteredCog):
     )
     async def claimchannel(self, ctx: nx_cmds.Context, action, place = claiming.DEFAULT_LOCATION):
         """Claims a channel to a location."""
+        # TODO implement error checking
         if action in ["claim", "unclaim"]:
             claim_status = action == "claim"
         else:
