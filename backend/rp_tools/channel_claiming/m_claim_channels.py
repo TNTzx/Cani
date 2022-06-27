@@ -8,22 +8,20 @@ import backend.firebase as firebase
 DEFAULT_LOCATION = "Unknown"
 
 
-class ClaimChannel(firebase.FBStruct):
-    """Represents a channel that can be claimed."""
+class ClaimData(firebase.FBStruct):
+    """Contains claiming data for a claim channel."""
     def __init__(
             self,
-            channel_id: int,
             claim_status: bool = False,
             location: str = DEFAULT_LOCATION
         ):
-        self.channel_id = channel_id
         self.claim_status = claim_status
         self.location = location
 
 
+    # TODO update this
     def firebase_to_json(self) -> list | dict:
         return {
-            "channel_id": str(self.channel_id),
             "claim_status": self.claim_status,
             "location": self.location
         }
@@ -31,9 +29,35 @@ class ClaimChannel(firebase.FBStruct):
     @classmethod
     def firebase_from_json(cls, json: list | dict) -> None:
         return cls(
-            channel_id = int(json.get("channel_id")),
             claim_status = json.get("claim_status"),
             location = json.get("location")
+        )
+
+
+class ClaimChannel(firebase.FBStruct):
+    """Represents a channel that can be claimed."""
+    def __init__(
+            self,
+            channel_id: int,
+            claim_data: ClaimData = ClaimData()
+        ):
+        self.channel_id = channel_id
+        self.claim_data = claim_data
+
+
+    # TODO update this
+    def firebase_to_json(self) -> list | dict:
+        return {
+            "channel_id": str(self.channel_id),
+            "claim_status": self.claim_data.claim_status,
+            "location": self.claim_data.location
+        }
+
+    @classmethod
+    def firebase_from_json(cls, json: list | dict) -> None:
+        return cls(
+            channel_id = int(json.get("channel_id")),
+            claim_data = ClaimData.firebase_from_json(json)
         )
 
 
