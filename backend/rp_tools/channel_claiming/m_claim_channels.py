@@ -80,18 +80,16 @@ class ClaimChannels(firebase.FBStruct):
 
     # TODO change name to "claim_channels"
     def firebase_to_json(self) -> list | dict:
-        return {
-            "available_channels": [
-                claim_channel.to_json() for claim_channel in self.claim_channels
-            ]
-        }
+        return [
+            claim_channel.to_json() for claim_channel in self.claim_channels
+        ]
 
     @classmethod
     def firebase_from_json(cls, json: list | dict) -> None:
         return cls(
             claim_channels = [
                 ClaimChannel.firebase_from_json(claim_channel)
-                for claim_channel in json.get("available_channels")
+                for claim_channel in json
             ]
         )
 
