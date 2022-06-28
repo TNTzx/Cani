@@ -55,22 +55,45 @@ class CogChannelClaiming(cog.RegisteredCog):
     )
     async def claimchannel(self, ctx: nx_cmds.Context, action, place = claiming.DEFAULT_LOCATION):
         """Claims a channel to a location."""
-        # TODO implement error checking
-        if action in ["claim", "unclaim"]:
-            claim_status = action == "claim"
-        else:
+        place_len_limit = 500
+        if len(place) > place_len_limit:
             await exc_utils.SendFailedCmd(
                 error_place = exc_utils.ErrorPlace.from_context(ctx),
-                suffix = f"`{action}` is not a valid action!"
-            ).send()
+                suffix = f"The location can't be more than {place_len_limit} characters long!"
+            )
+
+        disc_utils.cmd_choice_check(ctx, action, ["claim", "unclaim"])
+        claim_status = action == "claim"
+
+        if claim_status and place == claiming.DEFAULT_LOCATION:
+            await exc_utils.SendFailedCmd(
+                error_place = exc_utils.ErrorPlace.from_context(ctx),
+                suffix = "The location isn't specified! Specify the location if you're claiming the channel!"
+            )
+
+
+        claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
+
+        if claim_manager.claim_channels.is_claimable_channel(ctx.channel.id):
+            await exc_utils.SendFailedCmd(
+                error_place = exc_utils.ErrorPlace.from_context(ctx),
+                suffix = f"This channel isn't a claimable channel! Add this channel as a claimable channel using `++claimchanneledit {ctx.channel.mention}`!"
+            )
 
         claim_data = claiming.ClaimData(
             claim_status = claim_status,
             location = place
         )
+        claim_channel = claim_manager.claim_channels.get_claim_channel_by_id(ctx.channel.id)
 
-        claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
-        claim_manager.claim_channels.get_claim_channel_by_id(ctx.channel.id).claim_data = claim_data
+        if claim_channel.claim_data.claim_status == claim_data.claim_status:
+            await exc_utils.SendFailedCmd(
+                error_place = exc_utils.ErrorPlace.from_context(ctx),
+                suffix = f"This channel is already `{action}`ed!"
+            )
+
+        claim_channel.claim_data = claim_data
+
         await claim_manager.update_claim_channels(ctx.guild.id)
         await claim_manager.update_embed_safe(ctx)
 

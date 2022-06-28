@@ -9,7 +9,7 @@ import backend.firebase as firebase
 from . import m_claim_excs
 
 
-DEFAULT_LOCATION = "Unknown"
+DEFAULT_LOCATION = "//Unknown//"
 
 
 class ClaimData(firebase.FBStruct):
@@ -96,6 +96,16 @@ class ClaimChannels(firebase.FBStruct):
                 for claim_channel in json
             ]
         )
+
+
+    def get_claim_channel_ids(self):
+        """Gets all the claimable channel IDs."""
+        return [claim_channel.channel_id for claim_channel in self.claim_channels]
+
+
+    def is_claimable_channel(self, channel_id: int):
+        """Returns `True` if the channel is claimable, otherwise returns `False`."""
+        return channel_id in self.get_claim_channel_ids()
 
 
     def get_claim_channel_by_id(self, claim_channel_id: int):
