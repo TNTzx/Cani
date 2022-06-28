@@ -62,7 +62,7 @@ class CogChannelClaiming(cog.RegisteredCog):
                 suffix = f"The location can't be more than {place_len_limit} characters long!"
             ).send()
 
-        disc_utils.cmd_choice_check(ctx, action, ["claim", "unclaim"])
+        await disc_utils.cmd_choice_check(ctx, action, ["claim", "unclaim"])
         claim_status = action == "claim"
 
         if claim_status and place == claiming.DEFAULT_LOCATION:
@@ -74,10 +74,11 @@ class CogChannelClaiming(cog.RegisteredCog):
 
         claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
 
-        if claim_manager.claim_channels.is_claimable_channel(ctx.channel.id):
+        # TEST
+        if not claim_manager.claim_channels.is_claimable_channel(ctx.channel.id):
             await exc_utils.SendFailedCmd(
                 error_place = exc_utils.ErrorPlace.from_context(ctx),
-                suffix = f"This channel isn't a claimable channel! Add this channel as a claimable channel using `++claimchanneledit {ctx.channel.mention}`!"
+                suffix = f"This channel isn't a claimable channel! Add this channel as a claimable channel using `++claimchanneledit `{ctx.channel.mention}!"
             ).send()
 
         claim_data = claiming.ClaimData(
@@ -86,23 +87,33 @@ class CogChannelClaiming(cog.RegisteredCog):
         )
         claim_channel = claim_manager.claim_channels.get_claim_channel_by_id(ctx.channel.id)
 
-        if claim_channel.claim_data.claim_status == claim_data.claim_status:
+        if claim_channel.claim_data.claim_status == claim_data.claim_status == False:
             await exc_utils.SendFailedCmd(
                 error_place = exc_utils.ErrorPlace.from_context(ctx),
-                suffix = f"This channel is already `{action}`ed!"
+                suffix = "This channel is already unclaimed!"
             ).send()
 
         claim_channel.claim_data = claim_data
 
-        await ctx.send(f"Claiming channel {ctx.channel.mention}...")
+
+        if claim_data.claim_status:
+            await ctx.send(f"Claiming channel {ctx.channel.mention}...")
+        else:
+            await ctx.send(f"Unclaiming channel {ctx.channel.mention}...")
+
         await claim_manager.update_claim_channels(ctx.guild.id)
         await claim_manager.update_embed_safe(ctx)
-        await ctx.send(
-            (
-                f"Channel {ctx.channel.mention} claimed!\n"
-                f"Location: `{place}`"
+
+        if claim_data.claim_status:
+            await ctx.send(
+                (
+                    f"Channel {ctx.channel.mention} claimed!\n"
+                    f"Location: `{place}`"
+                )
             )
-        )
+        else:
+            await ctx.send(f"Channel {ctx.channel.mention} unclaimed!\n")
+
 
 
     @disc_utils.command_wrap(
