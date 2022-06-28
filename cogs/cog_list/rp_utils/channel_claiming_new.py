@@ -60,7 +60,7 @@ class CogChannelClaiming(cog.RegisteredCog):
             await exc_utils.SendFailedCmd(
                 error_place = exc_utils.ErrorPlace.from_context(ctx),
                 suffix = f"The location can't be more than {place_len_limit} characters long!"
-            )
+            ).send()
 
         disc_utils.cmd_choice_check(ctx, action, ["claim", "unclaim"])
         claim_status = action == "claim"
@@ -69,7 +69,7 @@ class CogChannelClaiming(cog.RegisteredCog):
             await exc_utils.SendFailedCmd(
                 error_place = exc_utils.ErrorPlace.from_context(ctx),
                 suffix = "The location isn't specified! Specify the location if you're claiming the channel!"
-            )
+            ).send()
 
 
         claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
@@ -78,7 +78,7 @@ class CogChannelClaiming(cog.RegisteredCog):
             await exc_utils.SendFailedCmd(
                 error_place = exc_utils.ErrorPlace.from_context(ctx),
                 suffix = f"This channel isn't a claimable channel! Add this channel as a claimable channel using `++claimchanneledit {ctx.channel.mention}`!"
-            )
+            ).send()
 
         claim_data = claiming.ClaimData(
             claim_status = claim_status,
@@ -90,12 +90,19 @@ class CogChannelClaiming(cog.RegisteredCog):
             await exc_utils.SendFailedCmd(
                 error_place = exc_utils.ErrorPlace.from_context(ctx),
                 suffix = f"This channel is already `{action}`ed!"
-            )
+            ).send()
 
         claim_channel.claim_data = claim_data
 
+        await ctx.send(f"Claiming channel {ctx.channel.mention}...")
         await claim_manager.update_claim_channels(ctx.guild.id)
         await claim_manager.update_embed_safe(ctx)
+        await ctx.send(
+            (
+                f"Channel {ctx.channel.mention} claimed!\n"
+                f"Location: `{place}`"
+            )
+        )
 
 
     @disc_utils.command_wrap(
