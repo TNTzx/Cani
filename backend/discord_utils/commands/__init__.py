@@ -3,7 +3,7 @@
 
 from .cmd_wrapper_lib import *
 
-from .param_choice import choice_param, choice_param_cmd
+from .cmd_arg_checks import cmd_choice_check
 
 from .sustained_cmd import \
     sustained_command, LIST_OF_SUSTAINED_CMDS, \
