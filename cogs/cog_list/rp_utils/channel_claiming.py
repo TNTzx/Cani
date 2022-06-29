@@ -215,7 +215,12 @@ class CogChannelClaiming(cog.RegisteredCog):
             params = disc_utils.Params(
                 disc_utils.ParamArgumentMultiple(
                     name = "channel mentions",
-                    description = "The channel mentions of all claim channels in order from left to right."
+                    description = (
+                        "The channel mentions of all claim channels in order from left to right.\n"
+                        "This command will give an error if the channels you listed are "
+                            "not in the list of claimable channels or "
+                            "there are claimable channels not included in the list."
+                    )
                 )
             ),
             perms = disc_utils.Permissions(
@@ -225,3 +230,25 @@ class CogChannelClaiming(cog.RegisteredCog):
     )
     async def claimchannelorder(self, ctx: nx_cmds.Context, *channel_mentions: str):
         """Orders the channels in the embed into a specified order."""
+        channel_ids = [disc_utils.get_id_from_mention(channel_mention) for channel_mention in channel_mentions]
+
+        claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
+
+        try:
+            claim_manager.claim_channels.sort_claim_channels(channel_ids)
+        except claiming.OrderListNotMatching:
+            await exc_utils.SendFailedCmd(
+                error_place = exc_utils.ErrorPlace.from_context(ctx),
+                suffix = (
+                    "The channels you listed don't match with the list of claimable channels!\n"
+                    "Make sure your list:\n"
+                    "- has all claimable channels in the server;"
+                    "- has no duplicates; and"
+                    "- has no channels that are not claimable!"
+                )
+            ).send()
+
+        await claim_manager.update_claim_channels(ctx.guild.id)
+        await claim_manager.update_embed_safe(ctx)
+
+        await ctx.send(f"The claimable channels are now sorted!")
