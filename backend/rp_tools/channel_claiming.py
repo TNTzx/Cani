@@ -4,11 +4,10 @@
 import nextcord as nx
 import nextcord.ext.commands as cmds
 
-import global_vars.variables as vrs
-import global_vars.defaultstuff as df
+import global_vars
 import backend.exceptions.send_error as s_e
 import backend.exceptions.custom_exc as c_e
-import backend.firebase_new as firebase
+import backend.firebase as firebase
 
 
 async def get_fb_path(ctx: cmds.Context):
@@ -75,12 +74,12 @@ async def update_embed(ctx: cmds.Context):
                 title = "Unclaimed"
                 description = "_ _"
 
-            channel = vrs.global_bot.get_channel(int(channel_id))
+            channel = global_vars.global_bot.get_channel(int(channel_id))
 
             new_title = f"__#{channel.name}__: {title}"
             embed.add_field(name=new_title, value=description, inline=False)
     else:
-        embed.add_field(name="No RP channels! :(", value=f"Ask the moderators to go add one using `{vrs.CMD_PREFIX}claimchanneledit add`.", inline=False)
+        embed.add_field(name="No RP channels! :(", value=f"Ask the moderators to go add one using `{global_vars.CMD_PREFIX}claimchanneledit add`.", inline=False)
 
     embed_info = firebase.get_data(path + ["embed_info"])
     if embed_info is None:
@@ -89,7 +88,7 @@ async def update_embed(ctx: cmds.Context):
         await s_e.send_error(ctx, "*There hasn't been a channel added to display claimed channels. Please ask the moderators / admins to add one!*")
         return
 
-    embed_channel = vrs.global_bot.get_channel(int(embed_info["channel_id"]))
+    embed_channel = global_vars.global_bot.get_channel(int(embed_info["channel_id"]))
 
     if embed_channel is None:
         await s_e.send_error(ctx, "*The claim channel embed is invalid! Try setting it again using `++claimchannelembed`!*")

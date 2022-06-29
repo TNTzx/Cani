@@ -5,19 +5,20 @@ import typing as typ
 
 import nextcord.ext.commands as cmds
 
-import backend.barking.path as p_b
-import backend.barking.special_event as s_ev
-import backend.firebase_new as firebase
+import backend.firebase as firebase
+
+from . import path as path_m
+from . import special_events
 
 
 class RawScope():
     """Parent class of raw scopes. Used to construct the scope later on."""
-    def __init__(self, path_bundle: p_b.PathBundle, raw_special_events: list[s_ev.RawSpecialEvent] = None):
+    def __init__(self, path_bundle: path_m.PathBundle, raw_special_events: list[special_events.RawSpecialEvent] = None):
         if raw_special_events is None:
             raw_special_events = []
 
         self.path_function: typ.Callable = None
-        self.special_events_cls: typ.Type[s_ev.SpecialEvent] = None
+        self.special_events_cls: typ.Type[special_events.SpecialEvent] = None
 
         self.path_bundle = path_bundle
         self.raw_special_events = raw_special_events
@@ -25,18 +26,18 @@ class RawScope():
 
 class ServerRawScope(RawScope):
     """Class for server-wide raw scopes."""
-    def __init__(self, path_bundle: p_b.PathBundle, raw_special_events: list[s_ev.RawSpecialEvent] = None):
+    def __init__(self, path_bundle: path_m.PathBundle, raw_special_events: list[special_events.RawSpecialEvent] = None):
         super().__init__(path_bundle, raw_special_events)
-        self.path_function = p_b.get_path_server
-        self.special_events_cls = s_ev.ServerSpecialEvent
+        self.path_function = path_m.get_path_server
+        self.special_events_cls = special_events.ServerSpecialEvent
 
 
 class UserRawScope(RawScope):
     """Class for user raw scopes."""
-    def __init__(self, path_bundle: p_b.PathBundle, raw_special_events: list[s_ev.RawSpecialEvent] = None):
+    def __init__(self, path_bundle: path_m.PathBundle, raw_special_events: list[special_events.RawSpecialEvent] = None):
         super().__init__(path_bundle, raw_special_events)
-        self.path_function = p_b.get_path_user
-        self.special_events_cls = s_ev.UserSpecialEvent
+        self.path_function = path_m.get_path_user
+        self.special_events_cls = special_events.UserSpecialEvent
 
 
 class Scope():
@@ -51,13 +52,13 @@ class Scope():
 
     async def add_on_scope(self, ctx: cmds.Context, amount: int):
         """Adds the amount to the scope."""
-        path: list[str] = self.raw.path_function(ctx, self.category)
-        if not firebase.is_data_exists(path):
-            firebase.override_data(path, self.raw.path_bundle.get_dict())
+        fb_path: list[str] = self.raw.path_function(ctx, self.category)
+        if not firebase.is_data_exists(fb_path):
+            firebase.override_data(fb_path, self.raw.path_bundle.get_dict())
 
-        original_total = firebase.get_data(path + self.raw.path_bundle.total, 0)
+        original_total = firebase.get_data(fb_path + self.raw.path_bundle.total, 0)
         new_total = original_total + amount
-        firebase.override_data(path + self.raw.path_bundle.total, new_total)
+        firebase.override_data(fb_path + self.raw.path_bundle.total, new_total)
 
         for special_event in self.special_events:
             await special_event.event_trigger(ctx)

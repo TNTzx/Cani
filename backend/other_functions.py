@@ -4,11 +4,9 @@
 import math
 import asyncio
 import datetime
-import nextcord as nx
 import nextcord.ext.commands as cmds
 
-import global_vars.variables as vrs
-import backend.exceptions.custom_exc as c_exc
+import global_vars
 
 
 def format_time(num: int):
@@ -34,7 +32,7 @@ def format_time(num: int):
 async def get_channel_from_mention(mention: str):
     """Gets channel from a mention."""
     get_id = mention[2:-1]
-    obj = vrs.global_bot.get_channel(int(get_id))
+    obj = global_vars.global_bot.get_channel(int(get_id))
     return obj
 
 
@@ -81,27 +79,21 @@ async def delay_message(ctx: cmds.Context, text: str, duration: int = 2, delete=
     else:
         return message
 
-def pr_print(value, htchar='\t', lfchar='\n', indent=0):
+def pr_print(value, tab_ch = '\t', newline_char = '\n', indent = 0):
     """Returns a string for pretty logging."""
-    nlch = lfchar + htchar * (indent + 1)
+    prefix_char = newline_char + tab_ch * (indent + 1)
     if isinstance(value, dict):
         items = [
-            nlch + repr(key) + ': ' + pr_print(value[key], htchar, lfchar, indent + 1)
+            prefix_char + repr(key) + ": " + pr_print(value[key], tab_ch, newline_char, indent + 1)
             for key in value
         ]
-        return '{%s}' % (','.join(items) + lfchar + htchar * indent)
-    if isinstance(value, list):
+        return ",".join(items) + newline_char + tab_ch * indent
+    if isinstance(value, (list, tuple)):
         items = [
-            nlch + pr_print(item, htchar, lfchar, indent + 1)
+            prefix_char + pr_print(item, tab_ch, newline_char, indent + 1)
             for item in value
         ]
-        return '[%s]' % (','.join(items) + lfchar + htchar * indent)
-    if isinstance(value, tuple):
-        items = [
-            nlch + pr_print(item, htchar, lfchar, indent + 1)
-            for item in value
-        ]
-        return '(%s)' % (','.join(items) + lfchar + htchar * indent)
+        return ",".join(items) + newline_char + tab_ch * indent
 
     return repr(value)
 

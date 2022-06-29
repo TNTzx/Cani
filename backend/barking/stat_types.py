@@ -3,24 +3,26 @@
 
 import nextcord.ext.commands as cmds
 
-import global_vars.variables as vrs
-import backend.barking.path as p_b
-import backend.barking.special_event as s_ev
-import backend.barking.scope as sc
-import backend.main_classes.str_variations as str_v
-import backend.firebase_new as firebase
+import global_vars
+
+import backend.other as other
+import backend.firebase as firebase
+
+from . import path as path_m
+from . import special_events
+from . import scope as scopes
 
 
 class StatisticType():
     """A class for a statistic type such as "barks" and "pats"."""
-    def __init__(self, name: str, name_plural: str, server_raw_scope: sc.ServerRawScope, user_raw_scope: sc.UserRawScope):
+    def __init__(self, name: str, name_plural: str, server_raw_scope: scopes.ServerRawScope, user_raw_scope: scopes.UserRawScope):
         self.name = name
-        self.name_variations = str_v.StrVariations(name)
+        self.name_variations = other.StrVariations(name)
         self.name_plural = name_plural
-        self.name_plural_variations = str_v.StrVariations(name_plural)
+        self.name_plural_variations = other.StrVariations(name_plural)
 
-        def get_scope(raw_scope: sc.RawScope):
-            return sc.Scope(raw_scope, name)
+        def get_scope(raw_scope: scopes.RawScope):
+            return scopes.Scope(raw_scope, name)
 
         self.server_scope = get_scope(server_raw_scope)
         self.user_scope = get_scope(user_raw_scope)
@@ -41,57 +43,57 @@ class StatisticTypes():
     def __init__(self):
         self.barks = StatisticType(
             "bark", "barks",
-            server_raw_scope = sc.ServerRawScope(
-                p_b.DEFAULT_PATH_BUNDLE,
+            server_raw_scope = scopes.ServerRawScope(
+                path_m.DEFAULT_PATH_BUNDLE,
                 raw_special_events = [
-                    s_ev.RawSpecialEvent(
+                    special_events.RawSpecialEvent(
                         "++pat", 1000, (
                             ">>> YAYYAYAYAYYAAYAYA- AM HAPPY!! :D!!\n"
                             "*Cani likes this server! The command `++pat` has been unlocked!*\n"
-                            f"*Use `{vrs.CMD_PREFIX}help pat` for more information.*"
+                            f"*Use `{global_vars.CMD_PREFIX}help pat` for more information.*"
                         )
                     ),
-                    s_ev.RawSpecialEvent(
+                    special_events.RawSpecialEvent(
                         "++fetch", 2500, (
                             ">>> ...oooh, a.. stick!\n"
                             "*Cani found some sticks for this server! The command `++fetch` has been unlocked!*\n"
-                            f"*Use `{vrs.CMD_PREFIX}help fetch` for more information.*"
+                            f"*Use `{global_vars.CMD_PREFIX}help fetch` for more information.*"
                         )
                     )
                 ]
             ),
-            user_raw_scope = sc.UserRawScope(
-                p_b.DEFAULT_PATH_BUNDLE
+            user_raw_scope = scopes.UserRawScope(
+                path_m.DEFAULT_PATH_BUNDLE
             )
         )
 
         self.pats = StatisticType(
             "pat", "pats",
-            server_raw_scope = sc.ServerRawScope(
-                p_b.DEFAULT_PATH_BUNDLE
+            server_raw_scope = scopes.ServerRawScope(
+                path_m.DEFAULT_PATH_BUNDLE
             ),
-            user_raw_scope = sc.UserRawScope(
-                p_b.DEFAULT_PATH_BUNDLE
+            user_raw_scope = scopes.UserRawScope(
+                path_m.DEFAULT_PATH_BUNDLE
             )
         )
 
         self.meows = StatisticType(
             "meow", "meows",
-            server_raw_scope = sc.ServerRawScope(
-                p_b.DEFAULT_PATH_BUNDLE
+            server_raw_scope = scopes.ServerRawScope(
+                path_m.DEFAULT_PATH_BUNDLE
             ),
-            user_raw_scope = sc.UserRawScope(
-                p_b.DEFAULT_PATH_BUNDLE
+            user_raw_scope = scopes.UserRawScope(
+                path_m.DEFAULT_PATH_BUNDLE
             )
         )
 
         self.sticks = StatisticType(
             "stick", "sticks",
-            server_raw_scope = sc.ServerRawScope(
-                p_b.DEFAULT_PATH_BUNDLE
+            server_raw_scope = scopes.ServerRawScope(
+                path_m.DEFAULT_PATH_BUNDLE
             ),
-            user_raw_scope = sc.UserRawScope(
-                p_b.DEFAULT_PATH_BUNDLE
+            user_raw_scope = scopes.UserRawScope(
+                path_m.DEFAULT_PATH_BUNDLE
             )
         )
 

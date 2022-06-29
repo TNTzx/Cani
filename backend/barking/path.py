@@ -3,7 +3,7 @@
 
 import nextcord.ext.commands as cmds
 
-import backend.firebase_new as firebase
+import backend.firebase as firebase
 
 
 def get_fb_path(ctx: cmds.Context):
