@@ -40,3 +40,10 @@ class AlreadyNotClaimableChannel(ChannelClaimException):
     """
     def __init__(self, channel_id: int):
         super().__init__(f"Channel ID {channel_id} is already not claimable.")
+
+
+class OrderListNotMatching(ChannelClaimException):
+    """
+    Exception.
+    The list of channel IDs doesn't match with the list of claim channel IDs.
+    """

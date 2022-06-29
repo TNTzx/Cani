@@ -1,6 +1,8 @@
 """Contains stuff about a claim channel."""
 
 
+import copy
+
 import nextcord as nx
 
 import global_vars
@@ -139,6 +141,37 @@ class ClaimChannels(firebase.FBStruct):
             if claim_channel.channel_id == channel_id:
                 del self.claim_channels[idx]
                 return
+
+
+    def sort_claim_channels(self, channel_id_order: list[int]):
+        """Sorts the claim channels by ID."""
+        def raise_error():
+            """Raises an error if any condition returns False."""
+            raise m_claim_excs.OrderListNotMatching()
+
+        # condition 1 and 2
+        claim_channel_ids = self.get_claim_channel_ids()
+        for channel_id in channel_id_order:
+            if channel_id not in claim_channel_ids:
+                raise_error()
+
+            claim_channel_ids.remove(channel_id)
+
+        # condition 3
+        if len(claim_channel_ids) != 0:
+            raise_error()
+
+
+        # algorithm
+        self_copy = copy.deepcopy(self)
+        sorted_claim_channels = []
+
+        for channel_id in channel_id_order:
+            clam_channel = self_copy.get_claim_channel_by_id(channel_id)
+            sorted_claim_channels.append(clam_channel)
+            self_copy.claim_channels.remove(clam_channel)
+
+        self.claim_channels = sorted_claim_channels
 
 
     def get_embed(self):

@@ -13,4 +13,5 @@ from .m_claim_manager import \
 from .m_claim_excs import \
     ChannelClaimException, \
         AlreadyClaimableChannel, AlreadyNotClaimableChannel, \
-        NoFoundClaimableChannel
+        NoFoundClaimableChannel, \
+        OrderListNotMatching
