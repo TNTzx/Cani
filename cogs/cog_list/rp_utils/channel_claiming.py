@@ -101,7 +101,6 @@ class CogChannelClaiming(cog.RegisteredCog):
             await ctx.send(f"Unclaiming channel {ctx.channel.mention}...")
 
         await claim_manager.update_claim_channels(ctx.guild.id)
-        await claim_manager.update_embed_safe(ctx)
 
         if claim_data.claim_status:
             await ctx.send(
@@ -112,6 +111,8 @@ class CogChannelClaiming(cog.RegisteredCog):
             )
         else:
             await ctx.send(f"Channel {ctx.channel.mention} unclaimed!\n")
+
+        await claim_manager.update_embed_safe(ctx)
 
 
     @disc_utils.command_wrap(
@@ -204,10 +205,11 @@ class CogChannelClaiming(cog.RegisteredCog):
         await ctx.send(f"{prefix_pending} {channel_mention} as a claimable channel...")
 
         await claim_manager.update_claim_channels(ctx.guild.id)
-        await claim_manager.update_embed_safe(ctx)
 
         prefix_success = "Added" if action == "add" else "Removed"
         await ctx.send(f"{prefix_success} {channel_mention} as a claimable channel!")
+
+        await claim_manager.update_embed_safe(ctx)
 
 
     @disc_utils.command_wrap(
@@ -257,6 +259,7 @@ class CogChannelClaiming(cog.RegisteredCog):
             ).send()
 
         await claim_manager.update_claim_channels(ctx.guild.id)
-        await claim_manager.update_embed_safe(ctx)
 
         await ctx.send("The claimable channels are now sorted!")
+
+        await claim_manager.update_embed_safe(ctx)

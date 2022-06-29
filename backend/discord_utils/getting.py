@@ -12,6 +12,9 @@ from . import disc_exc
 
 def get_id_from_mention(mention_str: str):
     """Gets the ID from a mention."""
+    if not (mention_str.startswith("<") and mention_str.endswith(">")):
+        raise disc_exc.NotMention(mention_str)
+
     try:
         return int(mention_str[2:-1])
     except (ValueError, TypeError) as exc:
