@@ -1,20 +1,16 @@
-"""Contains commands for RP tools."""
+"""Contains the commands for channel claiming."""
 
 
-import nextcord as nx
-import nextcord.ext.commands as cmds
+import nextcord.ext.commands as nx_cmds
 
 import global_vars
 import backend.discord_utils as disc_utils
-import backend.rp_tools.channel_claiming as c_c
-import backend.firebase as firebase
-import backend.exceptions.send_error as s_e
-import backend.other_functions as o_f
+import backend.exc_utils as exc_utils
+import backend.rp_tools.channel_claiming as claiming
 
 from ... import utils as cog
 
 
-# REWRITE
 class CogChannelClaiming(cog.RegisteredCog):
     """Contains commands for channel claiming."""
     def __init__(self, bot):
@@ -53,45 +49,92 @@ class CogChannelClaiming(cog.RegisteredCog):
             aliases = ["cc"],
             cooldown_info = disc_utils.CooldownInfo(
                 length = 60 * 2,
-                type_ = cmds.BucketType.user
+                type_ = nx_cmds.BucketType.user
             )
         )
     )
-    async def claimchannel(self, ctx: cmds.Context, action, place=None):
+    async def claimchannel(self, ctx: nx_cmds.Context, action, place = claiming.DEFAULT_LOCATION):
         """Claims a channel to a location."""
-        if not await c_c.is_rp_channel(ctx):
-            await s_e.send_error(ctx, "*This isn't an RP channel! >:(*", cooldown_reset=True)
-            return
+        place_len_limit = 500
+        if len(place) > place_len_limit:
+            await exc_utils.SendFailedCmd(
+                error_place = exc_utils.ErrorPlace.from_context(ctx),
+                suffix = f"The location can't be more than {place_len_limit} characters long!"
+            ).send()
 
-        async def claim():
-            if not o_f.is_not_blank_str(place):
-                await s_e.send_error(ctx, f"*You didn't specify what the `<location>` is! Type `{global_vars.CMD_PREFIX}help` to get help! >:(*", cooldown_reset=True)
-                return
-            await ctx.send("*Claiming channel...*")
-            await c_c.edit_channel_database(ctx, True, place)
-            await ctx.send(f"*Channel claimed! :D\nCurrent location: __{place}__*")
+        await disc_utils.cmd_choice_check(ctx, action, ["claim", "unclaim"])
+        claim_status = action == "claim"
 
-
-        async def unclaim():
-            claim_channels = await c_c.get_channels(ctx)
-            if not claim_channels[str(ctx.channel.id)]["claim_status"]:
-                await s_e.send_error(ctx, "*This channel isn't claimed yet! >:(*", cooldown_reset=True)
-                return
-
-            await ctx.send("*Unclaiming channel...*")
-            await c_c.edit_channel_database(ctx, False, "Unknown")
-            await ctx.send("*Channel unclaimed! :D*")
+        if claim_status and place == claiming.DEFAULT_LOCATION:
+            await exc_utils.SendFailedCmd(
+                error_place = exc_utils.ErrorPlace.from_context(ctx),
+                suffix = "The location isn't specified! Specify the location if you're claiming the channel!"
+            ).send()
 
 
-        if action == "claim":
-            await claim()
-        elif action == "unclaim":
-            await unclaim()
+        claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
+
+        if not claim_manager.claim_channels.is_claimable_channel(ctx.channel.id):
+            await exc_utils.SendFailedCmd(
+                error_place = exc_utils.ErrorPlace.from_context(ctx),
+                suffix = "This channel isn't a claimable channel! Add this channel as a claimable channel using `++claimchanneledit`!"
+            ).send()
+
+        claim_data = claiming.ClaimData(
+            claim_status = claim_status,
+            location = place
+        )
+        claim_channel = claim_manager.claim_channels.get_claim_channel_by_id(ctx.channel.id)
+
+        if claim_channel.claim_data.claim_status == claim_data.claim_status == False:
+            await exc_utils.SendFailedCmd(
+                error_place = exc_utils.ErrorPlace.from_context(ctx),
+                suffix = "This channel is already unclaimed!"
+            ).send()
+
+        claim_channel.claim_data = claim_data
+
+
+        if claim_data.claim_status:
+            await ctx.send(f"Claiming channel {ctx.channel.mention}...")
         else:
-            await s_e.send_error(ctx, f"*`{action}` isn't a valid argument! Type `{global_vars.CMD_PREFIX}help` for help!*", cooldown_reset=True)
-            return
+            await ctx.send(f"Unclaiming channel {ctx.channel.mention}...")
 
-        await c_c.update_embed(ctx)
+        await claim_manager.update_claim_channels(ctx.guild.id)
+        await claim_manager.update_embed_safe(ctx)
+
+        if claim_data.claim_status:
+            await ctx.send(
+                (
+                    f"Channel {ctx.channel.mention} claimed!\n"
+                    f"Location: `{place}`"
+                )
+            )
+        else:
+            await ctx.send(f"Channel {ctx.channel.mention} unclaimed!\n")
+
+
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryChannelClaiming,
+        cmd_info = disc_utils.CmdInfo(
+            description = "Changes where the embed for displaying claimed channels are sent.",
+            params = disc_utils.Params(
+                disc_utils.ParamArgument(
+                    "channel",
+                    description = "Channel where the embed will be put in."
+                )
+            ),
+            aliases = ["ccm"],
+            perms = disc_utils.Permissions(
+                [disc_utils.PermGuildAdmin]
+            )
+        )
+    )
+    async def claimchannelembed(self, ctx: nx_cmds.Context, channel_mention: str):
+        """Changes the embed for the claim channels."""
+        claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
+        channel = await disc_utils.channel_from_id_warn(ctx, disc_utils.get_id_from_mention(channel_mention))
+        await claim_manager.set_embed(ctx.guild.id, channel)
 
 
     @disc_utils.command_wrap(
@@ -125,109 +168,38 @@ class CogChannelClaiming(cog.RegisteredCog):
             )
         )
     )
-    async def claimchanneledit(self, ctx: cmds.Context, action: str, channel_mention: str, *dump):
+    async def claimchanneledit(self, ctx: nx_cmds.Context, action: str, channel_mention: str):
         """Edits possible claim channels."""
-        path = await c_c.get_fb_path(ctx)
-        claim_channels = await c_c.get_channels(ctx)
-        try:
-            channel = await o_f.get_channel_from_mention(channel_mention)
-        except ValueError:
-            await s_e.send_error(ctx, "*The channel doesn't exist! Make sure the channel name is highlighted in blue!*")
-            return
+        await disc_utils.cmd_choice_check(ctx, action, ["add", "remove"])
 
-        if channel is None:
-            await s_e.send_error(ctx, "*The channel doesn't exist! Make sure the channel name is highlighted in blue!*")
-            return
-
-        async def update_data(data):
-            if not len(data) == 0:
-                await c_c.edit_claims(ctx, data)
-            else:
-                firebase.edit_data(path, {"availableChannels": firebase.PLACEHOLDER_DATA})
-
-
-        async def add():
-            if str(channel.id) in claim_channels:
-                await s_e.send_error(ctx, "*That channel is already added! >:(*")
-                return
-
-            await ctx.send("*Adding channel as an RP channel...*")
-            claim_channels[channel.id] = {"claim_status": False, "location": "Unknown"}
-            await update_data(claim_channels)
-            await ctx.send("*The channel has been added as an RP channel! :D*")
-
-
-        async def remove():
-            if not str(channel.id) in claim_channels:
-                await s_e.send_error(ctx, "*That channel hasn't been added yet! >:(*")
-                return
-
-            await ctx.send("*Removing channel as an RP channel...*")
-            claim_channels.pop(str(channel.id))
-            await update_data(claim_channels)
-            await ctx.send("*The channel has been removed as an RP channel! :D*")
-
+        claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
 
         if action == "add":
-            await add()
-        elif action == "remove":
-            await remove()
-        else:
-            await s_e.send_error(ctx, f"*`{action}` isn't a valid argument! Type `{global_vars.CMD_PREFIX}help` for help!*")
-            return
-
-        await c_c.update_embed(ctx)
-
-
-    @disc_utils.command_wrap(
-        category = disc_utils.CategoryChannelClaiming,
-        cmd_info = disc_utils.CmdInfo(
-            description = "Changes where the embed for displaying claimed channels are sent.",
-            params = disc_utils.Params(
-                disc_utils.ParamArgument(
-                    "channel",
-                    description = "Channel where the embed will be put in."
+            try:
+                claim_manager.claim_channels.add_claim_channel(
+                    disc_utils.get_id_from_mention(channel_mention)
                 )
-            ),
-            aliases = ["ccm"],
-            perms = disc_utils.Permissions(
-                [disc_utils.PermGuildAdmin]
-            )
-        )
-    )
-    async def claimchannelembed(self, ctx: cmds.Context, channel_mention: str, *dump):
-        """Changes the embed for the claim channels."""
-        path = await c_c.get_fb_path(ctx)
-        try:
-            channel = await o_f.get_channel_from_mention(channel_mention)
-        except ValueError:
-            await s_e.send_error(ctx, "*The channel doesn't exist! Make sure the channel name is highlighted in blue!*")
-            return
+            except claiming.AlreadyClaimableChannel:
+                await exc_utils.SendFailedCmd(
+                    error_place = exc_utils.ErrorPlace.from_context(ctx),
+                    suffix = f"The channel {channel_mention} is already a claimable channel!"
+                ).send()
+        else:
+            try:
+                claim_manager.claim_channels.remove_claim_channel(
+                    disc_utils.get_id_from_mention(channel_mention)
+                )
+            except claiming.AlreadyNotClaimableChannel:
+                await exc_utils.SendFailedCmd(
+                    error_place = exc_utils.ErrorPlace.from_context(ctx),
+                    suffix = f"The channel {channel_mention} is not a claimable channel!"
+                ).send()
 
-        message = await channel.send(embed=nx.Embed(title="?", description="?"))
+        prefix_pending = "Adding" if action == "add" else "Removing"
+        await ctx.send(f"{prefix_pending} {channel_mention} as a claimable channel...")
 
-        firebase.edit_data(path + ["embed_info"], {
-                "channel_id": str(channel.id),
-                "message_id": str(message.id)
-            })
+        await claim_manager.update_claim_channels(ctx.guild.id)
+        await claim_manager.update_embed_safe(ctx)
 
-        await ctx.send("*Changing claim display channel...*")
-        await c_c.update_embed(ctx)
-        await ctx.send(f"*Changed claim display channel to {channel_mention}! :D*")
-
-
-    @disc_utils.command_wrap(
-        category = disc_utils.CategoryChannelClaiming,
-        cmd_info = disc_utils.CmdInfo(
-            description = "Updates the embed for displaying claimed channels.",
-            aliases = ["ccu"],
-            perms = disc_utils.Permissions(
-                [disc_utils.PermGuildAdmin]
-            )
-        )
-    )
-    async def claimchannelupdate(self, ctx: cmds.Context):
-        """Updates the embed."""
-        await ctx.send("*Updating embed...*")
-        await c_c.update_embed(ctx)
-        await ctx.send("*Updated! :D*")
+        prefix_success = "Added" if action == "add" else "Removed"
+        await ctx.send(f"{prefix_success} {channel_mention} as a claimable channel!")
