@@ -223,6 +223,7 @@ class CogChannelClaiming(cog.RegisteredCog):
                     )
                 )
             ),
+            aliases = ["cco"],
             perms = disc_utils.Permissions(
                 [disc_utils.PermGuildAdmin]
             )
@@ -251,4 +252,4 @@ class CogChannelClaiming(cog.RegisteredCog):
         await claim_manager.update_claim_channels(ctx.guild.id)
         await claim_manager.update_embed_safe(ctx)
 
-        await ctx.send(f"The claimable channels are now sorted!")
+        await ctx.send("The claimable channels are now sorted!")
