@@ -47,10 +47,10 @@ class CogChannelClaiming(cog.RegisteredCog):
                 )
             ),
             aliases = ["cc"],
-            # cooldown_info = disc_utils.CooldownInfo(
-            #     length = 60 * 2,
-            #     type_ = nx_cmds.BucketType.user
-            # )
+            cooldown_info = disc_utils.CooldownInfo(
+                length = 60 * 2,
+                type_ = nx_cmds.BucketType.user
+            )
         )
     )
     async def claimchannel(self, ctx: nx_cmds.Context, action, place = claiming.DEFAULT_LOCATION):
@@ -74,11 +74,10 @@ class CogChannelClaiming(cog.RegisteredCog):
 
         claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
 
-        # TEST
         if not claim_manager.claim_channels.is_claimable_channel(ctx.channel.id):
             await exc_utils.SendFailedCmd(
                 error_place = exc_utils.ErrorPlace.from_context(ctx),
-                suffix = f"This channel isn't a claimable channel! Add this channel as a claimable channel using `++claimchanneledit `{ctx.channel.mention}!"
+                suffix = "This channel isn't a claimable channel! Add this channel as a claimable channel using `++claimchanneledit`!"
             ).send()
 
         claim_data = claiming.ClaimData(
@@ -113,7 +112,6 @@ class CogChannelClaiming(cog.RegisteredCog):
             )
         else:
             await ctx.send(f"Channel {ctx.channel.mention} unclaimed!\n")
-
 
 
     @disc_utils.command_wrap(
@@ -198,10 +196,10 @@ class CogChannelClaiming(cog.RegisteredCog):
                 ).send()
 
         prefix_pending = "Adding" if action == "add" else "Removing"
-        await ctx.send(f"{prefix_pending} channel as a claimable channel...")
+        await ctx.send(f"{prefix_pending} {channel_mention} as a claimable channel...")
 
         await claim_manager.update_claim_channels(ctx.guild.id)
         await claim_manager.update_embed_safe(ctx)
 
         prefix_success = "Added" if action == "add" else "Removed"
-        await ctx.send(f"{prefix_success} channel as a claimable channel!")
+        await ctx.send(f"{prefix_success} {channel_mention} as a claimable channel!")
