@@ -133,7 +133,7 @@ class CogChannelClaiming(cog.RegisteredCog):
     async def claimchannelembed(self, ctx: nx_cmds.Context, channel_mention: str):
         """Changes the embed for the claim channels."""
         claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
-        channel = await disc_utils.channel_from_id_warn(ctx, disc_utils.get_id_from_mention(channel_mention))
+        channel = await disc_utils.channel_from_id_warn(ctx, await disc_utils.get_id_from_mention_warn(ctx, channel_mention))
         await claim_manager.set_embed(ctx.guild.id, channel)
 
 
@@ -177,7 +177,7 @@ class CogChannelClaiming(cog.RegisteredCog):
         if action == "add":
             try:
                 claim_manager.claim_channels.add_claim_channel(
-                    disc_utils.get_id_from_mention(channel_mention)
+                    await disc_utils.get_id_from_mention_warn(ctx, channel_mention)
                 )
             except claiming.AlreadyClaimableChannel:
                 await exc_utils.SendFailedCmd(
@@ -187,7 +187,7 @@ class CogChannelClaiming(cog.RegisteredCog):
         else:
             try:
                 claim_manager.claim_channels.remove_claim_channel(
-                    disc_utils.get_id_from_mention(channel_mention)
+                    await disc_utils.get_id_from_mention_warn(ctx, channel_mention)
                 )
             except claiming.AlreadyNotClaimableChannel:
                 await exc_utils.SendFailedCmd(
@@ -231,9 +231,11 @@ class CogChannelClaiming(cog.RegisteredCog):
     )
     async def claimchannelorder(self, ctx: nx_cmds.Context, *channel_mentions: str):
         """Orders the channels in the embed into a specified order."""
-        channel_ids = [disc_utils.get_id_from_mention(channel_mention) for channel_mention in channel_mentions]
+        channel_ids = [await disc_utils.get_id_from_mention_warn(ctx, channel_mention) for channel_mention in channel_mentions]
 
         claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
+
+        await ctx.send("Sorting the claimable channels...")
 
         try:
             claim_manager.claim_channels.sort_claim_channels(channel_ids)
@@ -243,9 +245,9 @@ class CogChannelClaiming(cog.RegisteredCog):
                 suffix = (
                     "The channels you listed don't match with the list of claimable channels!\n"
                     "Make sure your list:\n"
-                    "- has all claimable channels in the server;"
-                    "- has no duplicates; and"
-                    "- has no channels that are not claimable!"
+                    "- has all claimable channels in the server;\n"
+                    "- has no duplicates; and\n"
+                    "- has no channels that are not claimable!\n"
                 )
             ).send()
 
