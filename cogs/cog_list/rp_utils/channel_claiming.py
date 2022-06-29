@@ -133,8 +133,13 @@ class CogChannelClaiming(cog.RegisteredCog):
     async def claimchannelembed(self, ctx: nx_cmds.Context, channel_mention: str):
         """Changes the embed for the claim channels."""
         claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
+
+        await ctx.send("Changing the embed location...")
+
         channel = await disc_utils.channel_from_id_warn(ctx, await disc_utils.get_id_from_mention_warn(ctx, channel_mention))
         await claim_manager.set_embed(ctx.guild.id, channel)
+
+        await ctx.send(f"Embed location changed to {channel_mention}!")
 
 
     @disc_utils.command_wrap(
@@ -169,7 +174,7 @@ class CogChannelClaiming(cog.RegisteredCog):
         )
     )
     async def claimchanneledit(self, ctx: nx_cmds.Context, action: str, channel_mention: str):
-        """Edits possible claim channels."""
+        """Edits what channels are claimable."""
         await disc_utils.cmd_choice_check(ctx, action, ["add", "remove"])
 
         claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
