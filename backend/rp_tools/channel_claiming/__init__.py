@@ -9,3 +9,8 @@ from .m_claim_channels import \
 from .m_claim_manager import \
     get_path_claim_channels, \
     ClaimChannelManager
+
+from .m_claim_excs import \
+    ChannelClaimException, \
+        AlreadyClaimableChannel, AlreadyNotClaimableChannel, \
+        NoFoundClaimableChannel

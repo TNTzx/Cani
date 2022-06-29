@@ -137,3 +137,71 @@ class CogChannelClaiming(cog.RegisteredCog):
         claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
         channel = await disc_utils.channel_from_id_warn(ctx, disc_utils.get_id_from_mention(channel_mention))
         await claim_manager.set_embed(ctx.guild.id, channel)
+
+
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryChannelClaiming,
+        cmd_info = disc_utils.CmdInfo(
+            description = "Adds / removes the channel as an RP channel.",
+            params = disc_utils.Params(
+                disc_utils.ParamsSplit(
+                    disc_utils.Params(
+                        disc_utils.ParamLiteral(
+                            "add",
+                            description = "Adds a channel as an RP channel."
+                        )
+                    ),
+                    disc_utils.Params(
+                        disc_utils.ParamLiteral(
+                            "remove",
+                            description = "Removes a channel as an RP channel."
+                        )
+                    ),
+                    description = "Tells if you want to add or remove a channel as an RP channel."
+                ),
+                disc_utils.ParamArgument(
+                    "channel",
+                    description = "Channel to add / remove."
+                )
+            ),
+            aliases = ["cce"],
+            perms = disc_utils.Permissions(
+                [disc_utils.PermGuildAdmin]
+            )
+        )
+    )
+    async def claimchanneledit(self, ctx: nx_cmds.Context, action: str, channel_mention: str):
+        """Edits possible claim channels."""
+        await disc_utils.cmd_choice_check(ctx, action, ["add", "remove"])
+
+        claim_manager = claiming.ClaimChannelManager.from_guild_id(ctx.guild.id)
+
+        if action == "add":
+            try:
+                claim_manager.claim_channels.add_claim_channel(
+                    disc_utils.get_id_from_mention(channel_mention)
+                )
+            except claiming.AlreadyClaimableChannel:
+                await exc_utils.SendFailedCmd(
+                    error_place = exc_utils.ErrorPlace.from_context(ctx),
+                    suffix = f"The channel {channel_mention} is already a claimable channel!"
+                ).send()
+        else:
+            try:
+                claim_manager.claim_channels.remove_claim_channel(
+                    disc_utils.get_id_from_mention(channel_mention)
+                )
+            except claiming.AlreadyNotClaimableChannel:
+                await exc_utils.SendFailedCmd(
+                    error_place = exc_utils.ErrorPlace.from_context(ctx),
+                    suffix = f"The channel {channel_mention} is not a claimable channel!"
+                ).send()
+
+        prefix_pending = "Adding" if action == "add" else "Removing"
+        await ctx.send(f"{prefix_pending} channel as a claimable channel...")
+
+        await claim_manager.update_claim_channels(ctx.guild.id)
+        await claim_manager.update_embed_safe(ctx)
+
+        prefix_success = "Added" if action == "add" else "Removed"
+        await ctx.send(f"{prefix_success} channel as a claimable channel!")

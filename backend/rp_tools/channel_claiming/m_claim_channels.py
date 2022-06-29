@@ -65,6 +65,12 @@ class ClaimChannel(firebase.FBStruct):
         )
 
 
+    @classmethod
+    def from_channel(cls, channel: nx.TextChannel):
+        """Creates an instance from a channel."""
+        return cls(channel_id = channel.id)
+
+
     def discord_get_channel(self):
         """Gets the Discord channel from this object."""
         return global_vars.global_bot.get_channel(self.channel_id)
@@ -115,6 +121,24 @@ class ClaimChannels(firebase.FBStruct):
                 return claim_channel
 
         raise m_claim_excs.NoFoundClaimableChannel(claim_channel_id)
+
+
+    def add_claim_channel(self, channel_id: int):
+        """Adds a claim channel in this instance."""
+        if self.is_claimable_channel(channel_id):
+            raise m_claim_excs.AlreadyClaimableChannel(channel_id)
+
+        self.claim_channels.append(ClaimChannel(channel_id = channel_id))
+
+    def remove_claim_channel(self, channel_id: int):
+        """Removes a claim channel in this instance."""
+        if not self.is_claimable_channel(channel_id):
+            raise m_claim_excs.AlreadyNotClaimableChannel(channel_id)
+
+        for idx, claim_channel in enumerate(self.claim_channels):
+            if claim_channel.channel_id == channel_id:
+                del self.claim_channels[idx]
+                return
 
 
     def get_embed(self):
