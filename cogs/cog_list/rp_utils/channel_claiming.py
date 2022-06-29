@@ -214,8 +214,12 @@ class CogChannelClaiming(cog.RegisteredCog):
             ],
             params = disc_utils.Params(
                 disc_utils.ParamArgumentMultiple(
-                    name = "channel mentions"
+                    name = "channel mentions",
+                    description = "The channel mentions of all claim channels in order from left to right."
                 )
+            ),
+            perms = disc_utils.Permissions(
+                [disc_utils.PermGuildAdmin]
             )
         )
     )

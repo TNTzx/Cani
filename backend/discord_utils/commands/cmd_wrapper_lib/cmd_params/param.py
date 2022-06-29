@@ -20,7 +20,7 @@ class ParamArgument(Param):
 class ParamArgumentMultiple(ParamArgument):
     """A parameter argument that takes in a tuple of multiple values."""
     def get_syntax(self) -> str:
-        return f"<<{self.name}>>"
+        return f"<{self.name}>+"
 
 class ParamLiteral(Param):
     """A parameter with a literal value. Usually takes in a string."""
