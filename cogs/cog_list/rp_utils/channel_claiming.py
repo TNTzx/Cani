@@ -223,7 +223,7 @@ class CogChannelClaiming(cog.RegisteredCog):
                 disc_utils.ParamArgumentMultiple(
                     name = "channel mentions",
                     description = (
-                        "The channel mentions of all claim channels in order from left to right.\n"
+                        "The channel mentions of all claim channels in order from left to right. "
                         "This command will give an error if the channels you listed are "
                             "not in the list of claimable channels or "
                             "there are claimable channels not included in the list."
