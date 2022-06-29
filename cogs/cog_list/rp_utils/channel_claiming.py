@@ -203,3 +203,21 @@ class CogChannelClaiming(cog.RegisteredCog):
 
         prefix_success = "Added" if action == "add" else "Removed"
         await ctx.send(f"{prefix_success} {channel_mention} as a claimable channel!")
+
+
+    @disc_utils.command_wrap(
+        category = disc_utils.CategoryChannelClaiming,
+        cmd_info = disc_utils.CmdInfo(
+            description = "Orders the claimable channels in the embed into a specified order.",
+            example = [
+                f"{global_vars.CMD_PREFIX}claimchannelorder #rp-1 #rp-2 #rp-3 #rp-4"
+            ],
+            params = disc_utils.Params(
+                disc_utils.ParamArgumentMultiple(
+                    name = "channel mentions"
+                )
+            )
+        )
+    )
+    async def claimchannelorder(self, ctx: nx_cmds.Context, *channel_mentions: str):
+        """Orders the channels in the embed into a specified order."""
