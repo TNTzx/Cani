@@ -3,6 +3,7 @@
 
 import nextcord as nx
 import nextcord.ext.commands as cmds
+from backend.barking.path import get_fb_path
 
 import global_vars
 import backend.discord_utils as disc_utils
@@ -12,7 +13,7 @@ import backend.barking as barking
 from ... import utils as cog
 
 
-async def update_database():
+async def update_guild_list_database():
     """Updates the database for joined servers."""
     fb_path = firebase.ShortEndpoint.discord_guilds
     default_json = fb_path.get_default_data()
@@ -23,6 +24,14 @@ async def update_database():
     for guild in global_vars.global_bot.guilds:
         if not firebase.is_data_exists(fb_path.get_path() + [guild.id]):
             firebase.edit_data(fb_path.get_path(), {guild.id: default_json})
+
+    bot_guild_ids = [guild.id for guild in global_vars.global_bot.guilds]
+    for guild_id in firebase.get_data(fb_path):
+        guild_id = int(guild_id)
+        if guild_id not in bot_guild_ids:
+            firebase.delete_data(
+                firebase.ShortEndpoint.discord_guilds.get_path() + [guild_id]
+            )
 
 
 class CogEvents(cog.RegisteredCog):
@@ -38,20 +47,18 @@ class CogEvents(cog.RegisteredCog):
         global_vars.tntz = await global_vars.global_bot.fetch_user(279803094722674693)
 
         await global_vars.tntz.send("*Logged in! :D*")
-        await update_database()
+        await update_guild_list_database()
 
 
     @cmds.Cog.listener()
     async def on_guild_join(self, guild: nx.Guild):
         """On guild join."""
-        await update_database()
+        await update_guild_list_database()
 
     @cmds.Cog.listener()
     async def on_guild_remove(self, guild: nx.Guild):
         """On guild leave."""
-        firebase.delete_data(
-            firebase.ShortEndpoint.discord_guilds.get_path() + [str(guild.id)]
-        )
+        await update_guild_list_database()
 
 
     @disc_utils.command_wrap(
@@ -69,7 +76,7 @@ class CogEvents(cog.RegisteredCog):
     async def updatedatabase(self, ctx):
         """Updates the database."""
         await ctx.send("*Updating Database...*")
-        await update_database()
+        await update_guild_list_database()
         await ctx.send("*Updated! :D*")
 
 
