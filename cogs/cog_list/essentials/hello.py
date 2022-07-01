@@ -12,7 +12,7 @@ import backend.barking as barking
 from ... import utils as cog
 
 
-async def add_new_to_database():
+async def update_database():
     """Updates the database for joined servers."""
     fb_path = firebase.ShortEndpoint.discord_guilds
     default_json = fb_path.get_default_data()
@@ -22,7 +22,7 @@ async def add_new_to_database():
 
     for guild in global_vars.global_bot.guilds:
         if not firebase.is_data_exists(fb_path.get_path() + [guild.id]):
-            firebase.edit_data(fb_path.get_path() + [guild.id], {guild.id: default_json})
+            firebase.edit_data(fb_path.get_path(), {guild.id: default_json})
 
 
 class CogEvents(cog.RegisteredCog):
@@ -38,12 +38,12 @@ class CogEvents(cog.RegisteredCog):
         global_vars.tntz = await global_vars.global_bot.fetch_user(279803094722674693)
 
         await global_vars.tntz.send("*Logged in! :D*")
-        await add_new_to_database()
+        await update_database()
 
     @cmds.Cog.listener()
     async def on_guild_join(self, guild: nx.Guild):
         """On guild join."""
-        await add_new_to_database()
+        await update_database()
 
     @disc_utils.command_wrap(
         category = disc_utils.CategoryBotControl,
@@ -60,7 +60,7 @@ class CogEvents(cog.RegisteredCog):
     async def updatedatabase(self, ctx):
         """Updates the database."""
         await ctx.send("*Updating Database...*")
-        await add_new_to_database()
+        await update_database()
         await ctx.send("*Updated! :D*")
 
 

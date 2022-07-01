@@ -32,9 +32,11 @@ def get_data(path: list[str], default = consts.NOT_FOUND_DATA):
         if default_not_overridden:
             raise fb_exc.FBNoPath(f"Data doesn't exist for '{path}', or is None.")
 
-        # if fb_utils.placeholder_empty_to_none(result) is None:
-        #     if default_not_overridden:
-        #         return None
+        return default
+
+    if fb_utils.null_placeholder_empty_to_none(result) is None:
+        if default_not_overridden:
+            return None
 
         return default
 
