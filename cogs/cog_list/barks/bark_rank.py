@@ -66,8 +66,9 @@ class CogBarkRank(cog.RegisteredCog):
                 suffix = f"*No leaderboard found for {stat_type.name}. Be the first one to be in that leaderboard!*"
             ).send()
 
-        users_data: dict[str, dict[str, dict[str, int]]] = firebase.get_data(barking.get_path_users(ctx))
-        if users_data is None:
+        try:
+            users_data: dict[str, dict[str, dict[str, int]]] = firebase.get_data(barking.get_path_users(ctx))
+        except firebase.FBNoPath:
             await send_no_leaderboard_found()
 
 
