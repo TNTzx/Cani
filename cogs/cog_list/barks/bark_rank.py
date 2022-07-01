@@ -55,8 +55,8 @@ class CogBarkRank(cog.RegisteredCog):
             await ctx.send(f"*The following statistics available are: `{'`, `'.join(stat_type_names)}`.*")
             return
 
-        disc_utils.cmd_choice_check(ctx, stat_type_name, stat_type_names)
-        stat_type = await barking.STAT_TYPES.get_stat_type(stat_type_name)
+        await disc_utils.cmd_choice_check(ctx, stat_type_name, stat_type_names)
+        stat_type = barking.STAT_TYPES.get_stat_type(stat_type_name)
 
         await ctx.send(f"*Getting leaderboard for `{stat_type.name}`...*")
 
@@ -66,8 +66,9 @@ class CogBarkRank(cog.RegisteredCog):
                 suffix = f"*No leaderboard found for {stat_type.name}. Be the first one to be in that leaderboard!*"
             ).send()
 
-        users_data: dict[str, dict[str, dict[str, int]]] = firebase.get_data(barking.get_path_users(ctx))
-        if users_data is None:
+        try:
+            users_data: dict[str, dict[str, dict[str, int]]] = firebase.get_data(barking.get_path_users(ctx))
+        except firebase.FBNoPath:
             await send_no_leaderboard_found()
 
 

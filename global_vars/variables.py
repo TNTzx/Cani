@@ -4,6 +4,9 @@
 import nextcord as nx
 
 
+# dev environment
+dev_environment = False
+
 # Bot
 global_bot = nx.Client()
 

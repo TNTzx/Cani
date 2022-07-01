@@ -5,6 +5,7 @@ import typing as typ
 
 import nextcord.ext.commands as nx_cmds
 
+import global_vars
 import backend.firebase as firebase
 
 
@@ -120,8 +121,12 @@ class PermGuildAdmin(Permission):
 
         try:
             admin_role = firebase.get_data(firebase.ShortEndpoint.discord_guilds.get_path() + [guild_id, 'admin_role'])
-            admin_role = int(admin_role)
         except firebase.FBNoPath:
+            return False
+
+        try:
+            admin_role = int(admin_role)
+        except TypeError:
             return False
 
         for role in ctx.author.roles:
@@ -131,4 +136,4 @@ class PermGuildAdmin(Permission):
 
     @classmethod
     def get_fail_message(cls):
-        return "Only admins of this server may do this command!"
+        return f"Only admins of this server may do this command! Also make sure there's a set admin role of this server using `{global_vars.CMD_PREFIX}setadmin`!"

@@ -21,8 +21,8 @@ class ClaimChannelManager(firebase.FBStruct):
     """Manages the claim channels for a build."""
     def __init__(
             self,
-            claim_channels: m_claim_channels.ClaimChannels,
-            embed_pointer: disc_utils.MessagePointer
+            claim_channels: m_claim_channels.ClaimChannels = m_claim_channels.ClaimChannels(),
+            embed_pointer: disc_utils.MessagePointer = disc_utils.MessagePointer()
         ):
         self.claim_channels = claim_channels
         self.embed_pointer = embed_pointer
@@ -38,8 +38,8 @@ class ClaimChannelManager(firebase.FBStruct):
     @classmethod
     def firebase_from_json(cls, json: dict | list):
         return cls(
-            claim_channels = m_claim_channels.ClaimChannels.firebase_from_json(json.get("available_channels")),
-            embed_pointer = disc_utils.MessagePointer.firebase_from_json(json.get("embed_info"))
+            claim_channels = m_claim_channels.ClaimChannels.firebase_from_json(json.get("available_channels", m_claim_channels.ClaimChannels().firebase_to_json())),
+            embed_pointer = disc_utils.MessagePointer.firebase_from_json(json.get("embed_info", disc_utils.MessagePointer().firebase_to_json()))
         )
 
 
@@ -47,7 +47,10 @@ class ClaimChannelManager(firebase.FBStruct):
     def from_guild_id(cls, guild_id: int):
         """Gets the claim channel manager for a guild."""
         return cls.firebase_from_json(
-            firebase.get_data(get_path_claim_channels(guild_id))
+            firebase.get_data(
+                get_path_claim_channels(guild_id),
+                default = cls().firebase_to_json()
+            )
         )
 
 
@@ -72,10 +75,13 @@ class ClaimChannelManager(firebase.FBStruct):
 
     async def update_claim_channels(self, guild_id: int):
         """Updates the claim channel for a certain guild."""
-        firebase.override_data(
-            get_path_claim_channels(guild_id) + ["available_channels"],
-            self.claim_channels.firebase_to_json()
-        )
+        claim_channels_json = self.claim_channels.firebase_to_json()
+        path = get_path_claim_channels(guild_id) + ["available_channels"]
+
+        if len(claim_channels_json) == 0:
+            firebase.delete_data(path)
+        else:
+            firebase.override_data(path, claim_channels_json)
 
 
     def update_embed_pointer(self, guild_id: int):
