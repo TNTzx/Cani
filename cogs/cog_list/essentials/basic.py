@@ -32,7 +32,11 @@ async def update_guild_list_database():
     if not global_vars.dev_environment:
         bot_guild_ids = [guild.id for guild in global_vars.global_bot.guilds]
         for guild_id in firebase.get_data(endpoint_path):
-            guild_id = int(guild_id)
+            try:
+                guild_id = int(guild_id)
+            except ValueError:
+                continue
+
             if guild_id not in bot_guild_ids:
                 firebase.delete_data(
                     firebase.ShortEndpoint.discord_guilds.get_path() + [guild_id]

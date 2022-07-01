@@ -21,13 +21,15 @@ def log_something(log_str: str):
 
 def main():
     """...main!"""
-    dev_environment_str = sys.argv[0]
+    dev_environment_str = sys.argv[1]
     if dev_environment_str == "production":
         global_vars.dev_environment = False
         log_something("===PRODUCTION ENVIRONMENT===")
     elif dev_environment_str == "dev":
         global_vars.dev_environment = True
         log_something("===DEV ENVIRONMENT===")
+    else:
+        raise ValueError("Missing environment argument. Use \"production\" or \"dev\".")
 
 
     bot = nx.Client()
