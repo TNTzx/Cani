@@ -75,10 +75,13 @@ class ClaimChannelManager(firebase.FBStruct):
 
     async def update_claim_channels(self, guild_id: int):
         """Updates the claim channel for a certain guild."""
-        firebase.override_data(
-            get_path_claim_channels(guild_id) + ["available_channels"],
-            self.claim_channels.firebase_to_json()
-        )
+        claim_channels_json = self.claim_channels.firebase_to_json()
+        path = get_path_claim_channels(guild_id) + ["available_channels"]
+
+        if len(claim_channels_json) == 0:
+            firebase.delete_data(path)
+        else:
+            firebase.override_data(path, claim_channels_json)
 
 
     def update_embed_pointer(self, guild_id: int):

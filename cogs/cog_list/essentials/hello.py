@@ -40,10 +40,19 @@ class CogEvents(cog.RegisteredCog):
         await global_vars.tntz.send("*Logged in! :D*")
         await update_database()
 
+
     @cmds.Cog.listener()
     async def on_guild_join(self, guild: nx.Guild):
         """On guild join."""
         await update_database()
+
+    @cmds.Cog.listener()
+    async def on_guild_remove(self, guild: nx.Guild):
+        """On guild leave."""
+        firebase.delete_data(
+            firebase.ShortEndpoint.discord_guilds.get_path() + [str(guild.id)]
+        )
+
 
     @disc_utils.command_wrap(
         category = disc_utils.CategoryBotControl,
@@ -73,6 +82,7 @@ class CogEvents(cog.RegisteredCog):
     async def hello(self, ctx):
         """Hello there."""
         await ctx.send("*Bark! I'm an actual bot! :D*")
+
 
     @disc_utils.command_wrap(
         category = disc_utils.CategoryBasics,
