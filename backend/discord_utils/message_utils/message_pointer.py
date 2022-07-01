@@ -10,7 +10,7 @@ import global_vars
 
 class MessagePointer(firebase.FBStruct):
     """Class that contains channel and message ids to represent a message."""
-    def __init__(self, channel_id: int, message_id: int):
+    def __init__(self, channel_id: int = 0, message_id: int = 0):
         self.channel_id = channel_id
         self.message_id = message_id
 

@@ -21,8 +21,8 @@ class ClaimChannelManager(firebase.FBStruct):
     """Manages the claim channels for a build."""
     def __init__(
             self,
-            claim_channels: m_claim_channels.ClaimChannels,
-            embed_pointer: disc_utils.MessagePointer
+            claim_channels: m_claim_channels.ClaimChannels = m_claim_channels.ClaimChannels(),
+            embed_pointer: disc_utils.MessagePointer = disc_utils.MessagePointer()
         ):
         self.claim_channels = claim_channels
         self.embed_pointer = embed_pointer
@@ -47,7 +47,10 @@ class ClaimChannelManager(firebase.FBStruct):
     def from_guild_id(cls, guild_id: int):
         """Gets the claim channel manager for a guild."""
         return cls.firebase_from_json(
-            firebase.get_data(get_path_claim_channels(guild_id))
+            firebase.get_data(
+                get_path_claim_channels(guild_id),
+                default = cls().firebase_to_json()
+            )
         )
 
 
