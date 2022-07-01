@@ -28,6 +28,9 @@ def get_data(path: list[str], default = consts.NOT_FOUND_DATA):
     default_not_overridden = default == consts.NOT_FOUND_DATA
     result = get_from_path(path).get(token = consts.get_token()).val()
 
+    if isinstance(result, cl.OrderedDict):
+        result = dict(result)
+
     if result is None:
         if default_not_overridden:
             raise fb_exc.FBNoPath(f"Data doesn't exist for '{path}', or is None.")
@@ -41,9 +44,6 @@ def get_data(path: list[str], default = consts.NOT_FOUND_DATA):
         return default
 
     result = fb_utils.null_placeholder_empty_to_none(result)
-
-    if isinstance(result, cl.OrderedDict):
-        result = dict(result)
 
     log_message = f"Received data from path {path}: {ot.pr_print(result)}"
     lgr.log_firebase.info(log_message)
