@@ -1,8 +1,8 @@
 """Where the bot starts its life."""
 
 
-
 import os
+import sys
 
 import nextcord as nx
 import nextcord.ext.commands as nx_cmds
@@ -21,6 +21,15 @@ def log_something(log_str: str):
 
 def main():
     """...main!"""
+    dev_environment_str = sys.argv[0]
+    if dev_environment_str == "production":
+        global_vars.dev_environment = False
+        log_something("===PRODUCTION ENVIRONMENT===")
+    elif dev_environment_str == "dev":
+        global_vars.dev_environment = True
+        log_something("===DEV ENVIRONMENT===")
+
+
     bot = nx.Client()
 
     intents = nx.Intents.default()
