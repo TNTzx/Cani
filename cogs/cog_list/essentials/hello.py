@@ -15,21 +15,22 @@ from ... import utils as cog
 
 async def update_guild_list_database():
     """Updates the database for joined servers."""
-    fb_path = firebase.ShortEndpoint.discord_guilds
+    endpoint = firebase.ShortEndpoint.discord_guilds
+    endpoint_path = endpoint.get_path()
 
 
-    default_json = fb_path.get_default_data()
+    default_json = endpoint.get_default_data()
     default_json["fun"]["barking"]["server"] = {
         barking.STAT_TYPES.barks.name: barking.STAT_TYPES.barks.server_scope.raw.path_bundle.get_dict()
     }
 
     for guild in global_vars.global_bot.guilds:
-        if not firebase.is_data_exists(fb_path.get_path() + [guild.id]):
-            firebase.edit_data(fb_path.get_path(), {guild.id: default_json})
+        if not firebase.is_data_exists(endpoint_path + [guild.id]):
+            firebase.edit_data(endpoint_path, {guild.id: default_json})
 
 
     bot_guild_ids = [guild.id for guild in global_vars.global_bot.guilds]
-    for guild_id in firebase.get_data(fb_path):
+    for guild_id in firebase.get_data(endpoint_path):
         guild_id = int(guild_id)
         if guild_id not in bot_guild_ids:
             firebase.delete_data(
