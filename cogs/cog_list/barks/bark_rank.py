@@ -56,7 +56,7 @@ class CogBarkRank(cog.RegisteredCog):
             return
 
         disc_utils.cmd_choice_check(ctx, stat_type_name, stat_type_names)
-        stat_type = await barking.STAT_TYPES.get_stat_type(stat_type_name)
+        stat_type = barking.STAT_TYPES.get_stat_type(stat_type_name)
 
         await ctx.send(f"*Getting leaderboard for `{stat_type.name}`...*")
 
