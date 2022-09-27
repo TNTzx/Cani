@@ -60,7 +60,7 @@ pyparsing==2.4.7
 pyperclip==1.8.2
 # pypiwin32==223
 Pyrebase4==4.5.0
-python-jwt==3.3.0
+python-jwt==3.3.4
 pytz==2021.1
 # pywin32==301
 pywin32-ctypes==0.2.0
